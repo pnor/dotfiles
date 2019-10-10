@@ -23,9 +23,12 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'luochen1990/rainbow'
 " indentLine
 Plug 'Yggdroot/indentLine'
+" Swift completion theme
+Plug 'keith/swift.vim'
 
 " ColorThemes-----
 Plug 'kyoz/purify', { 'rtp': 'vim' }
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'
 
 call plug#end()
 
@@ -147,5 +150,7 @@ execute pathogen#infect()
 call pathogen#helptags()
 
 " Color Scheme Setup
-let g:purify_italic = 0
-colo purify
+"let g:purify_italic = 0
+colo sharkbites 
+hi Normal guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE
