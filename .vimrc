@@ -28,7 +28,7 @@ Plug 'keith/swift.vim'
 
 " ColorThemes-----
 Plug 'kyoz/purify', { 'rtp': 'vim' }
-Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim' " For the Airline theme
 
 call plug#end()
 
@@ -154,6 +154,6 @@ call pathogen#helptags()
 
 " Color Scheme Setup
 "let g:purify_italic = 0
-colo sharkbites 
+colo glow-in-the-dark-gucci-shark-bites-edit
 hi Normal guibg=NONE ctermbg=NONE
 hi LineNr guibg=NONE

@@ -94,3 +94,4 @@ hi xmlEndTag            guifg=#5EB2F2 guibg=#000000 gui=NONE
 hi clear SignColumn
 "NERDTree
 hi Directory guibg=#000000 guifg=#ffffff ctermfg=gray ctermbg=black
+
