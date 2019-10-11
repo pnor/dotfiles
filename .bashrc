@@ -1,6 +1,3 @@
-#colorls
-source $(dirname $(gem which colorls))/tab_complete.sh
-
 # powerline
 powerline-daemon -q
 POWERLINE_BASH_CONTINUATION=1

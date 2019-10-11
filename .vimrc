@@ -120,7 +120,10 @@ let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
 
 " Vim airline fix + theme
 let g:airline_powerline_fonts = 1
-let g:airline_theme='ouo'
+let g:airline_theme='sharkbites'
+set noshowmode
+"let g:airline_theme='ouo'
+
 
 " NERDTree 
 :let g:NERDTreeWinSize=30
