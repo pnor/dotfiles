@@ -6,10 +6,7 @@ call plug#begin('~/.vim/plugged')
 
 " youcompleteme
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }
-" NERDtree
-Plug 'scrooloose/nerdtree'
-Plug 'xuyuanp/nerdtree-git-plugin'
-Plug 'ryanoasis/vim-devicons'
+
 " ALE
 Plug 'w0rp/ale'
 " Sneak
@@ -91,7 +88,13 @@ endif
    set termguicolors
  endif
 
-" Personal Settings--------------------------------------------------------------------
+ " Enable italics
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+"set t_ZH=[3m
+"set t_ZR=[23m
+
+" Personal Settings----------------------------------------------------
 " Remove dog trails
 set noswapfile
 set nobackup
@@ -112,7 +115,16 @@ set softtabstop =4
 set shiftwidth  =4
 set expandtab
 
-" Plugin Settings---------------------------------------------------------------------
+"Remove all trailing whitespace by pressing F5
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+
+" Set Color Scheme----------
+"let g:purify_italic = 0
+colo glow-in-the-dark-gucci-shark-bites-edit
+hi Normal guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE
+
+" Plugin Settings--------------------------------------
 " youcompleteme fix
 let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 ""let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
@@ -121,26 +133,13 @@ let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
 " Vim airline fix + theme
 let g:airline_powerline_fonts = 1
 let g:airline_theme='sharkbites'
-set noshowmode
 "let g:airline_theme='ouo'
-
-
-" NERDTree 
-:let g:NERDTreeWinSize=30
-" Open tree with "\t"
-map <Leader>t :NERDTreeToggle<CR>
-" Open tree when starting a vim session with 'vim'
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-" Unicode for NERDTree icons
-set encoding=UTF-8
-" NERDtree colors
-:hi Directory guifg=#FF0000 ctermfg=cyan
+set noshowmode
 
 " ALE gutter color and symbols
 highlight clear SignColumn
-let g:ale_sign_error = 'x'
-let g:ale_sign_warning = '*'
+let g:ale_sign_error = ' x'
+let g:ale_sign_warning = ' *'
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
@@ -152,8 +151,4 @@ set dir=~/tmp
 execute pathogen#infect()
 call pathogen#helptags()
 
-" Color Scheme Setup
-"let g:purify_italic = 0
-colo glow-in-the-dark-gucci-shark-bites-edit
-hi Normal guibg=NONE ctermbg=NONE
-hi LineNr guibg=NONE
+
