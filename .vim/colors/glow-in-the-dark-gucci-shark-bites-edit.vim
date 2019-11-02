@@ -19,8 +19,8 @@ hi StatusLine     guifg=#f8f8f2 guibg=#1a1a1a gui=bold cterm=bold
 hi StatusLineNC   guifg=#f8f8f2 guibg=#1a1a1a gui=NONE
 hi Pmenu          guifg=#ffffff guibg=#000000 gui=NONE
 hi PmenuSel       guifg=#ffffff guibg=#3a3a3a gui=NONE
-hi IncSearch      guifg=#FF8C00 guibg=#ffffff gui=NONE
-hi Search         guifg=#00ffff guibg=#444444 gui=underline cterm=underline
+hi IncSearch      guifg=#ff8c00 guibg=#ffffff gui=NONE
+hi Search         guifg=#00ffff guibg=#444444 gui=NONE
 hi Directory      guifg=#FFFE58 guibg=#000000 gui=NONE
 hi Folded         guifg=#6272a4 guibg=#1f1f1f gui=NONE
 hi Normal         guifg=#f8f8f2 guibg=#000000 gui=NONE
@@ -52,7 +52,7 @@ hi StorageClass   guifg=#56F856 guibg=#000000 gui=italic cterm=italic
 hi String         guifg=#FFFE58 guibg=#000000 gui=NONE
 hi Tag            guifg=#F856B5 guibg=#000000 gui=NONE
 hi Title          guifg=#5EB2F2 guibg=#000000 gui=bold
-hi Todo           guifg=#6272a4 guibg=#000000 gui=inverse,bold cterm=inverse,bold
+hi Todo           guifg=#6272a4 guibg=#000000 gui=underline,bold cterm=underline,bold
 hi Type           guifg=#F856B5 guibg=#000000 gui=NONE
 hi Underlined     guifg=#ffffff guibg=#000000 gui=underline cterm=underline
 
@@ -91,7 +91,7 @@ hi xmlTag               guifg=#5EB2F2 guibg=#000000 gui=NONE
 hi xmlEndTag            guifg=#5EB2F2 guibg=#000000 gui=NONE
 
 " ALE
-hi clear SignColumn
+"hi clear SignColumn
 "NERDTree
 "hi Directory guibg=#000000 guifg=#ffffff ctermfg=gray ctermbg=black
 

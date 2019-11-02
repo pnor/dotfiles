@@ -1,36 +1,27 @@
-
-" Vim-Plug---
-" ---------------------------------------------------------------------------
+" ---------------------------------------------------------------------------- "
+" Vim-Plug                                                                     "
+" ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
-" Functionality-----
-
-" youcompleteme
-Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }
-
-" ALE
-Plug 'w0rp/ale'
-" Sneak
-Plug 'justinmk/vim-sneak'
-
-" Appearence-----
-" Vim-airline
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-" Rainbow Parenthesis
-Plug 'luochen1990/rainbow'
-" indentLine
-Plug 'Yggdroot/indentLine'
-" Swift completion theme
-Plug 'keith/swift.vim'
-
-" ColorThemes-----
-Plug 'kyoz/purify', { 'rtp': 'vim' }
-Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim' " For the Airline theme
+" - Functionality
+Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
+Plug 'w0rp/ale'                 " ALE
+Plug 'justinmk/vim-sneak'       " Sneak
+" - Appearence
+Plug 'vim-airline/vim-airline'          " Vim-airline
+Plug 'vim-airline/vim-airline-themes'   " Vim-airline Themes
+Plug 'luochen1990/rainbow'              " Rainbow Parenthesis
+Plug 'Yggdroot/indentLine'              " indentLine
+Plug 'keith/swift.vim'                  " Swift Syntax Suppoer
+" - ColorThemes
+Plug 'kyoz/purify', { 'rtp': 'vim' }                        " Purify
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme 
 
 call plug#end()
 
 
-" Vim Settings---
+" ---------------------------------------------------------------------------- "
+" Vim Config                                                                   "
+" ---------------------------------------------------------------------------- "
 " When started as "evim", evim.vim will already have done these settings.
 if v:progname =~? "evim"
   finish
@@ -55,14 +46,11 @@ endif
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
-
   " Put these in an autocmd group, so that we can delete them easily.
   augroup vimrcEx
   au!
-
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
-
   augroup END
 
 else
@@ -81,7 +69,11 @@ if has('syntax') && has('eval')
   packadd! matchit
 endif
 
-" Enable true color 启用终端24位色
+
+" ---------------------------------------------------------------------------- "
+" Display                                                                      "
+" ---------------------------------------------------------------------------- "
+" Enable true color
  if exists('+termguicolors')
    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
@@ -91,23 +83,6 @@ endif
  " Enable italics
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
-"set t_ZH=[3m
-"set t_ZR=[23m
-
-" Personal Settings----------------------------------------------------
-" Remove dog trails
-set noswapfile
-set nobackup
-set noundofile
-
-" Add syntax highlighting
-syntax on
-
-" Add line Numbers
-set number
-
-" <Ctrl-l> redraws the screen and removes any search highlighting.
-nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 " Tabs are 4 spaces for proper files
 set tabstop     =4
@@ -115,40 +90,55 @@ set softtabstop =4
 set shiftwidth  =4
 set expandtab
 
-"Remove all trailing whitespace by pressing F5
-nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+" Remove dog trails
+set noswapfile
+set nobackup
+set noundofile
 
-" Set Color Scheme----------
-"let g:purify_italic = 0
+set number  " Add line Numbers
+syntax on   " Add syntax highlighting
+
+
+" ---------------------------------------------------------------------------- "
+" Set Color Theme / Display                                                    "
+" ---------------------------------------------------------------------------- "
 colo glow-in-the-dark-gucci-shark-bites-edit
 hi Normal guibg=NONE ctermbg=NONE
 hi LineNr guibg=NONE
 
-" Plugin Settings--------------------------------------
-" youcompleteme fix
-let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-""let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
-let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
 
-" Vim airline fix + theme
+" ---------------------------------------------------------------------------- "
+" Key-Bindings                                                                 "
+" ---------------------------------------------------------------------------- "
+map <Leader>w <C-w> " Change vim windows with \w
+nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR> " F5 Removes trailing whitespace 
+
+
+" ---------------------------------------------------------------------------- "
+" Plugin Settings                                                              "
+" ---------------------------------------------------------------------------- "
+" - youcompleteme
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
+let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
+let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
+
+" - Vim Airline 
 let g:airline_powerline_fonts = 1
-let g:airline_theme='sharkbites'
-"let g:airline_theme='ouo'
+let g:airline_theme='sharkbites' " Used to use 'ouo'
 set noshowmode
 
-" ALE gutter color and symbols
-highlight clear SignColumn
-let g:ale_sign_error = ' x'
-let g:ale_sign_warning = ' *'
-highlight ALEErrorSign ctermbg=NONE ctermfg=red
+" - ALE gutter color and symbols
+highlight clear SignColumn      " Clear sign
+let g:ale_set_highlights = 0    " No ale highlights on line
+let g:ale_sign_error = ' x'     " Error symbol
+let g:ale_sign_warning = ' *'   " Warning Symbol
+highlight ALEErrorSign ctermbg=NONE ctermfg=red 
+highlight ALEError guibg=NONE ctermbg=NONE cterm=NONE
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
 
-" Rainbow Parenthesis
-let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
-
-
-set dir=~/tmp
-execute pathogen#infect()
-call pathogen#helptags()
-
-
+" - Rainbow Parenthesis
+let g:rainbow_active = 1 
+let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
