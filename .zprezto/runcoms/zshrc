@@ -10,9 +10,11 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Customize to your needs...
 
-# Change prompt appearence HACK
+
+
+
+# Prompt Uppearence
 prompt cloud \>\> cyan blue 
 
 #autojump
@@ -22,11 +24,10 @@ prompt cloud \>\> cyan blue
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # zsh-syntax highlighting
 source /Users/philliporeggio/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # Apple touchbar (zsh-apple-touchbar)
 source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
 
-# Alias ---
+# - Alias
 # git
 alias gs="git status"
 alias ga="git add"
@@ -36,7 +37,6 @@ alias gch="git checkout"
 alias gpsu="git push --set-upstream origin"
 
 # Commands
-alias treebb
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 
 # Xcode and iOS Dev
@@ -60,23 +60,7 @@ alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'
 alias leett='leetcode test'
 alias leetget='leetcode show -gx'
 
-
 # Dotfiles repo
 alias dotfi='/usr/bin/git --git-dir=/Users/philliporeggio/.cfg/ --work-tree=/Users/philliporeggio'
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/anaconda3/etc/profile.d/conda.sh" ]; then
-#         . "/anaconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/anaconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# <<< conda initialize <<<
 
 export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin"
