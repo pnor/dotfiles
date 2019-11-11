@@ -7,6 +7,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clan
 Plug 'w0rp/ale'                         " ALE
 Plug 'justinmk/vim-sneak'               " Sneak
 Plug 'ntpeters/vim-better-whitespace'   " Traiing Whitespace
+Plug 'scrooloose/nerdcommenter'         " NERD Commenting
 " - Appearence
 Plug 'vim-airline/vim-airline'          " Vim-airline
 Plug 'vim-airline/vim-airline-themes'   " Vim-airline Themes
