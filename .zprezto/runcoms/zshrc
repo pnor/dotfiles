@@ -10,14 +10,23 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-
-
-
-
 # Prompt Uppearence
-prompt cloud \>\> cyan blue 
+rand=$[$RANDOM%4]
+if [ $rand = 0 ]
+then
+    prompt cloud \>\> cyan blue
+elif [ $rand = 1 ]
+then
+    prompt cloud \>\> red magenta
+elif [ $rand = 2 ]
+then
+    prompt cloud \>\> black white
+else
+    prompt cloud \>\> white yellow
+fi
 
-#autojump
+
+# autojump
 [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
 
 # zsh-autosuggestions
@@ -41,15 +50,16 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 
 # Xcode and iOS Dev
 alias xcode='open -a Xcode'
+alias xvi='open -a XVim'
 alias delete_pods='~/cmd_line_scripts/kill_pods'
 
-# Python 
+# Python
 alias venv='source venv/bin/activate' # activate venv
 alias initvenv='virtualenv --no-site-packages -p python3 venv' # create venv with no site packages
 alias python='python3'
 
 # Web Browsers
-alias chrome='open -a "Google Chrome 2"' 
+alias chrome='open -a "Google Chrome 2"'
 alias safari='open -a "Safari"'
 alias incognito='~/cmd_line_scripts/open_incognito_safari'
 # Mail
