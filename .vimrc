@@ -4,8 +4,9 @@
 call plug#begin('~/.vim/plugged')
 " - Functionality
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
-Plug 'w0rp/ale'                 " ALE
-Plug 'justinmk/vim-sneak'       " Sneak
+Plug 'w0rp/ale'                         " ALE
+Plug 'justinmk/vim-sneak'               " Sneak
+Plug 'ntpeters/vim-better-whitespace'   " Traiing Whitespace
 " - Appearence
 Plug 'vim-airline/vim-airline'          " Vim-airline
 Plug 'vim-airline/vim-airline-themes'   " Vim-airline Themes
@@ -14,7 +15,7 @@ Plug 'Yggdroot/indentLine'              " indentLine
 Plug 'keith/swift.vim'                  " Swift Syntax Suppoer
 " - ColorThemes
 Plug 'kyoz/purify', { 'rtp': 'vim' }                        " Purify
-Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme 
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme
 
 call plug#end()
 
@@ -110,9 +111,7 @@ hi LineNr guibg=NONE
 " ---------------------------------------------------------------------------- "
 " Key-Bindings                                                                 "
 " ---------------------------------------------------------------------------- "
-map <Leader>w <C-w> " Change vim windows with \w
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
-nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR> " F5 Removes trailing whitespace 
 
 
 " ---------------------------------------------------------------------------- "
@@ -124,7 +123,7 @@ let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme
 let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
 let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
 
-" - Vim Airline 
+" - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme='sharkbites' " Used to use 'ouo'
 set noshowmode
@@ -134,11 +133,11 @@ highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 0    " No ale highlights on line
 let g:ale_sign_error = ' x'     " Error symbol
 let g:ale_sign_warning = ' *'   " Warning Symbol
-highlight ALEErrorSign ctermbg=NONE ctermfg=red 
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEError guibg=NONE ctermbg=NONE cterm=NONE
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
 
 " - Rainbow Parenthesis
-let g:rainbow_active = 1 
+let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
