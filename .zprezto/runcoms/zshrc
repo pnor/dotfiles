@@ -1,17 +1,10 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Prompt Uppearence
-rand=$[$RANDOM%4]
+# Prompt Appearence
+rand=$[$RANDOM%5]
 if [ $rand = 0 ]
 then
     prompt cloud \>\> cyan blue
@@ -21,6 +14,9 @@ then
 elif [ $rand = 2 ]
 then
     prompt cloud \>\> black white
+elif [ $rand = 3 ]
+then
+    prompt cloud \>\> cyan magenta
 else
     prompt cloud \>\> white yellow
 fi

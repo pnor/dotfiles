@@ -13,7 +13,7 @@ Plug 'vim-airline/vim-airline'          " Vim-airline
 Plug 'vim-airline/vim-airline-themes'   " Vim-airline Themes
 Plug 'luochen1990/rainbow'              " Rainbow Parenthesis
 Plug 'Yggdroot/indentLine'              " indentLine
-Plug 'keith/swift.vim'                  " Swift Syntax Suppoer
+Plug 'keith/swift.vim'                  " Swift Syntax Support
 " - ColorThemes
 Plug 'kyoz/purify', { 'rtp': 'vim' }                        " Purify
 Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme
@@ -80,9 +80,6 @@ hi SpellBad cterm=underline
 nnoremap <c-s> :w<CR>
 inoremap <c-s> <Esc>:w<CR>l
 vnoremap <c-s> <Esc>:w<CR>
-
-" Use ';' instead of ':'
-nnoremap ; :
 
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
