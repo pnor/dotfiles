@@ -3,17 +3,22 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Functionality
-Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
-Plug 'w0rp/ale'                         " ALE
-Plug 'justinmk/vim-sneak'               " Sneak
-Plug 'ntpeters/vim-better-whitespace'   " Traiing Whitespace
-Plug 'scrooloose/nerdcommenter'         " NERD Commenting
+Plug 'Valloric/YouCompleteMe', {
+\    'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer',
+\    'on': 'UseAllPlugs'
+\ }                                                     " youcompleteme
+Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                " ALE
+Plug 'justinmk/vim-sneak'                               " Sneak
+Plug 'ntpeters/vim-better-whitespace'                   " Traiing Whitespace
+Plug 'scrooloose/nerdcommenter'                         " NERD Commenting
+Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }     " Autoclose Parens
+Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }          " Fuzzy File Finder
 " - Appearence
-Plug 'vim-airline/vim-airline'          " Vim-airline
-Plug 'vim-airline/vim-airline-themes'   " Vim-airline Themes
-Plug 'luochen1990/rainbow'              " Rainbow Parenthesis
-Plug 'Yggdroot/indentLine'              " indentLine
-Plug 'keith/swift.vim'                  " Swift Syntax Support
+Plug 'vim-airline/vim-airline'                          " Vim-airline
+Plug 'vim-airline/vim-airline-thems'                    " Vim-airline Themes
+Plug 'luochen1990/rainbow'                              " Rainbow Parenthesis
+Plug 'Yggdroot/indentLine'                              " indentLine
+Plug 'keith/swift.vim'                                  " Swift Syntax Support
 " - ColorThemes
 Plug 'kyoz/purify', { 'rtp': 'vim' }                        " Purify
 Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme
@@ -127,6 +132,7 @@ nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highl
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
+command UseAllPlugs
 " - youcompleteme
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
@@ -151,3 +157,6 @@ highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
+
+" - CtrlP
+nnoremap <leader>t :CtrlP

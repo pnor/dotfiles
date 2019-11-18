@@ -33,8 +33,9 @@ source /Users/philliporeggio/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
 
 # - Alias
-# vim
-alias vi="macvim -v"
+# Vim
+alias vi="mvim -v"
+alias vim="mvim -vc \"UseAllPlugs\""
 
 # git
 alias gs="git status"
@@ -42,6 +43,8 @@ alias ga="git add"
 alias gc="git commit -m"
 alias gb="git branch"
 alias gch="git checkout"
+alias gpull="git pull"
+alias gpush="git push"
 alias gpsu="git push --set-upstream origin"
 
 # Commands
