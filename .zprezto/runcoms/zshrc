@@ -44,7 +44,8 @@ alias gc="git commit -m"
 alias gb="git branch"
 alias gch="git checkout"
 alias gpull="git pull"
-alias gpush="git push"
+alias gpu="git push"
+alias gpl="git pull"
 alias gpsu="git push --set-upstream origin"
 
 # Commands
@@ -53,7 +54,7 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 # Xcode and iOS Dev
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
-alias delete_pods='~/cmd_line_scripts/kill_pods'
+alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv

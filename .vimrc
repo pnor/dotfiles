@@ -3,28 +3,24 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Functionality
-Plug 'Valloric/YouCompleteMe', {
-\    'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer',
-\    'on': 'UseAllPlugs'
-\ }                                                     " youcompleteme
-Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                " ALE
-Plug 'justinmk/vim-sneak'                               " Sneak
-Plug 'ntpeters/vim-better-whitespace'                   " Traiing Whitespace
-Plug 'scrooloose/nerdcommenter'                         " NERD Commenting
-Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }     " Autoclose Parens
-Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }          " Fuzzy File Finder
+Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
+Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
+Plug 'justinmk/vim-sneak'                                   " Sneak
+Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
+Plug 'scrooloose/nerdcommenter'                             " NERD Commenting
+Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }         " Autoclose Parens
+Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }              " Fuzzy File Finder
 " - Appearence
-Plug 'vim-airline/vim-airline'                          " Vim-airline
-Plug 'vim-airline/vim-airline-thems'                    " Vim-airline Themes
-Plug 'luochen1990/rainbow'                              " Rainbow Parenthesis
-Plug 'Yggdroot/indentLine'                              " indentLine
-Plug 'keith/swift.vim'                                  " Swift Syntax Support
+Plug 'vim-airline/vim-airline'                              " Vim-airline
+Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
+Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
+Plug 'Yggdroot/indentLine'                                  " indentLine
+Plug 'keith/swift.vim'                                      " Swift Syntax Support
 " - ColorThemes
-Plug 'kyoz/purify', { 'rtp': 'vim' }                        " Purify
+Plug 'cocopon/iceberg.vim'                                  " Iceberg Theme
 Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme
 
 call plug#end()
-
 
 " ---------------------------------------------------------------------------- "
 " Vim Config                                                                   "
@@ -86,6 +82,9 @@ nnoremap <c-s> :w<CR>
 inoremap <c-s> <Esc>:w<CR>l
 vnoremap <c-s> <Esc>:w<CR>
 
+" Escape to jk to leave insert mode
+inoremap jk <Esc>
+
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
 " ---------------------------------------------------------------------------- "
@@ -118,7 +117,13 @@ syntax on   " Add syntax highlighting
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
-colo glow-in-the-dark-gucci-shark-bites-edit
+if len(v:argv) >= 3 && v:argv[2] =~ 'c'
+    " Loaded all plugins
+    colo glow-in-the-dark-gucci-shark-bites-edit
+else
+    " Loaded minimal plugins
+    colo iceberg
+endif
 hi Normal guibg=NONE ctermbg=NONE
 hi LineNr guibg=NONE
 
@@ -128,20 +133,27 @@ hi LineNr guibg=NONE
 " ---------------------------------------------------------------------------- "
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
 
-
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
-command UseAllPlugs
 " - youcompleteme
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
 let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
 let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
+if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
+    let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
+endif
 
 " - Vim Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme='sharkbites' " Used to use 'ouo'
+if len(v:argv) >= 3 && v:argv[2] =~ "c"
+    " Loaded all plugins
+    let g:airline_theme='sharkbites'
+else
+    " Loaded minimal plugins
+    let g:airline_theme='iceberg'
+endif
 set noshowmode
 
 " - ALE gutter color and symbols
