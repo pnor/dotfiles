@@ -18,7 +18,7 @@ elif [ $rand = 3 ]
 then
     prompt cloud \>\> cyan magenta
 else
-    prompt cloud \>\> white yellow
+    prompt cloud \>\> black yellow
 fi
 
 
@@ -47,6 +47,7 @@ alias gpull="git pull"
 alias gpu="git push"
 alias gpl="git pull"
 alias gpsu="git push --set-upstream origin"
+alias glog="git log"
 
 # Commands
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"

@@ -22,6 +22,7 @@ Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airlin
 
 call plug#end()
 
+
 " ---------------------------------------------------------------------------- "
 " Vim Config                                                                   "
 " ---------------------------------------------------------------------------- "
@@ -74,8 +75,8 @@ endif
 
 " Spell Checking
 autocmd FileType markdown setlocal spell
-hi clear SpellBad
 hi SpellBad cterm=underline
+hi clear SpellBad
 
 " Map ctrl-s to save
 nnoremap <c-s> :w<CR>
@@ -84,6 +85,7 @@ vnoremap <c-s> <Esc>:w<CR>
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+
 
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
@@ -118,20 +120,23 @@ syntax on   " Add syntax highlighting
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
 if len(v:argv) >= 3 && v:argv[2] =~ 'c'
-    " Loaded all plugins
-    colo glow-in-the-dark-gucci-shark-bites-edit
+    colo glow-in-the-dark-gucci-shark-bites-edit " Loaded all plugins
 else
-    " Loaded minimal plugins
-    colo iceberg
+    colo iceberg " Loaded minimal plugins
 endif
-hi Normal guibg=NONE ctermbg=NONE
-hi LineNr guibg=NONE
+
+" Keep Black Terminal Background
+hi  Normal       guibg=NONE ctermbg=NONE ctermfg=NONE
+hi  NonText  cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
+hi  StatusLine   cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=#ffffff guifg=#d70000
+hi  LineNr       guibg=NONE
 
 
 " ---------------------------------------------------------------------------- "
 " Key-Bindings                                                                 "
 " ---------------------------------------------------------------------------- "
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
+
 
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
@@ -148,11 +153,9 @@ endif
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 if len(v:argv) >= 3 && v:argv[2] =~ "c"
-    " Loaded all plugins
-    let g:airline_theme='sharkbites'
+    let g:airline_theme='sharkbites'    " Loaded all plugins
 else
-    " Loaded minimal plugins
-    let g:airline_theme='iceberg'
+    let g:airline_theme='iceberg'       " Loaded minimal plugins
 endif
 set noshowmode
 
