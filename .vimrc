@@ -5,7 +5,7 @@ call plug#begin('~/.vim/plugged')
 " - Functionality
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
 Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
-Plug 'justinmk/vim-sneak'                                   " Sneak
+Plug 'easymotion/vim-easymotion'                            " Easy Motion
 Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
 Plug 'scrooloose/nerdcommenter'                             " NERD Commenting
 Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }         " Autoclose Parens
@@ -79,12 +79,15 @@ hi SpellBad cterm=underline
 hi clear SpellBad
 
 " Map ctrl-s to save
-nnoremap <c-s> :w<CR>
-inoremap <c-s> <Esc>:w<CR>l
-vnoremap <c-s> <Esc>:w<CR>
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>l
+vnoremap <C-s> <Esc>:w<CR>
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+
+" Map ; to :
+ map ; :
 
 
 " ---------------------------------------------------------------------------- "
@@ -172,6 +175,10 @@ highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
+
+" - Easymotion
+nmap s <Plug>(easymotion-s2)
+nmap t <Plug>(easymotion-t2)
 
 " - CtrlP
 nnoremap <leader>t :CtrlP
