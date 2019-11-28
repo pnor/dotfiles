@@ -2,23 +2,24 @@
 " Vim-Plug                                                                     "
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
+
 " - Functionality
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
-Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
 Plug 'easymotion/vim-easymotion'                            " Easy Motion
+Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }              " Fuzzy File Finder
 Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
 Plug 'scrooloose/nerdcommenter'                             " NERD Commenting
 Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }         " Autoclose Parens
-Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }              " Fuzzy File Finder
+Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
 " - Appearence
-Plug 'vim-airline/vim-airline'                              " Vim-airline
-Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
-Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
 Plug 'Yggdroot/indentLine'                                  " indentLine
 Plug 'keith/swift.vim'                                      " Swift Syntax Support
+Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
+Plug 'vim-airline/vim-airline'                              " Vim-airline
+Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
 " - ColorThemes
 Plug 'cocopon/iceberg.vim'                                  " Iceberg Theme
-Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Shark bites Airline Theme
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Sharkbites Airline Theme
 
 call plug#end()
 
