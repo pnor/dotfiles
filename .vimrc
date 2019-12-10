@@ -6,10 +6,10 @@ call plug#begin('~/.vim/plugged')
 " - Functionality
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
 Plug 'easymotion/vim-easymotion'                            " Easy Motion
-Plug 'kien/ctrlp.vim', { 'on': 'UseAllPlugs' }              " Fuzzy File Finder
+Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }          " FZF
 Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
-Plug 'scrooloose/nerdcommenter'                             " NERD Commenting
-Plug 'townk/vim-autoclose', { 'on': 'UseAllPlugs' }         " Autoclose Parens
+Plug 'scrooloose/nerdcommenter', { 'on': 'UseAllPlugs' }    " NERD Commenting
+Plug 'tpope/vim-fugitive', { 'on': 'UseAllPlugs' }          " Fugitive
 Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
 " - Appearence
 Plug 'Yggdroot/indentLine'                                  " indentLine
@@ -18,7 +18,9 @@ Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesi
 Plug 'vim-airline/vim-airline'                              " Vim-airline
 Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
 " - ColorThemes
+Plug 'NLKNguyen/papercolor-theme'                           " Papercolor
 Plug 'cocopon/iceberg.vim'                                  " Iceberg Theme
+Plug 'fcpg/vim-orbital'                                     " Orbital Theme
 Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Sharkbites Airline Theme
 
 call plug#end()
@@ -57,11 +59,8 @@ if has("autocmd")
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
   augroup END
-
 else
-
   set autoindent		" always set autoindenting on
-
 endif " has("autocmd")
 
 " Add optional packages.
@@ -79,27 +78,15 @@ autocmd FileType markdown setlocal spell
 hi SpellBad cterm=underline
 hi clear SpellBad
 
-" Map ctrl-s to save
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>l
-vnoremap <C-s> <Esc>:w<CR>
-
-" Escape to jk to leave insert mode
-inoremap jk <Esc>
-
-" Map ; to :
- map ; :
-
-
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
 " ---------------------------------------------------------------------------- "
 " Enable true color
- if exists('+termguicolors')
-   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-   set termguicolors
- endif
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
  " Enable italics
 let &t_ZH="\e[3m"
@@ -126,12 +113,12 @@ syntax on   " Add syntax highlighting
 if len(v:argv) >= 3 && v:argv[2] =~ 'c'
     colo glow-in-the-dark-gucci-shark-bites-edit " Loaded all plugins
 else
-    colo iceberg " Loaded minimal plugins
+    colo orbital " Loaded minimal plugins
 endif
 
 " Keep Black Terminal Background
 hi  Normal       guibg=NONE ctermbg=NONE ctermfg=NONE
-hi  NonText  cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
+hi  NonText      cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
 hi  StatusLine   cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=#ffffff guifg=#d70000
 hi  LineNr       guibg=NONE
 
@@ -140,6 +127,27 @@ hi  LineNr       guibg=NONE
 " Key-Bindings                                                                 "
 " ---------------------------------------------------------------------------- "
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
+
+" Map ctrl-s to save
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>l
+vnoremap <C-s> <Esc>:w<CR>
+
+" Escape to jk to leave insert mode
+inoremap jk <Esc>
+
+" Map ; to :
+map ; :
+
+ " Autoclose Parenthesis
+inoremap ( ()<Esc>i
+inoremap { {}<Esc>i
+
+" Move Faster with arrows
+nnoremap <Up> {
+nnoremap <Down> }
+nnoremap <Right> 5l
+nnoremap <Left> 5h
 
 
 " ---------------------------------------------------------------------------- "
@@ -154,32 +162,41 @@ if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
     let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
 endif
 
+" - Easymotion
+map <Leader>w <Plug>(easymotion-w)
+map <Leader>b <Plug>(easymotion-b)
+
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 if len(v:argv) >= 3 && v:argv[2] =~ "c"
     let g:airline_theme='sharkbites'    " Loaded all plugins
 else
-    let g:airline_theme='iceberg'       " Loaded minimal plugins
+    let g:airline_theme='orbital'       " Loaded minimal plugins
 endif
 set noshowmode
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 0    " No ale highlights on line
-let g:ale_sign_error = ' x'     " Error symbol
-let g:ale_sign_warning = ' *'   " Warning Symbol
+let g:ale_sign_error = 'x'     " Error symbol
+let g:ale_sign_warning = '*'   " Warning Symbol
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEError guibg=NONE ctermbg=NONE cterm=NONE
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
+let g:airline#extensions#ale#enabled = 1
+
+" - Fugitive
+set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
 
-" - Easymotion
+"- Easymotion
 nmap s <Plug>(easymotion-s2)
 nmap t <Plug>(easymotion-t2)
 
-" - CtrlP
-nnoremap <leader>t :CtrlP
+" - FZF
+nnoremap <leader>t :FZF
+
