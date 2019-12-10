@@ -4,7 +4,8 @@
 call plug#begin('~/.vim/plugged')
 
 " - Functionality
-Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
+" Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'on': 'UseAllPlugs' }   " COC
 Plug 'easymotion/vim-easymotion'                            " Easy Motion
 Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }          " FZF
 Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
@@ -13,7 +14,8 @@ Plug 'tpope/vim-fugitive', { 'on': 'UseAllPlugs' }          " Fugitive
 Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
 " - Appearence
 Plug 'Yggdroot/indentLine'                                  " indentLine
-Plug 'keith/swift.vim'                                      " Swift Syntax Support
+"Plug 'keith/swift.vim'                                      " Swift Syntax Support
+Plug 'sheerun/vim-polyglot'                                 " Vim Polyglot
 Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                              " Vim-airline
 Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
@@ -153,14 +155,22 @@ nnoremap <Left> 5h
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
-" - youcompleteme
-let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
-let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
-let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
-if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
-    let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
-endif
+" - COC
+" Use tab for trigger completion with characters ahead and navigate.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
+"     let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
+" endif
 
 " - Easymotion
 map <Leader>w <Plug>(easymotion-w)
