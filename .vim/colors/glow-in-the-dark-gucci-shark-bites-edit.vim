@@ -17,7 +17,7 @@ hi LineNr         guifg=#555555 guibg=#000000 gui=NONE
 hi VertSplit      guifg=#555555 guibg=#1a1a1a gui=NONE
 hi MatchParen     guifg=#f856b5 guibg=#000000 gui=underline cterm=underline
 hi StatusLine     guifg=#f8f8f2 guibg=#1a1a1a gui=bold cterm=bold
-hi StatusLineNC   guifg=#f8f8f2 guibg=#1a1a1a gui=NONE
+hi StatusLineNC   guifg=#f8f8f2 guibg=#000000 gui=NONE
 hi Pmenu          guifg=#ffffff guibg=#000000 gui=NONE
 hi PmenuSel       guifg=#ffffff guibg=#3a3a3a gui=NONE
 hi IncSearch      guifg=#ff8c00 guibg=#ffffff gui=NONE
@@ -53,7 +53,7 @@ hi StorageClass   guifg=#56f856 guibg=#000000 gui=italic cterm=italic
 hi String         guifg=#fffe58 guibg=#000000 gui=NONE
 hi Tag            guifg=#f856b5 guibg=#000000 gui=NONE
 hi TabLineFill    guifg=#000000 guibg=#000000 gui=NONE
-hi TabLine        guifg=#5eb2f2 guibg=#222222 gui=NONE
+hi TabLine        guifg=#888888 guibg=#222222 gui=NONE
 hi Title          guifg=#5eb2f2 guibg=#000000 gui=bold
 hi Todo           guifg=#6272a4 guibg=#000000 gui=underline,bold cterm=underline,bold
 hi Type           guifg=#f856b5 guibg=#000000 gui=NONE
