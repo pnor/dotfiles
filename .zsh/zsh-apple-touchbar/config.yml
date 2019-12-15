@@ -1,0 +1,197 @@
+# Outline
+# .
+# └── main
+#     ├── extra
+#     ├── git
+#     │   └── git-extra
+#     ├── programs
+#     └── other
+#         ├── gradle
+#         └── python
+
+default_view: main
+views:
+  main: # Main display. Has some utility and links to other buttons
+    1:
+      text: pwd-copy
+      command: pwd |tr -d "\\n" |pbcopy
+    2:
+      text: clear
+      command: clear
+    3:
+      text: open .
+      command: open .
+    4:
+      text: git status
+      command: git status
+    5:
+      text: source ~/.zshrc
+      command: source ~/.zshrc
+    6:
+      text: ls -A
+      command: ls -A
+    7:
+      text: ✨ extra
+      view: extra_util
+    8:
+      text: 📖 git
+      view: git
+    9:
+      text: 💻 programs
+      view: programs
+    10:
+      text: ❔ other
+      view: other
+
+  extra_util: # Utils
+    1:
+      text: 👈 back
+      view: main
+    2:
+      text: source ~/.zshrc
+      command: source ~/.zshrc
+    back: main
+
+  git: # Primary git
+    1:
+      text: 👈 back
+      view: main
+    2:
+      text: status
+      command: git status
+    3:
+      text: add .
+      command: git add .
+    4:
+      text: remove all
+      command: git rm --cached -r *
+    5:
+      text: push
+      command: git push
+    6:
+      text: pull
+      command: git pull
+    7:
+      text: branch
+      command: git branch
+    8:
+      text: stash
+      command: git stash
+    9:
+      text: stash pop
+      command: git stash pop
+    10:
+      text: fetch
+      command: git fetch
+    11:
+      text: More 👉
+      view: git-extra
+
+  git-extra: # Specific Git
+    1:
+      text: 👈 back
+      view: git
+    2:
+      text: vim .gitignore
+      command: vi .gitignore
+    3:
+      text: push -u origin master
+      command: git push -u origin master
+    4:
+      text: force push
+      command: git push -f
+    5:
+      text: stash list
+      command: git stash list
+    6:
+      text: stash clear
+      command: git stash clear
+    7:
+      text: amend commit
+      command: git commit --amend
+    8:
+      text: hard reset
+      command: git reset --hard HEAD
+    9:
+      text: soft reset
+      command: git reset --soft
+    10:
+      text: checkout master
+      command: git checkout master
+
+  programs: # Opens other applications
+    1:
+      text: 👈 back
+      view: main
+    2:
+      text: 🌍
+      command: safari
+    3:
+      text: 🕵️‍♂️
+      command: incognito
+    4:
+      text: 📧
+      command: gmail_cornell
+    5:
+      text: 💌
+      command: gmail_personal
+
+
+
+#--------- Other
+  other: # For other, lesser used shortcuts
+    1:
+      text: 👈 back
+      view: main
+    2:
+      text: 🐘 gradle
+      view: gradle
+    3:
+      text: 🐍 python
+      view: python
+
+  # Gradle build tools
+  gradle:
+    1:
+      text: 👈 back
+      view: other
+    2:
+      text: gradle run
+      command: gradle run
+    3:
+      text: gradle run plain
+      command: gradle run --console=plain
+    4:
+      text: gradle test
+      command: gradle test
+    5:
+      text: rerun tests
+      command: gradle test --rerun-tasks
+    6:
+      text: stop daemon
+      command: gradle --stop
+    7:
+      text: init java
+      command: gradle init --type -java-application
+
+  # Python
+  python:
+    1:
+      text: 👈 back
+      view: other
+    2:
+      text: interactive shell
+      command: python
+    3:
+      text: venv
+      command: venv
+    4:
+      text: deactivate
+      command: deactivate
+    5:
+      text: init venv
+      command: initvenv
+
+
+
+

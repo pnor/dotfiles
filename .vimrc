@@ -3,18 +3,19 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 
-" - Functionality
-" Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }                                                     " youcompleteme
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'on': 'UseAllPlugs' }   " COC
-Plug 'easymotion/vim-easymotion'                            " Easy Motion
-Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }          " FZF
-Plug 'ntpeters/vim-better-whitespace'                       " Traiing Whitespace
-Plug 'scrooloose/nerdcommenter', { 'on': 'UseAllPlugs' }    " NERD Commenting
+" - Completion
+Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }
+" - Productivity
+Plug 'tmsvg/pear-tree'                                      " Pear tree
 Plug 'tpope/vim-fugitive', { 'on': 'UseAllPlugs' }          " Fugitive
+Plug 'scrooloose/nerdcommenter', { 'on': 'UseAllPlugs' }    " NERD Commenting
+Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }          " FZF
+" - Code Appearence
+Plug 'ntpeters/vim-better-whitespace'                       " Trailing Whitespace
 Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
+Plug 'easymotion/vim-easymotion'                            " Easy Motion
 " - Appearence
 Plug 'Yggdroot/indentLine'                                  " indentLine
-"Plug 'keith/swift.vim'                                      " Swift Syntax Support
 Plug 'sheerun/vim-polyglot'                                 " Vim Polyglot
 Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                              " Vim-airline
@@ -118,11 +119,16 @@ else
     colo orbital " Loaded minimal plugins
 endif
 
-" Keep Black Terminal Background
-hi  Normal       guibg=NONE ctermbg=NONE ctermfg=NONE
-hi  NonText      cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
+if &term =~ '256color'
+    set t_ut=
+endif
+
+" Keep Terminal Background
+" hi! Normal       guibg=NONE ctermbg=NONE ctermfg=NONE
+" hi  NonText      cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
+" hi  Comment      guibg=NONE
 hi  StatusLine   cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=#ffffff guifg=#d70000
-hi  LineNr       guibg=NONE
+" hi  LineNr       guibg=NONE
 
 
 " ---------------------------------------------------------------------------- "
@@ -130,20 +136,17 @@ hi  LineNr       guibg=NONE
 " ---------------------------------------------------------------------------- "
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
 
-" Map ctrl-s to save
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>l
-vnoremap <C-s> <Esc>:w<CR>
-
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
 
 " Map ; to :
 map ; :
 
- " Autoclose Parenthesis
-inoremap ( ()<Esc>i
-inoremap { {}<Esc>i
+" Ctrl-W to Leader W
+nnoremap <Leader> <C-w>
+
+" Map spacebar to leader
+map <Space> <Leader>
 
 " Move Faster with arrows
 nnoremap <Up> {
@@ -155,31 +158,22 @@ nnoremap <Left> 5h
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
-" - COC
-" Use tab for trigger completion with characters ahead and navigate.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
-"     let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
-" endif
-
-" - Easymotion
-map <Leader>w <Plug>(easymotion-w)
-map <Leader>b <Plug>(easymotion-b)
+"
+" - youcompleteme
+if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
+     let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
+ endif
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
+let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
 
 " - Vim Airline
 let g:airline_powerline_fonts = 1
-if len(v:argv) >= 3 && v:argv[2] =~ "c"
-    let g:airline_theme='sharkbites'    " Loaded all plugins
+if len(v:argv) >= 3 && v:argv[2] =~ "c" " Loaded all plugins
+    let g:airline_theme='sharkbites'
+    let g:airline#extensions#ycm#enabled = 1
 else
     let g:airline_theme='orbital'       " Loaded minimal plugins
 endif
