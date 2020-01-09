@@ -17,7 +17,7 @@ hi LineNr         guifg=#555555 guibg=#000000 gui=NONE
 hi VertSplit      guifg=#555555 guibg=#1a1a1a gui=NONE
 hi MatchParen     guifg=#f856b5 guibg=#000000 gui=underline cterm=underline
 hi StatusLine     guifg=#f8f8f2 guibg=#1a1a1a gui=bold cterm=bold
-hi StatusLineNC   guifg=#f8f8f2 guibg=#000000 gui=NONE
+hi StatusLineNC   guifg=#555555 guibg=#000000 gui=NONE
 hi Pmenu          guifg=#ffffff guibg=#000000 gui=NONE
 hi PmenuSel       guifg=#ffffff guibg=#3a3a3a gui=NONE
 hi IncSearch      guifg=#ff8c00 guibg=#ffffff gui=NONE

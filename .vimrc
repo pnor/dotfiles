@@ -4,29 +4,34 @@
 call plug#begin('~/.vim/plugged')
 
 " - Completion
-Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' }
-" - Productivity
-Plug 'tmsvg/pear-tree'                                      " Pear tree
-Plug 'tpope/vim-fugitive', { 'on': 'UseAllPlugs' }          " Fugitive
-Plug 'scrooloose/nerdcommenter', { 'on': 'UseAllPlugs' }    " NERD Commenting
-Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }          " FZF
-" - Code Appearence
-Plug 'ntpeters/vim-better-whitespace'                       " Trailing Whitespace
-Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                    " ALE
-Plug 'easymotion/vim-easymotion'                            " Easy Motion
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'on': 'UseAllPlugs' }
+" - Handy
+Plug 'easymotion/vim-easymotion'                                " Easy Motion
+Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
+Plug 'townk/vim-autoclose'                                      " Autoclose
+Plug '/usr/local/opt/fzf', { 'on': 'UseAllPlugs' }              " FZF
+Plug 'scrooloose/nerdcommenter', { 'on': 'UseAllPlugs' }        " NERD Commenting
+Plug 'tpope/vim-fugitive', { 'on': 'UseAllPlugs' }              " Fugitive
+Plug 'w0rp/ale', { 'on': 'UseAllPlugs' }                        " ALE
 " - Appearence
-Plug 'Yggdroot/indentLine'                                  " indentLine
-Plug 'sheerun/vim-polyglot'                                 " Vim Polyglot
-Plug 'luochen1990/rainbow'                                  " Rainbow Parenthesis
-Plug 'vim-airline/vim-airline'                              " Vim-airline
-Plug 'vim-airline/vim-airline-themes'                       " Vim-airline Themes
-" - ColorThemes
-Plug 'NLKNguyen/papercolor-theme'                           " Papercolor
-Plug 'cocopon/iceberg.vim'                                  " Iceberg Theme
-Plug 'fcpg/vim-orbital'                                     " Orbital Theme
-Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'    " Sharkbites Airline Theme
+Plug 'Yggdroot/indentLine'                                      " indentLine
+Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
+Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
+Plug 'vim-airline/vim-airline' , { 'on': 'UseAllPlugs' }        " Vim-airline
+Plug 'vim-airline/vim-airline-themes', { 'on': 'UseAllPlugs' }  " Vim-airline Themes
+" - Color Themes
+Plug 'NLKNguyen/papercolor-theme'                               " Papercolor
+Plug 'fcpg/vim-orbital'                                         " Orbital
+Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'        " Sharkbites Airline Theme
 
+Plug 'ryanoasis/vim-devicons', { 'on': 'UseAllPlugs' }          " Dev icons (Must be called last)
 call plug#end()
+
+
+" Handling whether it was started with "UseAllPlugs" arguement
+function ShouldUseAllPlugs()
+    return len(v:argv) >= 3 && v:argv[2] =~ 'UseAllPlugs'
+endfunction
 
 
 " ---------------------------------------------------------------------------- "
@@ -81,6 +86,7 @@ autocmd FileType markdown setlocal spell
 hi SpellBad cterm=underline
 hi clear SpellBad
 
+
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
 " ---------------------------------------------------------------------------- "
@@ -113,7 +119,7 @@ syntax on   " Add syntax highlighting
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
-if len(v:argv) >= 3 && v:argv[2] =~ 'c'
+if ShouldUseAllPlugs()
     colo glow-in-the-dark-gucci-shark-bites-edit " Loaded all plugins
 else
     colo orbital " Loaded minimal plugins
@@ -122,13 +128,6 @@ endif
 if &term =~ '256color'
     set t_ut=
 endif
-
-" Keep Terminal Background
-" hi! Normal       guibg=NONE ctermbg=NONE ctermfg=NONE
-" hi  NonText      cterm=NONE ctermbg=NONE gui=NONE guibg=NONE
-" hi  Comment      guibg=NONE
-hi  StatusLine   cterm=NONE ctermbg=NONE ctermfg=NONE gui=NONE guibg=#ffffff guifg=#d70000
-" hi  LineNr       guibg=NONE
 
 
 " ---------------------------------------------------------------------------- "
@@ -142,8 +141,14 @@ inoremap jk <Esc>
 " Map ; to :
 map ; :
 
+" Complete Brackets
+" inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
+
 " Ctrl-W to Leader W
-nnoremap <Leader> <C-w>
+nnoremap <Leader>w <C-w>w
+nnoremap <Leader>W <C-w>W
+tnoremap <Leader>w <C-w>w
+
 
 " Map spacebar to leader
 map <Space> <Leader>
@@ -158,49 +163,65 @@ nnoremap <Left> 5h
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
-"
-" - youcompleteme
-if !(len(v:argv) >= 3 && v:argv[2] =~ "c")
-     let g:loaded_youcompleteme = 1 " Disable YCM if started without some plugins
- endif
-let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'  " youcompleteme fix
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_enable_diagnostic_signs = 0         " Don't highlight errors
-let g:ycm_enable_diagnostic_highlighting = 0  " ^^^
-
-" - Vim Airline
-let g:airline_powerline_fonts = 1
-if len(v:argv) >= 3 && v:argv[2] =~ "c" " Loaded all plugins
-    let g:airline_theme='sharkbites'
-    let g:airline#extensions#ycm#enabled = 1
-else
-    let g:airline_theme='orbital'       " Loaded minimal plugins
-endif
-set noshowmode
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
-let g:ale_set_highlights = 0    " No ale highlights on line
-let g:ale_sign_error = 'x'     " Error symbol
-let g:ale_sign_warning = '*'   " Warning Symbol
+let g:ale_set_highlights = 1    " No ale highlights on line
+let g:ale_sign_error = '>>'     " Error symbol
+let g:ale_sign_warning = '>>'   " Warning Symbol
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
-highlight ALEError guibg=NONE ctermbg=NONE cterm=NONE
+highlight ALEError guibg=NONE ctermbg=NONE cterm=underline ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
-highlight ALEWarning guibg=NONE ctermbg=NONE cterm=NONE
+highlight ALEWarning guibg=NONE ctermbg=NONE cterm=underline
 let g:airline#extensions#ale#enabled = 1
+
+" - Coc
+" Completion with Tab
+if ShouldUseAllPlugs() " Loaded all plugins
+    inoremap <silent><expr> <TAB>
+          \ pumvisible() ? "\<C-n>" :
+          \ <SID>check_back_space() ? "\<TAB>" :
+          \ coc#refresh()
+    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+    function! s:check_back_space() abort
+      let col = col('.') - 1
+      return !col || getline('.')[col - 1]  =~# '\s'
+    endfunction
+    " Signature Help
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+endif
+
+" - Easymotion
+nmap s <Plug>(easymotion-s2)
+
+" - Echodoc
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'popup'
+highlight link EchoDocPopup Pmenu
 
 " - Fugitive
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
+
+" - FZF
+nnoremap <leader>t :FZF
 
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
 
-"- Easymotion
-nmap s <Plug>(easymotion-s2)
-nmap t <Plug>(easymotion-t2)
+" - Vim Airline
+if ShouldUseAllPlugs() " Loaded all plugins
+    let g:airline_powerline_fonts = 1
+    let g:airline_theme='sharkbites'
+    let g:airline#extensions#ycm#enabled = 1
+    set noshowmode
+else
+    set laststatus=2
+    set statusline+=%F
+endif
 
-" - FZF
-nnoremap <leader>t :FZF
-
+" Load any external config
+if ShouldUseAllPlugs() " Loaded all plugins
+    runtime ocaml-config.vim
+endif
