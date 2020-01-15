@@ -4,7 +4,8 @@
 call plug#begin('~/.vim/plugged')
 
 " - Completion
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'on': 'UseAllPlugs' }
+Plug 'ervandew/supertab'
+Plug 'vim-scripts/AutoComplPop', { 'on': 'UseAllPlugs' }        " Auto Completion Prompt TODO select first option
 " - Handy
 Plug 'easymotion/vim-easymotion'                                " Easy Motion
 Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
@@ -18,7 +19,6 @@ Plug 'Yggdroot/indentLine'                                      " indentLine
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'vim-airline/vim-airline' , { 'on': 'UseAllPlugs' }        " Vim-airline
-Plug 'vim-airline/vim-airline-themes', { 'on': 'UseAllPlugs' }  " Vim-airline Themes
 " - Color Themes
 Plug 'NLKNguyen/papercolor-theme'                               " Papercolor
 Plug 'fcpg/vim-orbital'                                         " Orbital
@@ -86,6 +86,14 @@ autocmd FileType markdown setlocal spell
 hi SpellBad cterm=underline
 hi clear SpellBad
 
+" Remove dog trails
+set noswapfile
+set nobackup
+set noundofile
+
+" ins-completion
+set completeopt=menuone,longest,preview
+
 
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
@@ -106,11 +114,6 @@ set tabstop     =4
 set softtabstop =4
 set shiftwidth  =4
 set expandtab
-
-" Remove dog trails
-set noswapfile
-set nobackup
-set noundofile
 
 set number  " Add line Numbers
 syntax on   " Add syntax highlighting
@@ -154,8 +157,8 @@ tnoremap <Leader>w <C-w>w
 map <Space> <Leader>
 
 " Move Faster with arrows
-nnoremap <Up> {
-nnoremap <Down> }
+nnoremap <Up> 8k
+nnoremap <Down> 8j
 nnoremap <Right> 5l
 nnoremap <Left> 5h
 
@@ -163,6 +166,11 @@ nnoremap <Left> 5h
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
+
+" - Aucomplete & Supertab
+let g:acp_behaviorKeywordLength = 1
+let g:SuperTabLongestHighlight = 1
+let g:acp_behaviorKeywordCommand = "\<C-p>"
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
@@ -175,30 +183,8 @@ highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 highlight ALEWarning guibg=NONE ctermbg=NONE cterm=underline
 let g:airline#extensions#ale#enabled = 1
 
-" - Coc
-" Completion with Tab
-if ShouldUseAllPlugs() " Loaded all plugins
-    inoremap <silent><expr> <TAB>
-          \ pumvisible() ? "\<C-n>" :
-          \ <SID>check_back_space() ? "\<TAB>" :
-          \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-    function! s:check_back_space() abort
-      let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
-    " Signature Help
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-endif
-
 " - Easymotion
 nmap s <Plug>(easymotion-s2)
-
-" - Echodoc
-let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = 'popup'
-highlight link EchoDocPopup Pmenu
 
 " - Fugitive
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
@@ -215,6 +201,10 @@ if ShouldUseAllPlugs() " Loaded all plugins
     let g:airline_powerline_fonts = 1
     let g:airline_theme='sharkbites'
     let g:airline#extensions#ycm#enabled = 1
+    " No > Sep
+    let g:airline_powerline_fonts = 0
+    let g:airline_left_sep = ''
+    let g:airline_right_sep = ''
     set noshowmode
 else
     set laststatus=2
