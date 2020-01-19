@@ -1,0 +1,122 @@
+" ---------------------------------------------------------------------------- "
+" Config                                                                       "
+" ---------------------------------------------------------------------------- "
+set nocompatible
+
+set number  " Add line Numbers
+syntax on   " Add syntax highlighting
+
+" Filetype config
+filetype on
+filetype plugin on " load plugins for specific file types
+filetype indent on " auto indent
+
+" Search
+set hlsearch
+set incsearch
+
+" Tabs are 4 spaces for proper files
+set tabstop     =4
+set softtabstop =4
+set shiftwidth  =4
+set expandtab
+
+" Spell Checking
+autocmd FileType markdown setlocal spell
+
+" Remove dog trails
+set noswapfile
+set nobackup
+set noundofile
+
+" ins-completion
+set completeopt=menuone,longest,preview
+
+" backspace can delete whitespace/break indents
+set backspace=indent,eol,start
+
+" :find works as file fuzzy finder
+set path+=**
+set wildmenu
+
+" Enable italics
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+
+" Load matchit so % matches if-else-endif
+runtime! macros/matchit.vim
+
+" Enable true color
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+" Statusline
+set laststatus=2
+set statusline=
+set statusline +=%1*\ %n\ %*    " buffer number
+set statusline +=%1*\ %<%F%*    " full path
+set statusline +=%2*%m%*        " modified flag
+set statusline +=%1*%=%{&ff}%*  " file format
+set statusline +=%1*%y%*        " file type
+set statusline +=%1*%5l%*       " current line
+set statusline +=%1*/%L%*       " total lines
+set statusline +=%1*%4v\ %*     " virtual column number
+set statusline +=%1*0x%04B\ %*  " character under cursor
+
+
+" ---------------------------------------------------------------------------- "
+" Mapping                                                                      "
+" ---------------------------------------------------------------------------- "
+nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
+
+" Escape to jk to leave insert mode
+inoremap jk <Esc>
+
+" s to move to text nearby
+nnoremap s ?
+
+" Map ; to :
+map ; :
+
+" Ctrl-W to Leader W
+nnoremap <Leader>w <C-w>w
+nnoremap <Leader>W <C-w>W
+tnoremap <Leader>w <C-w>w
+
+" Map spacebar to leader
+map <Space> <Leader>
+
+" Move Faster with arrows
+nnoremap <Up> 8k
+vnoremap <Up> 4k
+nnoremap <Down> 8j
+vnoremap <Down> 4j
+nnoremap <Right> 4l
+nnoremap <Left> 4h
+
+" Insert completion
+inoremap <Leader><Tab> <C-n> " Leader-Tab opens ins-completion menu
+" Tab and Shift Tab navigates completion menu
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "<C-n>"
+" Enter accepts hovered selection on menu
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+" Leader-t triggers find
+nnoremap <Leader>t :find 
+
+" ---------------------------------------------------------------------------- "
+" Set Color Theme / Display                                                    "
+" ---------------------------------------------------------------------------- "
+try
+    colo orbital
+catch /^Vim\%((\a\+)\)\=:E185/ " Does not have orbital color scheme
+    colo torte
+endtry
+
+" Statusline Colors
+hi User1 guibg=#222222 " Gray background
+hi User2 guifg=#ff0000 guibg=#222222 " Modified Flag

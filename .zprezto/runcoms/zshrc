@@ -36,6 +36,7 @@ source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
 # Vim
 alias v="vi"
 alias vim="vim -c \"silent! UseAllPlugs\""
+alias vi="vi -u ~/.simplevimrc"
 
 # git
 alias gs="git status"

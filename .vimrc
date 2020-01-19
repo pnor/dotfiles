@@ -4,7 +4,7 @@
 call plug#begin('~/.vim/plugged')
 
 " - Completion
-Plug 'ervandew/supertab'
+Plug 'ajh17/vimcompletesme'
 Plug 'vim-scripts/AutoComplPop', { 'on': 'UseAllPlugs' }        " Auto Completion Prompt TODO select first option
 " - Handy
 Plug 'easymotion/vim-easymotion'                                " Easy Motion
@@ -37,54 +37,25 @@ endfunction
 " ---------------------------------------------------------------------------- "
 " Vim Config                                                                   "
 " ---------------------------------------------------------------------------- "
-" When started as "evim", evim.vim will already have done these settings.
-if v:progname =~? "evim"
-  finish
-endif
+set nocompatible
 
-" Get the defaults that most users want.
-source $VIMRUNTIME/defaults.vim
+" Search
+set hlsearch
+set incsearch
 
-if has("vms")
-  set nobackup		" do not keep a backup file, use versions instead
-else
-  set backup		" keep a backup file (restore to previous version)
-  if has('persistent_undo')
-    set undofile	" keep an undo file (undo changes after closing)
-  endif
-endif
+" Tabs are 4 spaces for proper files
+set tabstop     =4
+set softtabstop =4
+set shiftwidth  =4
+set expandtab
 
-if &t_Co > 2 || has("gui_running")
-  " Switch on highlighting the last used search pattern.
-  set hlsearch
-endif
-
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
-  " Put these in an autocmd group, so that we can delete them easily.
-  augroup vimrcEx
-  au!
-  " For all text files set 'textwidth' to 78 characters.
-  autocmd FileType text setlocal textwidth=78
-  augroup END
-else
-  set autoindent		" always set autoindenting on
-endif " has("autocmd")
-
-" Add optional packages.
-"
-" The matchit plugin makes the % command work better, but it is not backwards
-" compatible.
-" The ! means the package won't be loaded right away but when plugins are
-" loaded during initialization.
-if has('syntax') && has('eval')
-  packadd! matchit
-endif
+" Filetype config
+filetype on
+filetype plugin on " load plugins for specific file types
+filetype indent on " auto indent
 
 " Spell Checking
 autocmd FileType markdown setlocal spell
-hi SpellBad cterm=underline
-hi clear SpellBad
 
 " Remove dog trails
 set noswapfile
@@ -93,6 +64,12 @@ set noundofile
 
 " ins-completion
 set completeopt=menuone,longest,preview
+
+" backspace can delete whitespace/break indents
+set backspace=indent,eol,start
+
+" Load matchit so % matches if-else-endif
+runtime! macros/matchit.vim
 
 
 " ---------------------------------------------------------------------------- "
@@ -109,14 +86,12 @@ endif
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 
-" Tabs are 4 spaces for proper files
-set tabstop     =4
-set softtabstop =4
-set shiftwidth  =4
-set expandtab
-
 set number  " Add line Numbers
 syntax on   " Add syntax highlighting
+
+" :find works as file fuzzy finder
+set path+=**
+set wildmenu
 
 
 " ---------------------------------------------------------------------------- "
@@ -144,23 +119,24 @@ inoremap jk <Esc>
 " Map ; to :
 map ; :
 
-" Complete Brackets
-" inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
-
 " Ctrl-W to Leader W
 nnoremap <Leader>w <C-w>w
 nnoremap <Leader>W <C-w>W
 tnoremap <Leader>w <C-w>w
-
 
 " Map spacebar to leader
 map <Space> <Leader>
 
 " Move Faster with arrows
 nnoremap <Up> 8k
+vnoremap <Up> 4k
 nnoremap <Down> 8j
-nnoremap <Right> 5l
-nnoremap <Left> 5h
+vnoremap <Down> 4j
+nnoremap <Right> 4l
+nnoremap <Left> 4h
+
+" Insert completion; Enter selects option
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 
 " ---------------------------------------------------------------------------- "
@@ -168,9 +144,8 @@ nnoremap <Left> 5h
 " ---------------------------------------------------------------------------- "
 
 " - Aucomplete & Supertab
-let g:acp_behaviorKeywordLength = 1
+let g:acp_behaviorKeywordLength = 2
 let g:SuperTabLongestHighlight = 1
-let g:acp_behaviorKeywordCommand = "\<C-p>"
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
