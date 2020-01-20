@@ -5,13 +5,13 @@ call plug#begin('~/.vim/plugged')
 
 " - Completion
 Plug 'ajh17/vimcompletesme'
-Plug 'vim-scripts/AutoComplPop'                                 " Auto Completion Prompt TODO select first option
+Plug 'https://github.com/pnor/AutoComplPop.git'                 " Auto Completion Prompt
 " - Handy
+Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'easymotion/vim-easymotion'                                " Easy Motion
 Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
-Plug 'townk/vim-autoclose'                                      " Autoclose
-Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'scrooloose/nerdcommenter'                                 " NERD Commenting
+Plug 'townk/vim-autoclose'                                      " Autoclose
 Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'w0rp/ale'                                                 " ALE
 " - Appearence
@@ -125,17 +125,14 @@ vnoremap <Down> 4j
 nnoremap <Right> 4l
 nnoremap <Left> 4h
 
-" Insert completion; Enter selects option
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-
 
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
 
 " - Aucomplete & Supertab
-let g:acp_behaviorKeywordLength = 2
-let g:SuperTabLongestHighlight = 1
+let g:acp_behaviorKeywordLengthn = 2
+let g:acp_autoselectFirstCompletion = 0
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
