@@ -21,6 +21,8 @@ else
     prompt cloud \>\> black yellow
 fi
 
+# vi mode
+set -o vi
 
 # autojump
 [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh

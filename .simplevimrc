@@ -5,6 +5,7 @@ set nocompatible
 
 set number  " Add line Numbers
 syntax on   " Add syntax highlighting
+set relativenumber " Relative number (due to absence of sneak jumps)
 
 " Filetype config
 filetype on
@@ -53,13 +54,38 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
-" Statusline
+" Remember Last cursor location
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
+endif
+
+" Line for over 80 characters
+set textwidth=80
+
+
+" ---------------------------------------------------------------------------- "
+" Statusline                                                                   "
+" ---------------------------------------------------------------------------- "
+function CurrentGitStatus() " Gets the current git status for the statusline
+    let gitoutput = split(system('git status --porcelain -b '.shellescape(expand('%')).' 2>/dev/null'),'\n')
+    if len(gitoutput) > 0
+        let name = strpart(get(gitoutput,0,''),3)
+        let gittag = strpart(get(gitoutput,1,'  '),0,2)
+        if exists("*trim")
+            let b:gitstatus = name . ' [' . trim(gittag) . ']'
+        endif
+    else
+        let b:gitstatus = ''
+    endif
+endfunc
+autocmd BufEnter,BufWritePost * call CurrentGitStatus()
 set laststatus=2
 set statusline=
 set statusline +=%1*\ %n\ %*    " buffer number
 set statusline +=%1*\ %<%F%*    " full path
-set statusline +=%2*%m%*        " modified flag
-set statusline +=%1*%=%{&ff}%*  " file format
+set statusline +=%3*%m%*        " modified flag
+set statusline +=%2*%=%(%{b:gitstatus}%)        " git branch
+set statusline +=%1*\ \ \ %{&ff}%*  " file format
 set statusline +=%1*%y%*        " file type
 set statusline +=%1*%5l%*       " current line
 set statusline +=%1*/%L%*       " total lines
@@ -105,8 +131,8 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "<C-n>"
 " Enter accepts hovered selection on menu
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
-" Leader-t triggers find
-nnoremap <Leader>t :find 
+" Leader-f triggers find
+nnoremap <Leader>f :find 
 
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
@@ -118,5 +144,6 @@ catch /^Vim\%((\a\+)\)\=:E185/ " Does not have orbital color scheme
 endtry
 
 " Statusline Colors
-hi User1 guibg=#222222 " Gray background
-hi User2 guifg=#ff0000 guibg=#222222 " Modified Flag
+hi User1 guibg=#222222               " Gray background
+hi User2 guifg=#ffffff guibg=#222222 " Git status
+hi User3 guifg=#ff0000 guibg=#222222 " Modified Flag

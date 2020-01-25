@@ -29,7 +29,7 @@ call plug#end()
 
 
 " ---------------------------------------------------------------------------- "
-" Vim Config                                                                   "
+" Config                                                                       "
 " ---------------------------------------------------------------------------- "
 set nocompatible
 
@@ -44,12 +44,7 @@ set shiftwidth  =4
 set expandtab
 
 " Filetype config
-filetype on
-filetype plugin on " load plugins for specific file types
-filetype indent on " auto indent
-
-" Spell Checking
-autocmd FileType markdown setlocal spell
+filetype plugin indent on
 
 " Remove dog trails
 set noswapfile
@@ -64,6 +59,19 @@ set backspace=indent,eol,start
 
 " Load matchit so % matches if-else-endif
 runtime! macros/matchit.vim
+
+" Spell Checking
+if has("autocmd")
+    autocmd FileType markdown setlocal spell
+    autocmd FileType markdown,txt set dictionary+=/usr/share/dict/words
+endif
+hi SpellBad cterm=underline
+hi clear SpellBad
+
+if has("autocmd")
+    " Remember Last cursor location
+    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
+endif
 
 
 " ---------------------------------------------------------------------------- "
@@ -81,11 +89,15 @@ let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 
 set number  " Add line Numbers
+set relativenumber " Use relative number to make it easy to jump
 syntax on   " Add syntax highlighting
 
 " :find works as file fuzzy finder
 set path+=**
 set wildmenu
+
+" Line for over 80 characters
+set textwidth=80
 
 
 " ---------------------------------------------------------------------------- "
@@ -109,6 +121,9 @@ inoremap jk <Esc>
 " Map ; to :
 map ; :
 
+" Brace completion
+inoremap {<Enter> {<Enter><Enter>}<Esc>ki<Tab>
+
 " Ctrl-W to Leader W
 nnoremap <Leader>w <C-w>w
 nnoremap <Leader>W <C-w>W
@@ -131,14 +146,19 @@ nnoremap <Left> 4h
 " ---------------------------------------------------------------------------- "
 
 " - Aucomplete & Supertab
-let g:acp_behaviorKeywordLengthn = 2
+let g:acp_behaviorKeywordLength = 2
 let g:acp_autoselectFirstCompletion = 0
+" Give spelling suggestions on text docs for long words
+autocmd FileType markdown,txt let g:acp_behaviorKeywordLength = 6
+" Enter Spelling suggestion versus normal suggestions at will
+command CodeSuggest let g:acp_behaviorKeywordLength = 2 | set dictionary=
+command DocSuggest let g:acp_behaviorKeywordLength = 6 | set dictionary+=/usr/share/dict/words
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '>>'     " Error symbol
-let g:ale_sign_warning = '>>'   " Warning Symbol
+let g:ale_sign_warning = '~~'   " Warning Symbol
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEError guibg=NONE ctermbg=NONE cterm=underline ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
@@ -152,7 +172,7 @@ nmap s <Plug>(easymotion-s2)
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 
 " - FZF
-nnoremap <leader>t :FZF
+nnoremap <leader>f :FZF
 
 " - Rainbow Parenthesis
 let g:rainbow_active = 1

@@ -10,7 +10,7 @@ let g:colors_name = "sharkbitesEdit"
 hi Cursor         guifg=#1f1f1f guibg=#f8f8f0 gui=NONE
 hi Visual         guifg=#ffffff guibg=#2a2a2a gui=NONE
 hi CursorLine     guifg=#ffffff guibg=#2a2a2a gui=NONE
-hi ColorColumn    guifg=#ffffff guibg=#2a2a2a gui=NONE
+hi ColorColumn    guifg=#ffffff guibg=#111111 gui=NONE
 hi CursorColumn   guifg=#ffffff guibg=#2a2a2a gui=NONE
 hi CursorLineNr   guifg=#5eb2f2 guibg=#000000 gui=NONE cterm=NONE
 hi LineNr         guifg=#555555 guibg=#000000 gui=NONE
