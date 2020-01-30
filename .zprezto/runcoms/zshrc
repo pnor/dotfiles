@@ -84,5 +84,8 @@ export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Libra
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+# laTEX
+path+=('/Library/TeX/texbin/')
+export PATH
 # opam configuration
 test -r /Users/philliporeggio/.opam/opam-init/init.zsh && . /Users/philliporeggio/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

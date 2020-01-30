@@ -4,25 +4,36 @@
 call plug#begin('~/.vim/plugged')
 
 " - Completion
-Plug 'ajh17/vimcompletesme'
+Plug 'ajh17/vimcompletesme'                                     " Vim-Completes-me
 Plug 'https://github.com/pnor/AutoComplPop.git'                 " Auto Completion Prompt
-" - Handy
-Plug '/usr/local/opt/fzf'                                       " FZF
-Plug 'easymotion/vim-easymotion'                                " Easy Motion
-Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
-Plug 'scrooloose/nerdcommenter'                                 " NERD Commenting
 Plug 'townk/vim-autoclose'                                      " Autoclose
-Plug 'tpope/vim-fugitive'                                       " Fugitive
+" - Language
+Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
+Plug 'vim-latex/vim-latex'                                      " Latex
 Plug 'w0rp/ale'                                                 " ALE
-" - Appearence
+" - Display
 Plug 'Yggdroot/indentLine'                                      " indentLine
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
-Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
+" - Integrations
+Plug '/usr/local/opt/fzf'                                       " FZF
+Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
+Plug 'tpope/vim-fugitive'                                       " Fugitive
+" - Interface
+Plug 'airblade/vim-gitgutter'
+" - Commands
+Plug 'easymotion/vim-easymotion'                                " Easy Motion
+Plug 'scrooloose/nerdcommenter'                                 " NERD Commenting
+
 " - Color Themes
 Plug 'NLKNguyen/papercolor-theme'                               " Papercolor
 Plug 'fcpg/vim-orbital'                                         " Orbital
 Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'        " Sharkbites Airline Theme
+
+" - Misc
+Plug 'dbmrq/vim-ditto'                                          " Ditto
+Plug 'dpelle/vim-LanguageTool'                                  " LanguageTool
+Plug 'ying17zi/vim-live-latex-preview'                          " Latex Preview
 
 Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
@@ -60,14 +71,6 @@ set backspace=indent,eol,start
 " Load matchit so % matches if-else-endif
 runtime! macros/matchit.vim
 
-" Spell Checking
-if has("autocmd")
-    autocmd FileType markdown setlocal spell
-    autocmd FileType markdown,txt set dictionary+=/usr/share/dict/words
-endif
-hi SpellBad cterm=underline
-hi clear SpellBad
-
 if has("autocmd")
     " Remember Last cursor location
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
@@ -89,6 +92,7 @@ let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 
 set number  " Add line Numbers
+set numberwidth=3 " 3 for numnber size
 set relativenumber " Use relative number to make it easy to jump
 syntax on   " Add syntax highlighting
 
@@ -98,12 +102,20 @@ set wildmenu
 
 " Line for over 80 characters
 set textwidth=80
+set colorcolumn=+0
 
 
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
 colo glow-in-the-dark-gucci-shark-bites-edit
+
+" Spell Checking Coloring
+hi clear SpellBad
+hi SpellBad     guifg=#ff4444 gui=undercurl
+hi SpellRare    guifg=#ddaaff
+hi SpellCap     guifg=#ff8811 cterm=underline
+
 
 if &term =~ '256color'
     set t_ut=
@@ -132,6 +144,9 @@ tnoremap <Leader>w <C-w>w
 " Map spacebar to leader
 map <Space> <Leader>
 
+" Fix spelling errors
+imap *L <Esc>[s1z=`]a
+
 " Move Faster with arrows
 nnoremap <Up> 8k
 vnoremap <Up> 4k
@@ -148,17 +163,36 @@ nnoremap <Left> 4h
 " - Aucomplete & Supertab
 let g:acp_behaviorKeywordLength = 2
 let g:acp_autoselectFirstCompletion = 0
-" Give spelling suggestions on text docs for long words
-autocmd FileType markdown,txt let g:acp_behaviorKeywordLength = 6
-" Enter Spelling suggestion versus normal suggestions at will
-command CodeSuggest let g:acp_behaviorKeywordLength = 2 | set dictionary=
-command DocSuggest let g:acp_behaviorKeywordLength = 6 | set dictionary+=/usr/share/dict/words
+" Completion suggestions + checks if writing code
+command CodeSuggest
+    \ let g:acp_behaviorKeywordLength = 2 |
+    \ setlocal nospell
+    \ pumheight=0
+    \ complete=.,w,b,u,t,i
+    \ dictionary=
+    \ thesaurus= |
+    \ DittoOff
+" Completion suggestions + checks if documentation/text
+command DocSuggest
+    \ let g:acp_behaviorKeywordLength = 4 |
+    \ setlocal spell
+    \ complete+=k/usr/share/dict/words
+    \ pumheight=3
+    \ dictionary+=/usr/share/dict/words
+    \ thesaurus+=~/.vim/dict_thes/thes.text |
+    \ DittoOn
+
+if has("autocmd")
+    autocmd BufReadPost,BufNewFile *.md,*.txt DocSuggest
+    autocmd BufReadPost,BufNewFile *.txt setlocal linebreak wrap nolist textwidth=0
+endif
+
 
 " - ALE gutter color and symbols
 highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '>>'     " Error symbol
-let g:ale_sign_warning = '~~'   " Warning Symbol
+let g:ale_sign_warning = '>>'   " Warning Symbol
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEError guibg=NONE ctermbg=NONE cterm=underline ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
@@ -174,19 +208,47 @@ set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 " - FZF
 nnoremap <leader>f :FZF
 
+" - Git Gutter
+highlight GitGutterAdd    guifg=#444444
+highlight GitGutterChange guifg=#444444
+highlight GitGutterDelete guifg=#444444
+
+" - LanguageTool
+let g:languagetool_jar='/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar'
+let g:ale_languagetool_executable = '/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar'
+"let g:ale_linter_aliases = {'tex': 'md', 'txt': 'md', 'text': 'md'}
+"let g:ale_linters = {'md': ['languagetool'], 'text': ['languagetool']}
+
+
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
 
 " - Vim Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme='sharkbites'
-let g:airline#extensions#ycm#enabled = 1
+let g:airline_theme='shark_trans'
 " No > Sep
-let g:airline_powerline_fonts = 0
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
+ let g:airline_powerline_fonts = 0
+ let g:airline_left_sep = ''
+ let g:airline_right_sep = ''
 set noshowmode
+
+" - Vim-Latex
+"Set up latex preferences
+let g:tex_flavor='latex'
+let g:tex_conceal='abmgs'
+let g:livepreview_previewer = 'open -a Preview'
+if has("autocmd")
+    autocmd BufReadPost,BufNewFile *.tex
+        \ setlocal sw=2
+        \ spell
+        \ concealcursor=nvc
+        \ dictionary+=~/.vim/dict_thes/latex.text
+        \ complete+=k
+        \ iskeyword+=:
+        \ updatetime=1000
+endif
+
 
 " Load any external config
 runtime ocaml-config.vim

@@ -18,9 +18,9 @@ hi VertSplit      guifg=#000000 guibg=#bd93f9 gui=NONE
 hi MatchParen     guifg=#f856b5 guibg=#000000 gui=underline cterm=underline
 hi StatusLine     guifg=#f8f8f2 guibg=#1a1a1a gui=bold cterm=bold
 hi StatusLineNC   guifg=#555555 guibg=#000000 gui=NONE
-hi Pmenu          guifg=#ffffff guibg=#000000 gui=NONE
-hi PmenuSel       guifg=#ffffff guibg=#3a3a3a gui=NONE
-hi IncSearch      guifg=#ff8c00 guibg=#ffffff gui=NONE
+hi Pmenu          guifg=#888888 guibg=#111111 gui=NONE
+hi PmenuSel       guifg=#5eb2f2 guibg=#111111 gui=NONE
+hi IncSearch      guifg=#ff8c00 guibg=#111111 gui=NONE
 hi Search         guifg=#00ffff guibg=#444444 gui=NONE
 hi Directory      guifg=#fffe58 guibg=#000000 gui=NONE
 hi Folded         guifg=#6272a4 guibg=#1f1f1f gui=NONE
@@ -38,7 +38,7 @@ hi DiffText       guifg=#f8f8f2 guibg=#204a87 gui=bold cterm=bold
 hi ErrorMsg       guifg=#f856b5 guibg=#000000 gui=NONE
 hi WarningMsg     guifg=#f8f8f0 guibg=#000000 gui=NONE
 hi Float          guifg=#bd93f9 guibg=#000000 gui=NONE
-" hi Function     guifg=#56f856 guibg=#000000 gui=NONE
+hi Function       guifg=#56f856 guibg=#000000 gui=NONE
 hi Identifier     guifg=#5eb2f2 guibg=#000000 gui=italic cterm=italic
 hi Keyword        guifg=#f856b5 guibg=#000000 gui=NONE
 hi Label          guifg=#fffe58 guibg=#000000 gui=NONE

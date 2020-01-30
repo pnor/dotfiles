@@ -134,6 +134,11 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 " Leader-f triggers find
 nnoremap <Leader>f :find 
 
+" Trailing Whitespace
+command ShowWhitespace /\s\+$
+command StripTrailingWhitespace :%s/\s\+$//g
+
+
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
