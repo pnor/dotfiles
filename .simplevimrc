@@ -61,6 +61,7 @@ endif
 
 " Line for over 80 characters
 set textwidth=80
+set colorcolumn=+0
 
 
 " ---------------------------------------------------------------------------- "
