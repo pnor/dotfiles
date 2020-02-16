@@ -11,7 +11,8 @@ autocmd BufReadPost,BufNewFile *.ml setlocal
     \   colorcolumn=+0 |
 " Use Omni-complete for vcm since Merlin is being loaded
     \   let b:vcm_tab_complete = "omnni" |
-    \   let g:acp_behaviorKeywordCommand = "\<C-x>\<C-o>"
+    \   let g:acp_behaviorKeywordCommand = "\<C-x>\<C-o>" |
+    \   set complete=
 
 " ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
 let s:opam_share_dir = system("opam config var share")

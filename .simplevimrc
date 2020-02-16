@@ -101,6 +101,8 @@ nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highl
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+" Enter escapes visual mode
+vnoremap <CR> <Esc>
 
 " s to move to text nearby
 nnoremap s ?

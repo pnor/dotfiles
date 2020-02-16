@@ -17,6 +17,7 @@ Plug 'luochen1990/rainbow'                                      " Rainbow Parent
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
+Plug 'jceb/vim-orgmode'                                         " Org-Mode
 Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
 Plug 'tpope/vim-fugitive'                                       " Fugitive
 " - Interface
@@ -32,8 +33,7 @@ Plug 'kenwheeler/glow-in-the-dark-gucci-shark-bites-vim'        " Sharkbites Air
 
 " - Misc
 Plug 'dbmrq/vim-ditto'                                          " Ditto
-Plug 'dpelle/vim-LanguageTool'                                  " LanguageTool
-Plug 'ying17zi/vim-live-latex-preview'                          " Latex Preview
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex Preview
 
 Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
@@ -76,6 +76,10 @@ if has("autocmd")
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
 endif
 
+if has("autocmd")
+    autocmd BufReadPost,BufNewFile *.swift set textwidth=120
+endif
+
 
 " ---------------------------------------------------------------------------- "
 " Display                                                                      "
@@ -93,7 +97,7 @@ let &t_ZR="\e[23m"
 
 set number  " Add line Numbers
 set numberwidth=3 " 3 for numnber size
-set relativenumber " Use relative number to make it easy to jump
+"set relativenumber " Use relative number to make it easy to jump
 syntax on   " Add syntax highlighting
 
 " :find works as file fuzzy finder
@@ -129,6 +133,8 @@ nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highl
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+" Enter escapes visual mode
+vnoremap <CR> <Esc>
 
 " Map ; to :
 map ; :
@@ -136,10 +142,12 @@ map ; :
 " Brace completion
 inoremap {<Enter> {<Enter><Enter>}<Esc>ki<Tab>
 
-" Ctrl-W to Leader W
+" Ctrl-W to Leader W to navigate splits
 nnoremap <Leader>w <C-w>w
 nnoremap <Leader>W <C-w>W
 tnoremap <Leader>w <C-w>w
+tnoremap \w <C-w>w
+tnoremap \W <C-w>W
 
 " Map spacebar to leader
 map <Space> <Leader>
@@ -163,7 +171,7 @@ nnoremap <Left> 4h
 " - Aucomplete & Supertab
 let g:acp_behaviorKeywordLength = 2
 let g:acp_autoselectFirstCompletion = 0
-" Completion suggestions + checks if writing code
+" Completion suggestions for  writing code
 command CodeSuggest
     \ let g:acp_behaviorKeywordLength = 2 |
     \ setlocal nospell
@@ -172,9 +180,9 @@ command CodeSuggest
     \ dictionary=
     \ thesaurus= |
     \ DittoOff
-" Completion suggestions + checks if documentation/text
+" Completion suggestions for better documentation/text
 command DocSuggest
-    \ let g:acp_behaviorKeywordLength = 4 |
+    \ let g:acp_behaviorKeywordLength = 5 |
     \ setlocal spell
     \ complete+=k/usr/share/dict/words
     \ pumheight=3
@@ -209,29 +217,31 @@ set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 nnoremap <leader>f :FZF
 
 " - Git Gutter
-highlight GitGutterAdd    guifg=#444444
-highlight GitGutterChange guifg=#444444
-highlight GitGutterDelete guifg=#444444
+highlight GitGutterAdd    guifg=#448844
+highlight GitGutterChange guifg=#448888
+highlight GitGutterDelete guifg=#884444
 
 " - LanguageTool
-let g:languagetool_jar='/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar'
-let g:ale_languagetool_executable = '/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar'
-"let g:ale_linter_aliases = {'tex': 'md', 'txt': 'md', 'text': 'md'}
-"let g:ale_linters = {'md': ['languagetool'], 'text': ['languagetool']}
-
+let g:ale_languagetool_executable='languagetool'
+let g:ale_linter_aliases={'txt': 'text'}
+let g:ale_linters={'markdown': ['languagetool', 'mdl'], 'text': ['languagetool'], 'tex': ['chktex']}
 
 " - Rainbow Parenthesis
 let g:rainbow_active = 1
 let g:guifgs = ['firebrick', 'royalblue3', 'darkorange3', 'seagreen3']
 
+
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme='shark_trans'
 " No > Sep
- let g:airline_powerline_fonts = 0
- let g:airline_left_sep = ''
- let g:airline_right_sep = ''
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
 set noshowmode
+
+" - Vim-better-whitespace
+nnoremap <Leader>s :StripWhitespace<Enter>
 
 " - Vim-Latex
 "Set up latex preferences
@@ -248,6 +258,10 @@ if has("autocmd")
         \ iskeyword+=:
         \ updatetime=1000
 endif
+
+" - Vim-orgmode
+" Stop trying to ask me to install SpeedDating
+command -nargs=* -range SpeedDatingFormat
 
 
 " Load any external config

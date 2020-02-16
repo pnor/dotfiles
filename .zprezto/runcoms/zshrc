@@ -21,7 +21,7 @@ else
     prompt cloud \>\> black yellow
 fi
 
-# vi mode
+# vi mode for iterm
 set -o vi
 
 # autojump
@@ -33,6 +33,9 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /Users/philliporeggio/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Apple touchbar (zsh-apple-touchbar)
 source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
+
+# Keybinds
+bindkey \^U backward-kill-line
 
 # - Alias
 # Vim
@@ -47,7 +50,7 @@ alias gch="git checkout"
 alias gpull="git pull"
 alias gpu="git push"
 alias gpl="git pull"
-alias gpsu="git push --set-upstream origin"
+alias gpsuo="git push --set-upstream origin"
 alias glog="git log"
 
 # Commands
@@ -57,6 +60,7 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
+alias movgif='ffmpeg -i $0 -vf "scale=720:-1" -pix_fmt rgb24 -r 25 -f gif - | gifsicle --optimize=3 --delay=4 > $1'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv
@@ -73,12 +77,15 @@ alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'
 
 # LEETCODE
 alias leett='leetcode test'
-alias leetget='leetcode show -gx'
+alias leetget='~/cmd_line_scripts/leetget.sh'
 
 # Dotfiles repo
 alias dot='/usr/bin/git --git-dir=/Users/philliporeggio/.cfg/ --work-tree=/Users/philliporeggio'
 alias dots='dot status'
 alias dotc='dot commit -m'
+
+# todos
+alias todo='vi ~/todo.org'
 
 export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin"
 
