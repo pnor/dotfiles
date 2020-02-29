@@ -77,9 +77,13 @@ if has("autocmd")
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
 endif
 
+" Swift line length
 if has("autocmd")
     autocmd BufReadPost,BufNewFile *.swift set textwidth=120
 endif
+
+" Lower delay time on maps/keycodes
+set timeoutlen=300 ttimeoutlen=500
 
 
 " ---------------------------------------------------------------------------- "
