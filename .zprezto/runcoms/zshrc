@@ -60,7 +60,7 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-alias movgif='ffmpeg -i $0 -vf "scale=720:-1" -pix_fmt rgb24 -r 25 -f gif - | gifsicle --optimize=3 --delay=4 > $1'
+alias movgif='ffmpeg -i $0 -vf "scale=720:-1" -pix_fmts rgb24 -r 25 -f gif - | gifsicle --optimize=3 --delay=4 > $1'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv

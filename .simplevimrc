@@ -137,9 +137,14 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 " Leader-f triggers find
 nnoremap <Leader>f :find 
 
+" Fix spelling errors
+imap *L <Esc>[s1z=`]a
+
 " Trailing Whitespace
 command ShowWhitespace /\s\+$
 command StripTrailingWhitespace :%s/\s\+$//g
+" Fold based on pattern
+command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
 
 
 " ---------------------------------------------------------------------------- "
@@ -147,7 +152,7 @@ command StripTrailingWhitespace :%s/\s\+$//g
 " ---------------------------------------------------------------------------- "
 try
     colo orbital
-catch /^Vim\%((\a\+)\)\=:E185/ " Does not have orbital color scheme
+catch /^Vim\%((\a\+)\)\=:E185/ " Does not have color scheme
     colo torte
 endtry
 
