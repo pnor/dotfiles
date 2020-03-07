@@ -4,22 +4,29 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Prompt Appearence
-rand=$[$RANDOM%5]
-if [ $rand = 0 ]
-then
-    prompt cloud \>\> cyan blue
-elif [ $rand = 1 ]
-then
-    prompt cloud \>\> red magenta
-elif [ $rand = 2 ]
-then
-    prompt cloud \>\> black white
-elif [ $rand = 3 ]
-then
-    prompt cloud \>\> cyan magenta
-else
-    prompt cloud \>\> black yellow
-fi
+case $[$RANDOM%5] in
+0)
+    col1=cyan
+    col2=blue
+    ;;
+1)
+    col1=red
+    col2=magenta
+    ;;
+2)
+    col1=black
+    col2=white
+    ;;
+3)
+    col1=cyan
+    col2=magenta
+    ;;
+*)
+    col1=black
+    col2=yellow
+    ;;
+esac
+prompt cloud \>\> "$col1" "$col2"
 
 # vi mode for iterm
 set -o vi
@@ -56,11 +63,11 @@ alias glog="git log"
 # Commands
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 
-# Xcode and iOS Dev
+# Xcode/iOS
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-alias movgif='ffmpeg -i $0 -vf "scale=720:-1" -pix_fmts rgb24 -r 25 -f gif - | gifsicle --optimize=3 --delay=4 > $1'
+#alias movgif='ffmpeg -i $1 | convert -verbose -coalesce -layers OptimizeFrame | xargs gifsicle -o $2'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv
@@ -94,5 +101,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # laTEX
 path+=('/Library/TeX/texbin/')
 export PATH
+
 # opam configuration
 test -r /Users/philliporeggio/.opam/opam-init/init.zsh && . /Users/philliporeggio/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

@@ -3,8 +3,10 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Completion
-Plug 'ajh17/vimcompletesme'                                     " Vim-Completes-me
+Plug 'ajh17/vimcompletesme'                                     " Vim-completes-me
 Plug 'https://github.com/pnor/AutoComplPop.git'                 " Auto Completion Prompt
+Plug 'skywind3000/vim-dict'                                     " Dictionary Completion
+Plug 'tokorom/swift-dict.vim'                                   " Swift-dict
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
@@ -23,7 +25,7 @@ Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'tyru/open-browser.vim'                                    " Open Browser
 Plug 'xolox/vim-easytags'                                       " Easytags
 " - Interface
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar
@@ -79,11 +81,8 @@ endif
 
 " Swift line length
 if has("autocmd")
-    autocmd BufReadPost,BufNewFile *.swift set textwidth=120
+    autocmd BufReadPost,BufNewFile *.swift set textwidth=120 tabstop =4 softtabstop=4 shiftwidth=4
 endif
-
-" Lower delay time on maps/keycodes
-set timeoutlen=300 ttimeoutlen=500
 
 
 " ---------------------------------------------------------------------------- "
@@ -100,7 +99,7 @@ endif
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 
-set number  " Add line Numbers
+set number " Add line Numbers
 set numberwidth=3 " 3 for number size
 syntax on   " Add syntax highlighting
 
@@ -116,7 +115,8 @@ set colorcolumn=+0
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
-colo glow-in-the-dark-gucci-shark-bites-edit
+"colo glow-in-the-dark-gucci-shark-bites-edit
+colo cornell
 
 " Spell Checking Coloring
 hi clear SpellBad
@@ -140,6 +140,10 @@ inoremap jk <Esc>
 " Enter escapes visual mode
 vnoremap <CR> <Esc>
 
+" Change , to ;
+nnoremap , ;
+vnoremap , ;
+
 " Map ; to :
 map ; :
 
@@ -152,6 +156,9 @@ nnoremap <Leader>W <C-w>W
 tnoremap <Leader>w <C-w>w
 tnoremap \w <C-w>w
 tnoremap \W <C-w>W
+
+" Alternate Buffers with <Leader>b
+nnoremap <Leader>b :w<CR>:b#<CR>
 
 " Map spacebar to leader
 map <Space> <Leader>
@@ -258,7 +265,7 @@ let g:tex_conceal='abmgs'
 let g:livepreview_previewer = 'open -a Preview'
 if has("autocmd")
     autocmd BufReadPost,BufNewFile *.tex
-        \ setlocal sw=2 spell conceallevel=2 concealcursor=nvc iskeyword+=:
+        \ setlocal sw=2 spell conceallevel=2 concealcursor=nvc iskeyword+=: textwidth=120
         \ dictionary+=~/.vim/dict_thes/latex.text complete+=k
         \ updatetime=1000 |
         \ IndentLinesDisable
