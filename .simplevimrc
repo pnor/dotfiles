@@ -101,6 +101,7 @@ nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highl
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+inoremap JK <Esc>
 " Enter escapes visual mode
 vnoremap <CR> <Esc>
 
@@ -109,6 +110,10 @@ nnoremap s ?
 
 " Map ; to :
 map ; :
+
+" Change , to ;
+nnoremap , ;
+vnoremap , ;
 
 " Ctrl-W to Leader W
 nnoremap <Leader>w <C-w>w

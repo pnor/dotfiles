@@ -16,6 +16,7 @@ Plug 'w0rp/ale'                                                 " ALE
 Plug 'Yggdroot/indentLine'                                      " indentLine
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
+Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'junegunn/fzf.vim'
@@ -60,10 +61,11 @@ set expandtab
 " Filetype config
 filetype plugin indent on
 
-" Remove dog trails
-set noswapfile
-set nobackup
-set noundofile
+" Redirect backups
+set undofile
+set directory=$HOME/.vim/swap//
+set backupdir=$HOME/.vim/backup//
+set undodir=$HOME/.vim/undo//
 
 " ins-completion
 set completeopt=menuone,longest,preview
@@ -135,8 +137,12 @@ endif
 " ---------------------------------------------------------------------------- "
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
 
+" Source vimrc
+nnoremap <Leader>v :source ~/.vimrc
+
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
+inoremap JK <Esc>
 " Enter escapes visual mode
 vnoremap <CR> <Esc>
 
@@ -208,7 +214,7 @@ let g:acp_behaviorKeywordLength = 2
 let g:acp_autoselectFirstCompletion = 0
 
 if has("autocmd")
-    autocmd BufReadPost,BufNewFile *.md,*.txt DocSuggest
+    autocmd BufReadPost,BufNewFile *.md,*.txt,*.org DocSuggest
     autocmd BufReadPost,BufNewFile *.txt setlocal linebreak wrap nolist textwidth=0
 endif
 
@@ -234,6 +240,8 @@ highlight GitGutterAdd    guifg=#448844
 highlight GitGutterChange guifg=#448888
 highlight GitGutterDelete guifg=#884444
 
+" - indent line
+let g:indentLine_char = '│'
 " - LanguageTool
 let g:ale_languagetool_executable='languagetool'
 let g:ale_linter_aliases={'txt': 'text'}
@@ -257,7 +265,7 @@ let g:airline_right_sep = '' " No < Sep
 set noshowmode
 
 " - Vim-better-whitespace
-nnoremap <Leader>s :StripWhitespace<Enter>
+nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 
 " - Vim-Latex
 let g:tex_flavor='latex'
@@ -280,3 +288,4 @@ let g:sneak#streak = 1
 
 " Load any external config
 runtime ocaml-config.vim
+autocmd BufReadPost,BufNewFile *.tex runtime latex-config.vim

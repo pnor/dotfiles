@@ -47,6 +47,7 @@ bindkey \^U backward-kill-line
 # - Alias
 # Vim
 alias v="vim -u ~/.simplevimrc"
+alias vis="vim -S Session.vim"
 
 # git
 alias gs="git status"
@@ -77,14 +78,14 @@ alias python='python3'
 # Web Browsers
 alias chrome='open -a "Google Chrome 2"'
 alias safari='open -a "Safari"'
-alias incognito='~/cmd_line_scripts/open_incognito_safari'
+alias incognito='~/bin_scripts/open_incognito_safari'
 # Mail
 alias gmail_personal='open -a /Applications/Google\ Chrome\ 2.app '\''https://mail.google.com/mail/u/0/#inbox'\'''
 alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'\'''
 
 # LEETCODE
 alias leett='leetcode test'
-alias leetget='~/cmd_line_scripts/leetget.sh'
+alias leetget='~/bin_scripts/leetget.sh'
 
 # Dotfiles repo
 alias dot='/usr/bin/git --git-dir=/Users/philliporeggio/.cfg/ --work-tree=/Users/philliporeggio'
@@ -101,6 +102,14 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # laTEX
 path+=('/Library/TeX/texbin/')
 export PATH
+
+# go
+path+=('/usr/local/go/bin')
+export PATH
+
+# Custom bins/scripts
+export PATH="$HOME/bin_scripts/bin:$PATH"
+export PATH="$HOME/Documents/Coding/ocamljava-2.0-alpha3/bin:$PATH"
 
 # opam configuration
 test -r /Users/philliporeggio/.opam/opam-init/init.zsh && . /Users/philliporeggio/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

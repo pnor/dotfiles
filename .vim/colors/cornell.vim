@@ -22,7 +22,7 @@ hi PMenu          guifg=#BD9800 guibg=#121628 guisp=#121628 gui=NONE ctermfg=222
 hi PMenuSel       guifg=#FDDC87 guibg=#121618 guisp=#121618 gui=NONE ctermfg=15 ctermbg=234 cterm=NONE
 hi PMenuThumb     guifg=#32384A guibg=#32384a guisp=#32384a gui=NONE ctermfg=239 ctermbg=239 cterm=NONE
 hi PMenuSbar      guifg=#121628 guibg=#121628 guisp=#121628 gui=NONE ctermfg=235 ctermbg=235 cterm=NONE
-hi IncSearch      guifg=#00ffff guibg=#f856b5 gui=NONE
+hi IncSearch      guifg=#f856b5 guibg=#000000 gui=NONE
 hi Search         guifg=#00ffff guibg=#444444 gui=NONE
 hi Directory      guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Folded         guifg=#676b7d guibg=#1f1f1f gui=NONE
@@ -30,7 +30,8 @@ hi Normal         guifg=#f8f8f2 guibg=#010517 gui=NONE
 hi Boolean        guifg=#AAA5B0 guibg=#010517 gui=NONE
 hi Character      guifg=#AAA5B0 guibg=#010517 gui=NONE
 hi Comment        guifg=#777777 guibg=#010517 gui=NONE
-hi Conditional    guifg=#BD9800 guibg=#010517 gui=NONE
+hi Conditional    guifg=#7AA1EB guibg=#010517 gui=NONE
+hi Repeat         guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Constant       guifg=#FF8833 guibg=#010517 gui=NONE
 hi Define         guifg=#BD9800 guibg=#010517 gui=NONE
 hi DiffAdd        guifg=#f8f8f2 guibg=#468410 gui=bold cterm=bold
