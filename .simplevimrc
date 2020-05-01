@@ -155,11 +155,7 @@ command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(g
 " ---------------------------------------------------------------------------- "
 " Set Color Theme / Display                                                    "
 " ---------------------------------------------------------------------------- "
-try
-    colo orbital
-catch /^Vim\%((\a\+)\)\=:E185/ " Does not have color scheme
-    colo torte
-endtry
+colo torte
 
 " Statusline Colors
 hi User1 guibg=#222222               " Gray background

@@ -3,10 +3,9 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Completion
-Plug 'ajh17/vimcompletesme'                                     " Vim-completes-me
-Plug 'https://github.com/pnor/AutoComplPop.git'                 " Auto Completion Prompt
-Plug 'skywind3000/vim-dict'                                     " Dictionary Completion
-Plug 'tokorom/swift-dict.vim'                                   " Swift-dict
+Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
+Plug 'prabirshrestha/vim-lsp'                                   " LSP
+Plug 'prabirshrestha/async.vim'                                 " Async
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
@@ -14,30 +13,28 @@ Plug 'vim-latex/vim-latex'                                      " Latex
 Plug 'w0rp/ale'                                                 " ALE
 " - Display
 Plug 'Yggdroot/indentLine'                                      " indentLine
+Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
-Plug 'lilydjwg/colorizer'                                       " Color Highlighter
+Plug 'voldikss/vim-floaterm'                                    " Floaterm
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'junegunn/fzf.vim'
-Plug 'jceb/vim-orgmode'                                         " `Org-Mode`
 Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
 Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'tyru/open-browser.vim'                                    " Open Browser
-Plug 'xolox/vim-easytags'                                       " Easytags
+Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'ludovicchabant/vim-gutentags'
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar
 Plug 'tpope/vim-surround'                                       " Vim-surround
-" - Color Themes
-Plug 'NLKNguyen/papercolor-theme'                               " Papercolor
-Plug 'fcpg/vim-orbital'                                         " Orbital
 " - Misc
 Plug 'dbmrq/vim-ditto'                                          " Ditto
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex Preview
-Plug 'xolox/vim-misc'                                           " Vim-misc (easytags dependency)
 
 Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
@@ -79,11 +76,6 @@ runtime! macros/matchit.vim
 if has("autocmd")
     " Remember Last cursor location
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"zz" | endif
-endif
-
-" Swift line length
-if has("autocmd")
-    autocmd BufReadPost,BufNewFile *.swift set textwidth=120 tabstop =4 softtabstop=4 shiftwidth=4
 endif
 
 
@@ -138,7 +130,7 @@ endif
 nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
 
 " Source vimrc
-nnoremap <Leader>v :source ~/.vimrc
+nnoremap <Leader>v :source ~/.vimrc<CR>
 
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
@@ -162,6 +154,8 @@ nnoremap <Leader>W <C-w>W
 tnoremap <Leader>w <C-w>w
 tnoremap \w <C-w>w
 tnoremap \W <C-w>W
+" Or double tap leader
+nnoremap <Leader><Leader> <C-w>w
 
 " Alternate Buffers with <Leader>b
 nnoremap <Leader>b :w<CR>:b#<CR>
@@ -204,36 +198,45 @@ command DocSuggest
     \ thesaurus+=~/.vim/dict_thes/thes.text |
     \ DittoOn
 
-
-" ---------------------------------------------------------------------------- "
-" Plugin Settings                                                              "
-" ---------------------------------------------------------------------------- "
-
-" - Aucomplete & Supertab
-let g:acp_behaviorKeywordLength = 2
-let g:acp_autoselectFirstCompletion = 0
-
+" Turn on DocSuggest if likely writing prose
 if has("autocmd")
     autocmd BufReadPost,BufNewFile *.md,*.txt,*.org DocSuggest
     autocmd BufReadPost,BufNewFile *.txt setlocal linebreak wrap nolist textwidth=0
 endif
 
-" - ALE gutter color and symbols
+
+" ---------------------------------------------------------------------------- "
+" Plugin Settings                                                              "
+" ---------------------------------------------------------------------------- "
+
+" - ALE
 highlight clear SignColumn      " Clear sign
+
 let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '>>'     " Error symbol
 let g:ale_sign_warning = '>>'   " Warning Symbol
+
+let g:airline#extensions#ale#enabled = 1
+
+let g:ale_linter_aliases={'txt': 'text'}
+let g:ale_linters={'pandoc': ['languagetool', 'mdl'], 'markdown': ['languagetool', 'mdl'], 'text': ['languagetool'], 'tex': ['chktex']}
+
 highlight ALEErrorSign      ctermbg=NONE ctermfg=red
 highlight ALEError          guibg=NONE ctermbg=NONE cterm=underline ctermfg=red
 highlight ALEWarningSign    ctermbg=NONE ctermfg=yellow
 highlight ALEWarning        guibg=NONE ctermbg=NONE cterm=underline
-let g:airline#extensions#ale#enabled = 1
 
 " - Easytags
 let g:easytags_async = 1
 
 " - FZF
 nnoremap <leader>f :FZF
+
+" - Floaterm
+let g:floaterm_keymap_toggle = '<Leader>sh'
+"let g:floaterm_wintype = 'normal'
+hi FloatermBorder guifg=orange
+
 
 " - Git Gutter
 highlight GitGutterAdd    guifg=#448844
@@ -242,10 +245,7 @@ highlight GitGutterDelete guifg=#884444
 
 " - indent line
 let g:indentLine_char = '│'
-" - LanguageTool
-let g:ale_languagetool_executable='languagetool'
-let g:ale_linter_aliases={'txt': 'text'}
-let g:ale_linters={'markdown': ['languagetool', 'mdl'], 'text': ['languagetool'], 'tex': ['chktex']}
+set fillchars+=vert:│
 
 " - Open Browser
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
@@ -257,12 +257,12 @@ let g:rainbow_active = 1
 
 " - Vim Airline
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline_theme='shark_trans'
-let g:airline_powerline_fonts = 0 " No Separators
-let g:airline_left_sep = ''  " No > Sep
+"let g:airline_powerline_fonts = 0 " No Separators
+"let g:airline_left_sep = ''  " No > Sep
 let g:airline_right_sep = '' " No < Sep
-
-set noshowmode
+set noshowmode " Remove default mode display
 
 " - Vim-better-whitespace
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
@@ -270,22 +270,20 @@ nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 " - Vim-Latex
 let g:tex_flavor='latex'
 let g:tex_conceal='abmgs'
-let g:livepreview_previewer = 'open -a Preview'
+let g:livepreview_previewer = 'open -a Skim'
 if has("autocmd")
     autocmd BufReadPost,BufNewFile *.tex
         \ setlocal sw=2 spell conceallevel=2 concealcursor=nvc iskeyword+=: textwidth=120
         \ dictionary+=~/.vim/dict_thes/latex.text complete+=k
         \ updatetime=1000 |
-        \ IndentLinesDisable
+        \ IndentLinesDisable |
+        \ autocmd CursorHold,CursorHoldI * update
 endif
 
-" - Vim-orgmode
-command -nargs=* -range SpeedDatingFormat " Stop asking me to install SpeedDating
-
 " - vim-sneak
-let g:sneak#streak = 1
+let g:sneak#label = 1
 
 
 " Load any external config
 runtime ocaml-config.vim
-autocmd BufReadPost,BufNewFile *.tex runtime latex-config.vim
+runtime swift-config.vim

@@ -47,6 +47,7 @@ bindkey \^U backward-kill-line
 # - Alias
 # Vim
 alias v="vim -u ~/.simplevimrc"
+alias iv="vim"
 alias vis="vim -S Session.vim"
 
 # git
@@ -60,6 +61,7 @@ alias gpu="git push"
 alias gpl="git pull"
 alias gpsuo="git push --set-upstream origin"
 alias glog="git log"
+alias glogs="git log --stat"
 
 # Commands
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
@@ -69,6 +71,10 @@ alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
 #alias movgif='ffmpeg -i $1 | convert -verbose -coalesce -layers OptimizeFrame | xargs gifsicle -o $2'
+
+# iOS Grading
+alias ios_rename='~/bin_scripts/ios_rename_grade.sh'
+alias ios_init='~/bin_scripts/ios_init.sh'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv

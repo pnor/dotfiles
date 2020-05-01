@@ -23,9 +23,10 @@ hi PMenuSel       guifg=#FDDC87 guibg=#121618 guisp=#121618 gui=NONE ctermfg=15 
 hi PMenuThumb     guifg=#32384A guibg=#32384a guisp=#32384a gui=NONE ctermfg=239 ctermbg=239 cterm=NONE
 hi PMenuSbar      guifg=#121628 guibg=#121628 guisp=#121628 gui=NONE ctermfg=235 ctermbg=235 cterm=NONE
 hi IncSearch      guifg=#f856b5 guibg=#000000 gui=NONE
-hi Search         guifg=#00ffff guibg=#444444 gui=NONE
+hi Search         guifg=#00ffff guibg=#010517 gui=NONE
 hi Directory      guifg=#7AA1EB guibg=#010517 gui=NONE
-hi Folded         guifg=#676b7d guibg=#1f1f1f gui=NONE
+hi Folded         guifg=#7AA1EB guibg=#1f1f1f gui=NONE
+hi FoldColumn     guifg=#FF8833 guibg=#010517 gui=NONE
 hi Normal         guifg=#f8f8f2 guibg=#010517 gui=NONE
 hi Boolean        guifg=#AAA5B0 guibg=#010517 gui=NONE
 hi Character      guifg=#AAA5B0 guibg=#010517 gui=NONE

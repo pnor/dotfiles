@@ -1,7 +1,7 @@
 " Based on the airline theme distinguished, used a structural starting point
 "
 
-let s:gray     = [245, '#3f4b59']
+let s:gray     = [245, '#4f5d6a']
 let s:darkgray = [245, '#1d1f21']
 let s:golden   = [143, '#5eb2f2']
 let s:pink     = [131, '#f856b5']
@@ -53,15 +53,15 @@ let g:airline#themes#shark_trans#palette.inactive = {
 let g:airline#themes#shark_trans#palette.inactive_modified = {
     \ 'airline_a': s:IA,
     \ 'airline_b': s:IA,
-    \ 'airline_c': s:NM3,
+    \ 'airline_c': s:V3,
     \ 'airline_x': s:IA,
     \ 'airline_y': s:IA,
     \ 'airline_z': s:IA}
 
 let g:airline#themes#shark_trans#palette.normal = {
     \ 'airline_a': s:N1,
-    \ 'airline_b': s:N3,
-    \ 'airline_c': s:N3,
+    \ 'airline_b': s:I3,
+    \ 'airline_c': s:I3,
     \ 'airline_x': s:N3,
     \ 'airline_y': s:N3,
     \ 'airline_z': s:N3}
@@ -69,16 +69,16 @@ let g:airline#themes#shark_trans#palette.normal = {
 
 let g:airline#themes#shark_trans#palette.normal_modified = {
     \ 'airline_a': s:NM1,
-    \ 'airline_b': s:N3,
-    \ 'airline_c': s:N3,
+    \ 'airline_b': s:I3,
+    \ 'airline_c': s:I3,
     \ 'airline_x': s:N3,
     \ 'airline_y': s:N3,
     \ 'airline_z': s:NM3}
 
 let g:airline#themes#shark_trans#palette.insert = {
     \ 'airline_a': s:I1,
-    \ 'airline_b': s:N3,
-    \ 'airline_c': s:N3,
+    \ 'airline_b': s:I3,
+    \ 'airline_c': s:I3,
     \ 'airline_x': s:N3,
     \ 'airline_y': s:N3,
     \ 'airline_z': s:I3}
@@ -86,8 +86,8 @@ let g:airline#themes#shark_trans#palette.insert_modified = {}
 
 let g:airline#themes#shark_trans#palette.replace = {
     \ 'airline_a': s:R1,
-    \ 'airline_b': s:N3,
-    \ 'airline_c': s:N3,
+    \ 'airline_b': s:R3,
+    \ 'airline_c': s:R3,
     \ 'airline_x': s:N3,
     \ 'airline_y': s:N3,
     \ 'airline_z': s:R3}
@@ -95,8 +95,8 @@ let g:airline#themes#shark_trans#palette.replace_modified = {}
 
 let g:airline#themes#shark_trans#palette.visual = {
     \ 'airline_a': s:V1,
-    \ 'airline_b': s:N3,
-    \ 'airline_c': s:N3,
+    \ 'airline_b': s:V3,
+    \ 'airline_c': s:V3,
     \ 'airline_x': s:N3,
     \ 'airline_y': s:N3,
     \ 'airline_z': s:V3}
