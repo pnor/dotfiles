@@ -63,6 +63,8 @@ endif
 set textwidth=80
 set colorcolumn=+0
 
+" Always have 4 lines of context for cursor
+set scrolloff=4
 
 " ---------------------------------------------------------------------------- "
 " Statusline                                                                   "

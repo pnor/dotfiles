@@ -97,6 +97,9 @@ set number " Add line Numbers
 set numberwidth=3 " 3 for number size
 syntax on   " Add syntax highlighting
 
+" Always have 4 lines of context for cursor
+set scrolloff=4
+
 " :find works as file fuzzy finder
 set path+=**
 set wildmenu
@@ -105,11 +108,6 @@ set wildmenu
 set textwidth=80
 set colorcolumn=+0
 
-
-" ---------------------------------------------------------------------------- "
-" Set Color Theme / Display                                                    "
-" ---------------------------------------------------------------------------- "
-"colo glow-in-the-dark-gucci-shark-bites-edit
 colo cornell
 
 " Spell Checking Coloring
@@ -117,7 +115,6 @@ hi clear SpellBad
 hi SpellBad     guifg=#ff4444 gui=undercurl
 hi SpellRare    guifg=#ddaaff
 hi SpellCap     guifg=#ff8811 cterm=underline
-
 
 if &term =~ '256color'
     set t_ut=
@@ -210,6 +207,8 @@ endif
 " ---------------------------------------------------------------------------- "
 
 " - ALE
+nnoremap <Leader>n :ALENext<CR>
+nnoremap <Leader>p :ALEPrevious<CR>
 highlight clear SignColumn      " Clear sign
 
 let g:ale_set_highlights = 1    " No ale highlights on line
