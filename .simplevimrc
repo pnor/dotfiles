@@ -37,7 +37,7 @@ set completeopt=menuone,longest,preview
 set backspace=indent,eol,start
 
 " :find works as file fuzzy finder
-set path+=**
+set path+=src/**,config/**
 set wildmenu
 
 " Enable italics
