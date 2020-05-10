@@ -70,8 +70,7 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-#alias movgif='ffmpeg -i $1 | convert -verbose -coalesce -layers OptimizeFrame | xargs gifsicle -o $2'
-
+alias movgif='ffmpeg -y -i $1 -f image2pipe -vcodec ppm - | convert -delay 2 -loop 0 -layers Optimize - gif:- | gifsicle -d 3 -O3 -o $2'
 # iOS Grading
 alias ios_rename='~/bin_scripts/ios_rename_grade.sh'
 alias ios_init='~/bin_scripts/ios_init.sh'
@@ -89,6 +88,9 @@ alias incognito='~/bin_scripts/open_incognito_safari'
 alias gmail_personal='open -a /Applications/Google\ Chrome\ 2.app '\''https://mail.google.com/mail/u/0/#inbox'\'''
 alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'\'''
 
+# Emacs
+alias emacs='~/bin_scripts/emacs.sh'
+
 # LEETCODE
 alias leett='leetcode test'
 alias leetget='~/bin_scripts/leetget.sh'
@@ -99,9 +101,9 @@ alias dots='dot status'
 alias dotc='dot commit -m'
 
 # todos
-alias todo='vi ~/todo.org'
+alias todo='vi ~/todo.md'
 
-export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin"
+export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin:/Users/philliporeggio/.emacs.d/bin"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

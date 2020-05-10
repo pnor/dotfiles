@@ -9,8 +9,8 @@ let g:colors_name = "cornell"
 
 hi Cursor         guifg=#1f1f1f guibg=#f8f8f0 gui=NONE
 hi Visual         guifg=#ffffff guibg=#2a2a2a gui=NONE
-hi CursorLine     guifg=#ffffff guibg=#2a2a2a gui=NONE
-hi ColorColumn    guifg=#ffffff guibg=#111111 gui=NONE
+hi CursorLine     guibg=#111527 cterm=NONE ctermbg=7 ctermfg=NONE
+hi ColorColumn    guifg=#ffffff guibg=#111527 gui=NONE
 hi CursorColumn   guifg=#ffffff guibg=#2a2a2a gui=NONE
 hi CursorLineNr   guifg=#5eb2f2 guibg=#010517 gui=NONE cterm=NONE
 hi LineNr         guifg=#676b7d guibg=#010517 gui=NONE
@@ -34,12 +34,14 @@ hi Comment        guifg=#777777 guibg=#010517 gui=NONE
 hi Conditional    guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Repeat         guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Constant       guifg=#FF8833 guibg=#010517 gui=NONE
-hi Define         guifg=#BD9800 guibg=#010517 gui=NONE
+hi define         guifg=#bd9800 guibg=#010517 gui=none
 hi DiffAdd        guifg=#f8f8f2 guibg=#468410 gui=bold cterm=bold
 hi DiffDelete     guifg=#8b080b guibg=#010517 gui=NONE
 hi DiffChange     guifg=#f8f8f2 guibg=#243a5f gui=NONE
 hi DiffText       guifg=#f8f8f2 guibg=#204a87 gui=bold cterm=bold
+hi Conceal        guifg=#FDDC87 guibg=#010517 gui=NONE
 hi ErrorMsg       guifg=#FB8496 guibg=#010517 gui=NONE
+hi Error          guifg=#FB8496 guibg=#010517 gui=NONE
 hi WarningMsg     guifg=#f8f8f0 guibg=#010517 gui=NONE
 hi Float          guifg=#AAA5B0 guibg=#010517 gui=NONE
 hi Function       guifg=#FB8496 guibg=#010517 gui=NONE
@@ -68,3 +70,8 @@ hi xmlEqual             guifg=#FDDC87 guibg=#010517 gui=NONE
 hi xmlTagName           guifg=#5eb2f2 guibg=#010517 gui=NONE
 hi xmlTag               guifg=#5eb2f2 guibg=#010517 gui=NONE
 hi xmlEndTag            guifg=#5eb2f2 guibg=#010517 gui=NONE
+
+hi ALEErrorSign      guifg=#FB8496 guibg=#010517 gui=NONE 
+hi ALEError          guifg=#FB8496 guibg=#010517 gui=NONE
+hi ALEWarningSign    guifg=#5eb2f2 guibg=#010517 gui=NONE
+hi ALEWarning        guibg=NONE ctermbg=NONE cterm=underline

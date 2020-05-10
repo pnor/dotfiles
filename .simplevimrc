@@ -160,6 +160,6 @@ command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(g
 colo torte
 
 " Statusline Colors
-hi User1 guibg=#222222               " Gray background
-hi User2 guifg=#ffffff guibg=#222222 " Git status
-hi User3 guifg=#ff0000 guibg=#222222 " Modified Flag
+hi User1 guibg=#111111               " Gray background
+hi User2 guifg=#ffffff guibg=#111111 " Git status
+hi User3 guifg=#ff0000 guibg=#111111 " Modified Flag

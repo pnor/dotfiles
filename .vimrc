@@ -12,11 +12,10 @@ Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'vim-latex/vim-latex'                                      " Latex
 Plug 'w0rp/ale'                                                 " ALE
 " - Display
-Plug 'Yggdroot/indentLine'                                      " indentLine
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
-Plug 'voldikss/vim-floaterm'                                    " Floaterm
+Plug 'vim-airline/vim-airline-themes'                                  " Vim-airline
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'junegunn/fzf.vim'
@@ -89,6 +88,13 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
+"if &term =~ '256color'
+"    set t_ut=
+"endif
+
+" Source color scheme
+colo cornell
+
  " Enable italics
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
@@ -101,24 +107,21 @@ syntax on   " Add syntax highlighting
 set scrolloff=4
 
 " :find works as file fuzzy finder
-set path+=**
+set path+=src/**,config/**
 set wildmenu
 
 " Line for over 80 characters
 set textwidth=80
 set colorcolumn=+0
 
-colo cornell
+" Cursor Line coloring
+set cursorline
 
 " Spell Checking Coloring
 hi clear SpellBad
-hi SpellBad     guifg=#ff4444 gui=undercurl
-hi SpellRare    guifg=#ddaaff
+hi SpellBad     guifg=#ffaaaa gui=undercurl
+hi SpellRare    guifg=#ffddff
 hi SpellCap     guifg=#ff8811 cterm=underline
-
-if &term =~ '256color'
-    set t_ut=
-endif
 
 
 " ---------------------------------------------------------------------------- "
@@ -151,8 +154,6 @@ nnoremap <Leader>W <C-w>W
 tnoremap <Leader>w <C-w>w
 tnoremap \w <C-w>w
 tnoremap \W <C-w>W
-" Or double tap leader
-nnoremap <Leader><Leader> <C-w>w
 
 " Alternate Buffers with <Leader>b
 nnoremap <Leader>b :w<CR>:b#<CR>
@@ -164,10 +165,10 @@ map <Space> <Leader>
 imap *L <Esc>[s1z=`]a
 
 " Move Faster with arrows
-nnoremap <Up> 8k
-vnoremap <Up> 4k
-nnoremap <Down> 8j
-vnoremap <Down> 4j
+nnoremap <Up> 10k
+vnoremap <Up> 5k
+nnoremap <Down> 10j
+vnoremap <Down> 5j
 nnoremap <Right> 4l
 nnoremap <Left> 4h
 
@@ -212,18 +213,13 @@ nnoremap <Leader>p :ALEPrevious<CR>
 highlight clear SignColumn      " Clear sign
 
 let g:ale_set_highlights = 1    " No ale highlights on line
-let g:ale_sign_error = '>>'     " Error symbol
-let g:ale_sign_warning = '>>'   " Warning Symbol
+let g:ale_sign_error = '#'     " Error symbol
+let g:ale_sign_warning = '~'   " Warning Symbol
 
 let g:airline#extensions#ale#enabled = 1
 
 let g:ale_linter_aliases={'txt': 'text'}
 let g:ale_linters={'pandoc': ['languagetool', 'mdl'], 'markdown': ['languagetool', 'mdl'], 'text': ['languagetool'], 'tex': ['chktex']}
-
-highlight ALEErrorSign      ctermbg=NONE ctermfg=red
-highlight ALEError          guibg=NONE ctermbg=NONE cterm=underline ctermfg=red
-highlight ALEWarningSign    ctermbg=NONE ctermfg=yellow
-highlight ALEWarning        guibg=NONE ctermbg=NONE cterm=underline
 
 " - Easytags
 let g:easytags_async = 1
@@ -231,20 +227,10 @@ let g:easytags_async = 1
 " - FZF
 nnoremap <leader>f :FZF
 
-" - Floaterm
-let g:floaterm_keymap_toggle = '<Leader>sh'
-"let g:floaterm_wintype = 'normal'
-hi FloatermBorder guifg=orange
-
-
 " - Git Gutter
 highlight GitGutterAdd    guifg=#448844
 highlight GitGutterChange guifg=#448888
 highlight GitGutterDelete guifg=#884444
-
-" - indent line
-let g:indentLine_char = '│'
-set fillchars+=vert:│
 
 " - Open Browser
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
@@ -257,14 +243,16 @@ let g:rainbow_active = 1
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='shark_trans'
-"let g:airline_powerline_fonts = 0 " No Separators
-"let g:airline_left_sep = ''  " No > Sep
+let g:airline_theme='dark'
+let g:airline_powerline_fonts = 0 " No Separators
+let g:airline_left_sep = ''  " No > Sep
 let g:airline_right_sep = '' " No < Sep
 set noshowmode " Remove default mode display
 
 " - Vim-better-whitespace
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
+let g:better_whitespace_ctermcolor = 'cyan'
+let g:better_whitespace_guicolor = '#676b7d'
 
 " - Vim-Latex
 let g:tex_flavor='latex'
@@ -274,9 +262,8 @@ if has("autocmd")
     autocmd BufReadPost,BufNewFile *.tex
         \ setlocal sw=2 spell conceallevel=2 concealcursor=nvc iskeyword+=: textwidth=120
         \ dictionary+=~/.vim/dict_thes/latex.text complete+=k
-        \ updatetime=1000 |
-        \ IndentLinesDisable |
-        \ autocmd CursorHold,CursorHoldI * update
+        \ updatetime=1000
+    autocmd CursorHold,CursorHoldI * update
 endif
 
 " - vim-sneak
