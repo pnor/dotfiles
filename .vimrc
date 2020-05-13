@@ -9,7 +9,6 @@ Plug 'prabirshrestha/async.vim'                                 " Async
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
-Plug 'vim-latex/vim-latex'                                      " Latex
 Plug 'w0rp/ale'                                                 " ALE
 " - Display
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
@@ -24,7 +23,7 @@ Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'tyru/open-browser.vim'                                    " Open Browser
 Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown
 Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'ludovicchabant/vim-gutentags'
+Plug 'ludovicchabant/vim-gutentags'                             " Tags
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
@@ -33,7 +32,6 @@ Plug 'majutsushi/tagbar'                                        " Tagbar
 Plug 'tpope/vim-surround'                                       " Vim-surround
 " - Misc
 Plug 'dbmrq/vim-ditto'                                          " Ditto
-Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex Preview
 
 Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
@@ -254,22 +252,9 @@ nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
 
-" - Vim-Latex
-let g:tex_flavor='latex'
-let g:tex_conceal='abmgs'
-let g:livepreview_previewer = 'open -a Skim'
-if has("autocmd")
-    autocmd BufReadPost,BufNewFile *.tex
-        \ setlocal sw=2 spell conceallevel=2 concealcursor=nvc iskeyword+=: textwidth=120
-        \ dictionary+=~/.vim/dict_thes/latex.text complete+=k
-        \ updatetime=1000
-    autocmd CursorHold,CursorHoldI * update
-endif
-
 " - vim-sneak
 let g:sneak#label = 1
 
-
 " Load any external config
-runtime ocaml-config.vim
+"runtime ocaml-config.vim
 runtime swift-config.vim
