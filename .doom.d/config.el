@@ -67,6 +67,10 @@
 (define-key evil-normal-state-map "\\f" 'helm-find-files)
 ;; list buffers
 (define-key evil-normal-state-map "\\b" 'helm-buffers-list)
+;; Spelling
+(define-key evil-normal-state-map "\\l" 'flyspell-auto-correct-word)
+;; Quick search
+(define-key evil-normal-state-map "\\s" 'browse-web)
 
 (require 'evil-snipe)
 (setq evil-snipe-scope 'buffer)
@@ -80,8 +84,12 @@
 (setq company-minimum-prefix-length 2)
 
 
+
 ;; Writing Prose
 (set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
 
 (doom-enable-show-trailing-whitespace-h)
 (latex-preview-pane-enable)
+
+;; Retina display / less fuzzy pdfs
+(setq pdf-view-use-scaling t pdf-view-use-imagemagick nil)

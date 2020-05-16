@@ -10,6 +10,7 @@ Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'w0rp/ale'                                                 " ALE
+Plug 'lervag/vimtex'                                            " Vimtex
 " - Display
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis

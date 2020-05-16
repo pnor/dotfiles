@@ -46,22 +46,26 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-;; package settings
-
-(use-package lsp-mode
+;;package settings
+(use-package lsp-python-ms
   :ensure t
-  :config
-  (add-hook '+javascript-npm-mode-hook 'lsp)
-  (add-hook 'c++-mode-hook 'lsp)
-  (add-hook 'c-mode-hook 'lsp)
-  (add-hook 'csharp-mode-hook 'lsp)
-  (add-hook 'go-mode-hook 'lsp)
-  (add-hook 'java-mode-hook 'lsp)
-  (add-hook 'latex-mode-hook 'lsp)
-  (add-hook 'python-mode-hook 'lsp)
-  (add-hook 'swift-mode-hook 'lsp)
-  (add-hook 'typescript-mode-hook 'lsp)
-  )
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp))))  ; or lsp-deferred
+
+;;(use-package lsp-mode
+;;  :ensure t
+;;  :config
+;;  (add-hook '+javascript-npm-mode-hook 'lsp)
+;;  (add-hook 'c++-mode-hook 'lsp)
+;;  (add-hook 'c-mode-hook 'lsp)
+;;  (add-hook 'csharp-mode-hook 'lsp)
+;;  (add-hook 'go-mode-hook 'lsp)
+;;  (add-hook 'java-mode-hook 'lsp)
+;;  (add-hook 'latex-mode-hook 'lsp)
+;;  (add-hook 'swift-mode-hook 'lsp)
+;;  (add-hook 'typescript-mode-hook 'lsp)
+;;  )
 
 (use-package lsp-ui
   :ensure t)
@@ -72,3 +76,14 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+
+(use-package company-quickhelp
+  :ensure t)
+
+(use-package company-jedi
+  :ensure t)
+
+(defun my/python-mode-hook ()
+  (add-to-list 'company-backends 'company-jedi))
+
+(add-hook 'python-mode-hook 'my/python-mode-hook)
