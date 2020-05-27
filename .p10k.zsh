@@ -55,7 +55,7 @@
     dir                       # current directory
     vcs                       # git status
     # command_execution_time  # previous command duration
-    # virtualenv              # python virtual environment
+    virtualenv                # python virtual environment
     prompt_char               # prompt symbol
   )
 
@@ -70,8 +70,8 @@
 
 
   local env_color=cyan
-  local failed_arrow=grey
-  case $[$RANDOM%6] in
+  local failed_arrow=lemon
+  case $[$RANDOM%8] in
     0)
       local git_col='280'
       local dir_name_color=cyan
@@ -172,8 +172,6 @@
 
   # Don't wait for Git status even for a millisecond, so that prompt always updates
   # asynchronously when Git state changes.
-  typeset -g POWERLEVEL9K_VCS_MAX_SYNC_LATENCY_SECONDS=0
-
   # Cyan ahead/behind arrows.
   typeset -g POWERLEVEL9K_VCS_{INCOMING,OUTGOING}_CHANGESFORMAT_FOREGROUND=$cyan
   # Don't show remote branch, current tag or stashes.
@@ -230,6 +228,13 @@
   # can slow down prompt by 1-2 milliseconds, so it's better to keep it turned off unless you
   # really need it.
   typeset -g POWERLEVEL9K_DISABLE_HOT_RELOAD=true
+
+  # Shorten directory prompt to basename
+  typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_last
+  # Bold the directory name
+  typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=true
+
+
 
   # If p10k is already loaded, reload configuration.
   # This works even with POWERLEVEL9K_DISABLE_HOT_RELOAD=true.

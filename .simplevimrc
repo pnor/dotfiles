@@ -142,6 +142,7 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "<C-n>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " Leader-f triggers find
+nnoremap <Space><Space> :find 
 nnoremap <Leader>f :find 
 
 " Fix spelling errors

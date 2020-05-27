@@ -15,7 +15,7 @@ Plug 'lervag/vimtex'                                            " Vimtex
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
-Plug 'vim-airline/vim-airline-themes'                                  " Vim-airline
+Plug 'vim-airline/vim-airline-themes'                           " Vim-airline
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'junegunn/fzf.vim'
@@ -24,7 +24,9 @@ Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'tyru/open-browser.vim'                                    " Open Browser
 Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown
 Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'jceb/vim-orgmode'                                         " Org mode
 Plug 'ludovicchabant/vim-gutentags'                             " Tags
+Plug 'jpalardy/vim-slime'                                       " Emacs slime
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
@@ -87,10 +89,6 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
-"if &term =~ '256color'
-"    set t_ut=
-"endif
-
 " Source color scheme
 colo cornell
 
@@ -118,9 +116,12 @@ set cursorline
 
 " Spell Checking Coloring
 hi clear SpellBad
-hi SpellBad     guifg=#ffaaaa gui=undercurl
-hi SpellRare    guifg=#ffddff
+hi SpellBad     guifg=#ff5555 gui=undercurl
+hi SpellRare    guifg=#ff88cc
 hi SpellCap     guifg=#ff8811 cterm=underline
+
+" Solid Split Line
+set fillchars+=vert:│
 
 
 " ---------------------------------------------------------------------------- "
@@ -224,7 +225,8 @@ let g:ale_linters={'pandoc': ['languagetool', 'mdl'], 'markdown': ['languagetool
 let g:easytags_async = 1
 
 " - FZF
-nnoremap <leader>f :FZF
+nnoremap <Space><Space> :FZF<CR>
+nnoremap <leader>f :FZF<CR>
 
 " - Git Gutter
 highlight GitGutterAdd    guifg=#448844
@@ -242,7 +244,7 @@ let g:rainbow_active = 1
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='dark'
+let g:airline_theme='atomic'
 let g:airline_powerline_fonts = 0 " No Separators
 let g:airline_left_sep = ''  " No > Sep
 let g:airline_right_sep = '' " No < Sep
@@ -253,8 +255,19 @@ nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
 
+" - Vim-orgmode
+command -nargs=* -range SpeedDatingFormat
+
+" - Vim-slime
+let g:slime_target = "vimterminal"
+vnoremap gr :SlimeSend<CR>
+
 " - vim-sneak
 let g:sneak#label = 1
+
+" - YCM
+let g:ycm_global_ycm_extra_conf = '~/.ycm_global_ycm_extra_conf.py'
+
 
 " Load any external config
 "runtime ocaml-config.vim

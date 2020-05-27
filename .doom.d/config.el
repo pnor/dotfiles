@@ -57,20 +57,43 @@
 (load! "~/.doom.d/lisp/magit-pretty-graph.el")
 
 ;; Keymaps
-;; ; to :
-(define-key evil-normal-state-map ";" 'evil-ex)
-(define-key evil-visual-state-map ";" 'evil-ex)
-;; Windows with \w
-(define-key evil-normal-state-map "\\w" 'evil-window-next)
-(define-key evil-normal-state-map "\\W" 'evil-window-prev)
-;; Fuzzy-ish finding
-(define-key evil-normal-state-map "\\f" 'helm-find-files)
-;; list buffers
-(define-key evil-normal-state-map "\\b" 'helm-buffers-list)
-;; Spelling
-(define-key evil-normal-state-map "\\l" 'flyspell-auto-correct-word)
-;; Quick search
-(define-key evil-normal-state-map "\\s" 'browse-web)
+(evil-define-key 'normal 'global
+  ;; Command
+  ";" 'evil-ex
+  ;; Windows
+  "\\w" 'evil-window-next
+  "\\W" 'evil-window-prev
+  ;; Browsing the Web
+  "\\s" 'browse-web
+  ;; Finder
+  "\\f" 'helm-find-files
+  ;; Spelling Correction
+  "\\l" 'flyspell-auto-correct-word
+  ;; Buffers
+  "\\b" 'helm-buffers-list
+  ;; Arrow Motion
+  ;;"up" 'evil-forward-paragraph
+  ;;"<down>" 'evil-backward-paragraph
+  )
+
+ (evil-define-key 'visual 'global
+  ;; Command
+  ";" 'evil-ex
+   )
+
+;; (define-key evil-normal-state-map ";" 'evil-ex)
+;; (define-key evil-visual-state-map ";" 'evil-ex)
+;; ;; Windows with \w
+;; (define-key evil-normal-state-map "\\w" 'evil-window-next)
+;; (define-key evil-normal-state-map "\\W" 'evil-window-prev)
+;; ;; Fuzzy-ish finding
+;; (define-key evil-normal-state-map "\\f" 'helm-find-files)
+;; ;; list buffers
+;; (define-key evil-normal-state-map "\\b" 'helm-buffers-list)
+;; ;; Spelling
+;; (define-key evil-normal-state-map "\\l" 'flyspell-auto-correct-word)
+;; ;; Quick search
+;; (define-key evil-normal-state-map "\\s" 'browse-web)
 
 (require 'evil-snipe)
 (setq evil-snipe-scope 'buffer)
@@ -83,12 +106,13 @@
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
 
-
-
 ;; Writing Prose
 (set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
 
+;; Trailing whitespace (?)
 (doom-enable-show-trailing-whitespace-h)
+
+;; Latex
 (latex-preview-pane-enable)
 
 ;; Retina display / less fuzzy pdfs
