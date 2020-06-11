@@ -8,7 +8,7 @@ endif
 let g:colors_name = "cornell"
 
 hi Cursor         guifg=#1f1f1f guibg=#f8f8f0 gui=NONE
-hi Visual         guifg=#ffffff guibg=#2a2a2a gui=NONE
+hi Visual         guifg=#5eb2f2 guibg=#2a2a2a gui=NONE
 hi CursorLine     guibg=#111527 cterm=NONE ctermbg=7 ctermfg=NONE
 hi ColorColumn    guifg=#ffffff guibg=#111527 gui=NONE
 hi CursorColumn   guifg=#ffffff guibg=#2a2a2a gui=NONE
@@ -27,10 +27,10 @@ hi Search         guifg=#00ffff guibg=#010517 gui=NONE
 hi Directory      guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Folded         guifg=#7AA1EB guibg=#1f1f1f gui=NONE
 hi FoldColumn     guifg=#FF8833 guibg=#010517 gui=NONE
-hi Normal         guifg=#f8f8f2 guibg=#010517 gui=NONE
+hi Normal         guifg=#AAAAAA guibg=#010517 gui=NONE
 hi Boolean        guifg=#AAA5B0 guibg=#010517 gui=NONE
 hi Character      guifg=#AAA5B0 guibg=#010517 gui=NONE
-hi Comment        guifg=#777777 guibg=#010517 gui=NONE
+hi Comment        guifg=#5675b0 guibg=#010517 gui=NONE
 hi Conditional    guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Repeat         guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Constant       guifg=#FF8833 guibg=#010517 gui=NONE
@@ -75,3 +75,9 @@ hi ALEErrorSign      guifg=#FB8496 guibg=#010517 gui=NONE
 hi ALEError          guifg=#FB8496 guibg=#010517 gui=NONE
 hi ALEWarningSign    guifg=#5eb2f2 guibg=#010517 gui=NONE
 hi ALEWarning        guibg=NONE ctermbg=NONE cterm=underline
+
+hi! link Sneak Search
+"hi Sneak        guifg=#FB8496 guibg=#010517
+"hi SneakScope   guifg=#FB8496 guibg=#010517
+"hi SneakLabel   guifg=#FB8496 guibg=#010517
+

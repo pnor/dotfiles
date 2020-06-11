@@ -73,6 +73,18 @@
 (use-package company-lsp
   :ensure t)
 
+(use-package lsp-sourcekit
+  :after lsp-mode
+  :config
+  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
+
+(require 'lsp-sourcekit)
+(setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
+;;(setq lsp-sourcekit-executable "/Users/rudedogg/Desktop/Contrib/sourcekit-lsp/.build/debug/sourcekit-lsp")
+
+(use-package swift-mode
+  :hook (swift-mode . (lambda () (lsp))))
+
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))

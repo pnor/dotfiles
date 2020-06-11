@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
 Plug 'prabirshrestha/vim-lsp'                                   " LSP
 Plug 'prabirshrestha/async.vim'                                 " Async
+Plug 'skywind3000/vim-dict'                                     " vim-dict
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
@@ -254,6 +255,9 @@ set noshowmode " Remove default mode display
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
+
+" - Vim-lsp
+let g:lsp_diagnostics_echo_cursor = 1
 
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat
