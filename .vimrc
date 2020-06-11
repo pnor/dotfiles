@@ -177,6 +177,9 @@ nnoremap <Left> 4h
 " Use zm to show less and zr to show more
 command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
 
+" Open a Terminal Sidebar
+command STerm execute "vert term" | execute "normal! <C-w>45<"
+
 " Completion Writing code
 command CodeSuggest
     \ let g:acp_behaviorKeywordLength = 2 |

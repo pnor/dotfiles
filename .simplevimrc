@@ -148,6 +148,11 @@ nnoremap <Leader>f :find
 " Fix spelling errors
 imap *L <Esc>[s1z=`]a
 
+" Terminal Sidebar
+if v:version >= 801
+    command STerm execute "vert term" | execute "normal! <C-w>45<"
+endif
+
 " Trailing Whitespace
 command ShowWhitespace /\s\+$
 command StripTrailingWhitespace :%s/\s\+$//g
