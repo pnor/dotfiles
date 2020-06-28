@@ -3,15 +3,15 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Completion
-Plug 'Valloric/YouCompleteMe', { 'do': '/usr/local/bin/python3 install.py --clang-completer --java-completer' } " youcompleteme
-Plug 'prabirshrestha/vim-lsp'                                   " LSP
 Plug 'prabirshrestha/async.vim'                                 " Async
 Plug 'skywind3000/vim-dict'                                     " vim-dict
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'w0rp/ale'                                                 " ALE
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'lervag/vimtex'                                            " Vimtex
+Plug 'rust-lang/rust.vim'
 " - Display
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
@@ -88,6 +88,12 @@ if exists('+termguicolors')
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
+endif
+
+" Change cursor shape between insert and normal mode in iTerm2.app
+if $TERM_PROGRAM =~ "iTerm"
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
 endif
 
 " Source color scheme
@@ -219,11 +225,19 @@ highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '#'     " Error symbol
 let g:ale_sign_warning = '~'   " Warning Symbol
-
 let g:airline#extensions#ale#enabled = 1
 
+let g:ale_rust_cargo_use_check = 1
 let g:ale_linter_aliases={'txt': 'text'}
-let g:ale_linters={'pandoc': ['languagetool', 'mdl'], 'markdown': ['languagetool', 'mdl'], 'text': ['languagetool'], 'tex': ['chktex']}
+let g:ale_linters={
+            \ 'rust': ['analyzer', 'rustc', 'cargo'],
+            "\ 'rust': ['analyzer'],
+            \ 'python': ['flake8', 'mypy', 'pylint', 'pyls'],
+            \ 'pandoc': ['languagetool', 'mdl'],
+            \ 'markdown': ['languagetool', 'mdl'],
+            \ 'text': ['languagetool'],
+            \ 'tex': ['chktex']}
+
 
 " - Easytags
 let g:easytags_async = 1
@@ -259,9 +273,6 @@ nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
 
-" - Vim-lsp
-let g:lsp_diagnostics_echo_cursor = 1
-
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat
 
@@ -275,7 +286,8 @@ let g:sneak#label = 1
 " - YCM
 let g:ycm_global_ycm_extra_conf = '~/.ycm_global_ycm_extra_conf.py'
 
-
 " Load any external config
+runtime coc-config.vim
 "runtime ocaml-config.vim
-runtime swift-config.vim
+"runtime rust-config.vim
+"runtime swift-config.vim

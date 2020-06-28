@@ -81,3 +81,6 @@ hi! link Sneak Search
 "hi SneakScope   guifg=#FB8496 guibg=#010517
 "hi SneakLabel   guifg=#FB8496 guibg=#010517
 
+hi! CocErrorSign guifg=#FB8496
+hi! CocInfoSign guibg=#FDDC87
+hi! CocWarningSign guifg=#5eb2f2
