@@ -7,35 +7,32 @@ Plug 'prabirshrestha/async.vim'                                 " Async
 Plug 'skywind3000/vim-dict'                                     " vim-dict
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
+Plug 'lervag/vimtex'                                            " Vimtex
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
 Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'w0rp/ale'                                                 " ALE
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'lervag/vimtex'                                            " Vimtex
-Plug 'rust-lang/rust.vim'
 " - Display
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
-Plug 'vim-airline/vim-airline-themes'                           " Vim-airline
 " - Integrations
 Plug '/usr/local/opt/fzf'                                       " FZF
 Plug 'junegunn/fzf.vim'
+Plug 'jceb/vim-orgmode'                                         " Org mode
+Plug 'jpalardy/vim-slime'                                       " Emacs slime
+Plug 'ludovicchabant/vim-gutentags'                             " Tags
 Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
 Plug 'tpope/vim-fugitive'                                       " Fugitive
 Plug 'tyru/open-browser.vim'                                    " Open Browser
 Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown
 Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'jceb/vim-orgmode'                                         " Org mode
-Plug 'ludovicchabant/vim-gutentags'                             " Tags
-Plug 'jpalardy/vim-slime'                                       " Emacs slime
+Plug 'voldikss/vim-floaterm'                                    " Vim Floaterm
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar
-Plug 'tpope/vim-surround'                                       " Vim-surround
-" - Misc
-Plug 'dbmrq/vim-ditto'                                          " Ditto
+Plug 'tpope/vim-surround'                                       " Vim-Surround
 
 Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
@@ -111,7 +108,7 @@ syntax on   " Add syntax highlighting
 set scrolloff=4
 
 " :find works as file fuzzy finder
-set path+=src/**,config/**
+set path+=&pwd,src/**,config/**
 set wildmenu
 
 " Line for over 80 characters
@@ -130,6 +127,12 @@ hi SpellCap     guifg=#ff8811 cterm=underline
 " Solid Split Line
 set fillchars+=vert:│
 
+" Character for broken lines
+set showbreak="+++"
+
+" Show cmd as typed
+set showcmd
+
 
 " ---------------------------------------------------------------------------- "
 " Key-Bindings / Commands                                                      "
@@ -142,6 +145,7 @@ nnoremap <Leader>v :source ~/.vimrc<CR>
 " Escape to jk to leave insert mode
 inoremap jk <Esc>
 inoremap JK <Esc>
+
 " Enter escapes visual mode
 vnoremap <CR> <Esc>
 
@@ -186,6 +190,13 @@ command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(g
 " Open a Terminal Sidebar
 command STerm execute "vert term" | execute "normal! <C-w>45<"
 
+" Open a VSCode-Style File Explorer Sidebar
+command Fexplore
+    \ execute "let g:netrw_liststyle = 3" |
+    \ execute "let g:netrw_browse_split = 4" |
+    \ execute "Vexplore" |
+    \ execute "normal! <C-w>55<<C-w>w"
+
 " Completion Writing code
 command CodeSuggest
     \ let g:acp_behaviorKeywordLength = 2 |
@@ -193,8 +204,7 @@ command CodeSuggest
     \ pumheight=0
     \ complete=.,w,b,u,t,i
     \ dictionary=
-    \ thesaurus= |
-    \ DittoOff
+    \ thesaurus=
 
 " Completion writing english
 command DocSuggest
@@ -203,8 +213,7 @@ command DocSuggest
     \ complete+=k/usr/share/dict/words
     \ pumheight=3
     \ dictionary+=/usr/share/dict/words
-    \ thesaurus+=~/.vim/dict_thes/thes.text |
-    \ DittoOn
+    \ thesaurus+=~/.vim/dict_thes/thes.text
 
 " Turn on DocSuggest if likely writing prose
 if has("autocmd")
@@ -223,28 +232,27 @@ nnoremap <Leader>p :ALEPrevious<CR>
 highlight clear SignColumn      " Clear sign
 
 let g:ale_set_highlights = 1    " No ale highlights on line
-let g:ale_sign_error = '#'     " Error symbol
-let g:ale_sign_warning = '~'   " Warning Symbol
+let g:ale_sign_error = '#'      " Error symbol
+let g:ale_sign_warning = '~'    " Warning Symbol
 let g:airline#extensions#ale#enabled = 1
 
 let g:ale_rust_cargo_use_check = 1
 let g:ale_linter_aliases={'txt': 'text'}
 let g:ale_linters={
             \ 'rust': ['analyzer', 'rustc', 'cargo'],
-            "\ 'rust': ['analyzer'],
             \ 'python': ['flake8', 'mypy', 'pylint', 'pyls'],
             \ 'pandoc': ['languagetool', 'mdl'],
             \ 'markdown': ['languagetool', 'mdl'],
             \ 'text': ['languagetool'],
-            \ 'tex': ['chktex']}
-
+            \ 'tex': ['chktex']
+            \ }
 
 " - Easytags
 let g:easytags_async = 1
 
 " - FZF
-nnoremap <Space><Space> :FZF<CR>
-nnoremap <leader>f :FZF<CR>
+nnoremap <Space><Space> :Files<CR>
+nnoremap <leader>f :Files<CR>
 
 " - Git Gutter
 highlight GitGutterAdd    guifg=#448844
@@ -254,6 +262,7 @@ highlight GitGutterDelete guifg=#884444
 " - Open Browser
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
 nmap <Leader>g <Plug>(openbrowser-smart-search)
+nnoremap <Leader><Leader>g :OpenBrowserSmartSearch<Space>
 vmap <Leader>g <Plug>(openbrowser-search)
 
 " - Rainbow Parenthesis
@@ -262,7 +271,7 @@ let g:rainbow_active = 1
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='atomic'
+let g:airline_theme='cornell'
 let g:airline_powerline_fonts = 0 " No Separators
 let g:airline_left_sep = ''  " No > Sep
 let g:airline_right_sep = '' " No < Sep
@@ -272,6 +281,10 @@ set noshowmode " Remove default mode display
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
+
+" - Vim Floaterm
+nnoremap <Leader>s :FloatermNew<CR>
+hi Floaterm guifg=orange
 
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat

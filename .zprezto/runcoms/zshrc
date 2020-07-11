@@ -86,7 +86,7 @@ alias dotc='dot commit -m'
 # todos
 alias todo='vi ~/todo.md'
 
-export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin:/Users/philliporeggio/.emacs.d/bin"
+export PATH="/usr/local/opt/node@8/bin:/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/texbin:/Users/philliporeggio/.vimpkg/bin:/Users/philliporeggio/.emacs.d/bin:$HOME/.cargo/bin"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -100,7 +100,7 @@ export PATH
 
 # Custom bins/scripts
 export PATH="$HOME/bin_scripts/bin:$PATH"
-export PATH="$HOME/Documents/Coding/ocamljava-2.0-alpha3/bin:$PATH"
+export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
 
 # opam configuration
 test -r /Users/philliporeggio/.opam/opam-init/init.zsh && . /Users/philliporeggio/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

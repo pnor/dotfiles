@@ -36,6 +36,7 @@
 
   # Zsh >= 5.1 is required.
   autoload -Uz is-at-least && is-at-least 5.1 || return
+
   # Prompt colors.
   local grey='242'
   local red='1'
@@ -45,9 +46,9 @@
   local cyan='6'
   local white='7'
 
-  local pink='200'
-  local lemon='180'
-  local melon='150'
+  local pink=200
+  local lemon=180
+  local melon=150
 
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -55,7 +56,7 @@
     dir                       # current directory
     vcs                       # git status
     # command_execution_time  # previous command duration
-    virtualenv                # python virtual environment
+    # virtualenv                # python virtual environment
     prompt_char               # prompt symbol
   )
 
@@ -70,44 +71,69 @@
 
 
   local env_color=cyan
-  local failed_arrow=lemon
-  case $[$RANDOM%8] in
-    0)
-      local git_col='280'
-      local dir_name_color=cyan
-      local arrow_color=magenta
+  local failed_arrow=244
+  case $[$RANDOM%12] in
+    0) # DIR: cyan ARROW: magenta GIT: white
+      local git_col=$white
+      local dir_name_color=$cyan
+      local arrow_color=$magenta
       ;;
-    1)
-      local git_col=cyan
-      local dir_name_color=blue
-      local arrow_color=blue
+    1) # DIR: blue ARROW: blue GIT: cyan
+      local git_col=$cyan
+      local dir_name_color=$blue
+      local arrow_color=$blue
       ;;
-    2)
-      local git_col=white
-      local dir_name_color=cyan
-      local arrow_color=cyan
+    2) # DIR: blue ARROW: blue GIT: cyan
+      local git_col=$white
+      local dir_name_color=$cyan
+      local arrow_color=$cyan
       ;;
-    3)
-      local git_col=yellow
-      local dir_name_color=white
-      local arrow_color=white
+    3) # DIR: yellow ARROW: white GIT: yellow
+      local git_col=$yellow
+      local dir_name_color=$white
+      local arrow_color=$white
       ;;
-    4)
-      local git_col=white
-      local dir_name_color=yellow
-      local arrow_color=yellow
+    4) # DIR: yellow ARROW: yellow GIT: white
+      local git_col=$white
+      local dir_name_color=$yellow
+      local arrow_color=$yellow
       ;;
-    5)
-      local git_col=pink
-      local dir_name_color=blue
-      local arrow_color=pink
+    5) # DIR: blue ARROW: pink GIT: pink
+      local git_col=$pink
+      local dir_name_color=$blue
+      local arrow_color=$pink
       ;;
-    6)
-      local git_col=white
-      local dir_name_color=melon
-      local arrow_color=pink
+    6) # DIR: melon ARROW: pink GIT: white
+      local git_col=$white
+      local dir_name_color=$melon
+      local arrow_color=$pink
       ;;
-    *)
+    7) # DIR: melon ARROW: pink GIT: white
+      local git_col=$white
+      local dir_name_color=$melon
+      local arrow_color=$pink
+      ;;
+    8) # blue fade
+      local git_col=57
+      local dir_name_color=69
+      local arrow_color=63
+      ;;
+    9) # red fade
+      local git_col=160
+      local dir_name_color=172
+      local arrow_color=166
+      ;;
+  10) # green fade
+      local git_col=45
+      local dir_name_color=47
+      local arrow_color=34
+      ;;
+  11) # cherry blossom
+      local git_col=130
+      local dir_name_color=206
+      local arrow_color=212
+      ;;
+    *) # DIR: magenta ARROW: red GIT: red
       local git_col=red
       local dir_name_color=magenta
       local arrow_color=red

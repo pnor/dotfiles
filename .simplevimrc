@@ -37,7 +37,7 @@ set completeopt=menuone,longest,preview
 set backspace=indent,eol,start
 
 " :find works as file fuzzy finder
-set path+=src/**,config/**
+set path+=&pwd,src/**,config/**
 set wildmenu
 
 " Enable italics
@@ -142,8 +142,8 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "<C-n>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " Leader-f triggers find
-nnoremap <Space><Space> :find 
-nnoremap <Leader>f :find 
+nnoremap <Space><Space> :find<Space>
+nnoremap <Leader>f :find<Space>
 
 " Fix spelling errors
 imap *L <Esc>[s1z=`]a
@@ -151,6 +151,15 @@ imap *L <Esc>[s1z=`]a
 " Terminal Sidebar
 if v:version >= 801
     command STerm execute "vert term" | execute "normal! <C-w>45<"
+endif
+
+" Open a VSCode-Style File Explorer Sidebar
+if ! exists("g:loaded_netrw")
+    command Fexplore
+        \ execute "let g:netrw_liststyle = 3" |
+        \ execute "let g:netrw_browse_split = 4" |
+        \ execute "Vexplore" |
+        \ execute "normal! <C-w>55<<C-w>w"
 endif
 
 " Trailing Whitespace
