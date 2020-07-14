@@ -1,4 +1,5 @@
 set background=dark
+
 highlight clear
 
 if exists("syntax_on")
@@ -15,7 +16,7 @@ hi CursorColumn   guifg=#ffffff guibg=#2a2a2a gui=NONE
 hi CursorLineNr   guifg=#5eb2f2 guibg=#010517 gui=NONE cterm=NONE
 hi LineNr         guifg=#34484A guibg=#010517 gui=NONE
 hi VertSplit      guifg=#010517 guibg=#676b7d gui=NONE
-hi MatchParen     guifg=#F856B5 guibg=#010517 gui=underline cterm=underline
+hi MatchParen     guifg=#FF8833 guibg=#010517 gui=underline cterm=underline
 hi StatusLine     guifg=#f8f8f2 guibg=#1a1a1a gui=bold cterm=bold
 hi StatusLineNC   guifg=#555555 guibg=#010517 gui=NONE
 hi PMenu          guifg=#BD9800 guibg=#121628 guisp=#121628 gui=NONE ctermfg=222 ctermbg=235 cterm=NONE
@@ -61,7 +62,7 @@ hi Tag            guifg=#FF8833 guibg=#010517 gui=NONE
 hi TabLineFill    guifg=#010517 guibg=#010517 gui=NONE
 hi TabLine        guifg=#888888 guibg=#222222 gui=NONE
 hi Title          guifg=#7AA1EB guibg=#010517 gui=bold
-hi Todo           guifg=#4F87AD guibg=#010517 gui=underline,bold cterm=underline,bold
+hi Todo           guifg=#46FF10 guibg=#010517 gui=underline,bold cterm=underline,bold
 hi Type           guifg=#7AA1EB guibg=#010517 gui=NONE
 hi Underlined     guifg=#ffffff guibg=#010517 gui=underline cterm=underline
 

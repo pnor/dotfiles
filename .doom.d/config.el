@@ -63,6 +63,8 @@
   ;; Windows
   "\\w" 'evil-window-next
   "\\W" 'evil-window-prev
+  ; Change workspace
+  "\\gt" '+workspace/cycle
   ;; Browsing the Web
   "\\s" 'browse-web
   ;; Finder

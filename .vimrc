@@ -16,7 +16,7 @@ Plug 'lilydjwg/colorizer'                                       " Color Highligh
 Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
 " - Integrations
-Plug '/usr/local/opt/fzf'                                       " FZF
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
 Plug 'junegunn/fzf.vim'
 Plug 'jceb/vim-orgmode'                                         " Org mode
 Plug 'jpalardy/vim-slime'                                       " Emacs slime
@@ -52,6 +52,10 @@ set tabstop     =4
 set softtabstop =4
 set shiftwidth  =4
 set expandtab
+
+" Search ignores case unless you use uppercase
+set smartcase
+set ignorecase
 
 " Filetype config
 filetype plugin indent on
@@ -251,6 +255,13 @@ let g:ale_linters={
 let g:easytags_async = 1
 
 " - FZF
+" Use rg with fzf
+let $FZF_DEFAULT_COMMAND = 'rg --files --ignore-case --hidden -g "!{.git,node_modules,vendor,venv,__pycache__}/*"'
+" Color preview
+let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
+
+
 nnoremap <Space><Space> :Files<CR>
 nnoremap <leader>f :Files<CR>
 
