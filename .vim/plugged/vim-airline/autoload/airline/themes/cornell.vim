@@ -17,7 +17,7 @@ let s:outerbg  = [ 16, 'NONE']
 let s:innerbg  = [234, 'NONE']
 
 " Normal mode
-let s:N1 = [s:outerfg[1], s:outerbg[1], s:outerfg[0], s:gray[0]]
+let s:N1 = [s:outerfg[1], s:darkgray[1], s:outerfg[0], s:gray[0]]
 let s:N3 = [s:gray[1]   , s:innerbg[1], s:gray[0]   , s:innerbg[0]]
 
 " Normal mode - modified
