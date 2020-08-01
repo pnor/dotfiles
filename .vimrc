@@ -3,8 +3,6 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Completion
-Plug 'prabirshrestha/async.vim'                                 " Async
-Plug 'skywind3000/vim-dict'                                     " vim-dict
 Plug 'townk/vim-autoclose'                                      " Autoclose
 " - Language
 Plug 'lervag/vimtex'                                            " Vimtex
@@ -13,8 +11,11 @@ Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
 Plug 'w0rp/ale'                                                 " ALE
 " - Display
 Plug 'lilydjwg/colorizer'                                       " Color Highlighter
-Plug 'luochen1990/rainbow'                                      " Rainbow Parenthesis
+Plug 'luochen1990/rlinbow'                                      " Rainbow Parenthesis
+Plug 'markonm/traces.vim'                                       " Traces
 Plug 'vim-airline/vim-airline'                                  " Vim-airline
+Plug 'vim-airline/vim-airline-themes'
+Plug 'romainl/vim-cool'                                         " Vim Cool
 " - Integrations
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
 Plug 'junegunn/fzf.vim'
@@ -98,7 +99,7 @@ if $TERM_PROGRAM =~ "iTerm"
 endif
 
 " Source color scheme
-colo cornell
+colo vim-framer-syntax
 
  " Enable italics
 let &t_ZH="\e[3m"
@@ -115,8 +116,8 @@ set scrolloff=4
 set path+=&pwd,src/**,config/**
 set wildmenu
 
-" Line for over 80 characters
-set textwidth=80
+" Line for over 120 characters
+set textwidth=120
 set colorcolumn=+0
 
 " Cursor Line coloring
@@ -129,7 +130,7 @@ hi SpellRare    guifg=#ff88cc
 hi SpellCap     guifg=#ff8811 cterm=underline
 
 " Solid Split Line
-set fillchars+=vert:│
+set fillchars+=vert:│,stlnc:─,stl:─
 
 " Character for broken lines
 set showbreak="+++"
@@ -161,7 +162,7 @@ vnoremap , ;
 map ; :
 
 " Brace completion
-inoremap {<Enter> {<Enter><Enter>}<Esc>ki<Tab>
+inoremap {<Enter> {<CR>}<Esc>ko
 
 " Ctrl-W to Leader W to navigate splits
 nnoremap <Leader>w <C-w>w
@@ -171,7 +172,7 @@ tnoremap \w <C-w>w
 tnoremap \W <C-w>W
 
 " Alternate Buffers with <Leader>b
-nnoremap <Leader>b :w<CR>:b#<CR>
+nnoremap <Leader>b :b#<CR>
 
 " Map spacebar to leader
 map <Space> <Leader>
@@ -203,7 +204,6 @@ command Fexplore
 
 " Completion Writing code
 command CodeSuggest
-    \ let g:acp_behaviorKeywordLength = 2 |
     \ setlocal nospell
     \ pumheight=0
     \ complete=.,w,b,u,t,i
@@ -212,7 +212,6 @@ command CodeSuggest
 
 " Completion writing english
 command DocSuggest
-    \ let g:acp_behaviorKeywordLength = 5 |
     \ setlocal spell
     \ complete+=k/usr/share/dict/words
     \ pumheight=3
@@ -229,7 +228,6 @@ endif
 " ---------------------------------------------------------------------------- "
 " Plugin Settings                                                              "
 " ---------------------------------------------------------------------------- "
-
 " - ALE
 nnoremap <Leader>n :ALENext<CR>
 nnoremap <Leader>p :ALEPrevious<CR>
@@ -282,7 +280,7 @@ let g:rainbow_active = 1
 " - Vim Airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='cornell'
+let g:airline_theme='fruit_punch'
 let g:airline_powerline_fonts = 0 " No Separators
 let g:airline_left_sep = ''  " No > Sep
 let g:airline_right_sep = '' " No < Sep
@@ -293,9 +291,13 @@ nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
 
+" - Vim Cool
+let g:CoolTotalMatches = 1
+
 " - Vim Floaterm
+let g:floaterm_autoclose = 2
 nnoremap <Leader>s :FloatermNew<CR>
-hi Floaterm guifg=orange
+hi Floaterm guifg=cyan
 
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat
@@ -307,11 +309,5 @@ vnoremap gr :SlimeSend<CR>
 " - vim-sneak
 let g:sneak#label = 1
 
-" - YCM
-let g:ycm_global_ycm_extra_conf = '~/.ycm_global_ycm_extra_conf.py'
-
 " Load any external config
 runtime coc-config.vim
-"runtime ocaml-config.vim
-"runtime rust-config.vim
-"runtime swift-config.vim

@@ -47,6 +47,7 @@ alias gpl="git pull"
 alias gpsuo="git push --set-upstream origin"
 alias glog="git log"
 alias glogs="git log --stat"
+alias ggraph="git log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ad)%C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date=local"
 
 # Commands
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"

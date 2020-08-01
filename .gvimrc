@@ -4,7 +4,8 @@ colorscheme PaperColor
 AirlineTheme transparent
 
 if has("gui_macvim")
-    " set macvim specific stuff
-    amenu TouchBar.strip :StripWhitespace
+    " Setup TouchBar Menu
+    amenu TouchBar.DocSuggest :DocSuggest<Cr>
+    amenu TouchBar.CodeSuggest :CodeSuggest<Cr>
 endif
 
