@@ -3,39 +3,35 @@
 " ---------------------------------------------------------------------------- "
 call plug#begin('~/.vim/plugged')
 " - Completion
-Plug 'townk/vim-autoclose'                                      " Autoclose
+Plug 'townk/vim-autoclose'                                      " Autoclose Parens
 " - Language
 Plug 'lervag/vimtex'                                            " Vimtex
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
-Plug 'sheerun/vim-polyglot'                                     " Vim Polyglot
+Plug 'sheerun/vim-polyglot'                                     " Language support
 Plug 'w0rp/ale'                                                 " ALE
 " - Display
-Plug 'lilydjwg/colorizer'                                       " Color Highlighter
-Plug 'luochen1990/rlinbow'                                      " Rainbow Parenthesis
-Plug 'markonm/traces.vim'                                       " Traces
-Plug 'vim-airline/vim-airline'                                  " Vim-airline
-Plug 'vim-airline/vim-airline-themes'
-Plug 'romainl/vim-cool'                                         " Vim Cool
+Plug 'junegunn/rainbow_parentheses.vim'                         " Rainbow Parenthesis
+Plug 'markonm/traces.vim'                                       " Live Pattern Substituion
+Plug 'romainl/vim-cool'                                         " Clear search on move
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }       " Color Highlighter
 " - Integrations
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
 Plug 'junegunn/fzf.vim'
-Plug 'jceb/vim-orgmode'                                         " Org mode
+Plug 'jceb/vim-orgmode'                                         " Org-mode Support
 Plug 'jpalardy/vim-slime'                                       " Emacs slime
-Plug 'ludovicchabant/vim-gutentags'                             " Tags
-Plug 'ntpeters/vim-better-whitespace'                           " Trailing Whitespace
-Plug 'tpope/vim-fugitive'                                       " Fugitive
-Plug 'tyru/open-browser.vim'                                    " Open Browser
-Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown
+Plug 'ludovicchabant/vim-gutentags'                             " Tag Management
+Plug 'ntpeters/vim-better-whitespace'                           " Show Trailing Whitespace
+Plug 'tpope/vim-fugitive'                                       " Git Fugitive
+Plug 'tyru/open-browser.vim'                                    " Search Web browser
+Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown Support
 Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'voldikss/vim-floaterm'                                    " Vim Floaterm
+Plug 'voldikss/vim-floaterm'                                    " Floaterm
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar
 Plug 'tpope/vim-surround'                                       " Vim-Surround
-
-Plug 'ryanoasis/vim-devicons'                                   " Dev icons (Must be called last)
 call plug#end()
 
 
@@ -73,6 +69,9 @@ set completeopt=menuone,longest,preview
 " backspace can delete whitespace/break indents
 set backspace=indent,eol,start
 
+" When diffing files, show them vertical side by side
+set diffopt+=vertical
+
 " Load matchit so % matches if-else-endif
 runtime! macros/matchit.vim
 
@@ -99,7 +98,7 @@ if $TERM_PROGRAM =~ "iTerm"
 endif
 
 " Source color scheme
-colo vim-framer-syntax
+colo cornell
 
  " Enable italics
 let &t_ZH="\e[3m"
@@ -130,13 +129,17 @@ hi SpellRare    guifg=#ff88cc
 hi SpellCap     guifg=#ff8811 cterm=underline
 
 " Solid Split Line
-set fillchars+=vert:│,stlnc:─,stl:─
+set fillchars=vert:│,stlnc:_,stl:\ ,fold:-,diff:-
 
 " Character for broken lines
 set showbreak="+++"
 
 " Show cmd as typed
 set showcmd
+
+" statusline
+set laststatus=2
+runtime statusline.vim
 
 
 " ---------------------------------------------------------------------------- "
@@ -164,21 +167,11 @@ map ; :
 " Brace completion
 inoremap {<Enter> {<CR>}<Esc>ko
 
-" Ctrl-W to Leader W to navigate splits
-nnoremap <Leader>w <C-w>w
-nnoremap <Leader>W <C-w>W
-tnoremap <Leader>w <C-w>w
-tnoremap \w <C-w>w
-tnoremap \W <C-w>W
-
-" Alternate Buffers with <Leader>b
-nnoremap <Leader>b :b#<CR>
-
-" Map spacebar to leader
-map <Space> <Leader>
-
 " Fix spelling errors
 imap *L <Esc>[s1z=`]a
+
+" Use Spacebar for window navigation
+nmap <Space> <C-w>
 
 " Move Faster with arrows
 nnoremap <Up> 10k
@@ -189,7 +182,6 @@ nnoremap <Right> 4l
 nnoremap <Left> 4h
 
 " Fold based on a search pattern
-" Use zm to show less and zr to show more
 command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
 
 " Open a Terminal Sidebar
@@ -236,7 +228,6 @@ highlight clear SignColumn      " Clear sign
 let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '#'      " Error symbol
 let g:ale_sign_warning = '~'    " Warning Symbol
-let g:airline#extensions#ale#enabled = 1
 
 let g:ale_rust_cargo_use_check = 1
 let g:ale_linter_aliases={'txt': 'text'}
@@ -249,24 +240,36 @@ let g:ale_linters={
             \ 'tex': ['chktex']
             \ }
 
-" - Easytags
-let g:easytags_async = 1
-
 " - FZF
-" Use rg with fzf
+" Us rg with fzf
 let $FZF_DEFAULT_COMMAND = 'rg --files --ignore-case --hidden -g "!{.git,node_modules,vendor,venv,__pycache__}/*"'
 " Color preview
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
-
-
+" Maps for fzf
 nnoremap <Space><Space> :Files<CR>
-nnoremap <leader>f :Files<CR>
 
 " - Git Gutter
-highlight GitGutterAdd    guifg=#448844
-highlight GitGutterChange guifg=#448888
-highlight GitGutterDelete guifg=#884444
+if has("autocmd")
+    hi GitGutterAdd    guifg=#448844
+    hi GitGutterChange guifg=#448888
+    hi GitGutterDelete guifg=#884444
+    autocmd ColorScheme * hi GitGutterAdd    guifg=#448844
+    autocmd ColorScheme * hi GitGutterChange guifg=#448888
+    autocmd ColorScheme * hi GitGutterDelete guifg=#884444
+endif
+
+" - Gutentags
+" Have gutentags generate tags frequently
+let g:gutentags_generate_on_new = 1
+let g:gutentags_generate_on_missing = 1
+let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_empty_buffer = 0
+" Gen extra info for tags
+let g:gutentags_ctags_extra_args = [
+      \ '--tag-relative=yes',
+      \ '--fields=+ailmnS',
+      \ ]
 
 " - Open Browser
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
@@ -275,16 +278,7 @@ nnoremap <Leader><Leader>g :OpenBrowserSmartSearch<Space>
 vmap <Leader>g <Plug>(openbrowser-search)
 
 " - Rainbow Parenthesis
-let g:rainbow_active = 1
-
-" - Vim Airline
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='fruit_punch'
-let g:airline_powerline_fonts = 0 " No Separators
-let g:airline_left_sep = ''  " No > Sep
-let g:airline_right_sep = '' " No < Sep
-set noshowmode " Remove default mode display
+autocmd VimEnter * RainbowParentheses
 
 " - Vim-better-whitespace
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
@@ -297,7 +291,10 @@ let g:CoolTotalMatches = 1
 " - Vim Floaterm
 let g:floaterm_autoclose = 2
 nnoremap <Leader>s :FloatermNew<CR>
-hi Floaterm guifg=cyan
+hi link Floaterm Type
+
+" - Vim-hexokinase
+let g:Hexokinase_highlighters = ['backgroundfull']
 
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat
@@ -308,6 +305,10 @@ vnoremap gr :SlimeSend<CR>
 
 " - vim-sneak
 let g:sneak#label = 1
+hi! link Sneak Search
+
+" - Vimtex
+let g:tex_flavor = 'latex'
 
 " Load any external config
 runtime coc-config.vim

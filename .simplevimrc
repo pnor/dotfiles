@@ -16,6 +16,10 @@ filetype indent on " auto indent
 set hlsearch
 set incsearch
 
+" Search ignores case unless you use uppercase
+set smartcase
+set ignorecase
+
 " Tabs are 4 spaces for proper files
 set tabstop     =4
 set softtabstop =4
@@ -81,19 +85,25 @@ function CurrentGitStatus() " Gets the current git status for the statusline
         let b:gitstatus = ''
     endif
 endfunc
+
+"hi! link StatusLine Normal
+"hi! link StatusLineGit Keyword
+"hi! link StatusLineBufferNr Search
+
 autocmd BufEnter,BufWritePost * call CurrentGitStatus()
+autocmd FileType netrw call CurrentGitStatus()
+
 set laststatus=2
 set statusline=
-set statusline +=%1*\ %n\ %*    " buffer number
-set statusline +=%1*\ %<%F%*    " full path
-set statusline +=%3*%m%*        " modified flag
-set statusline +=%2*%=%(%{b:gitstatus}%)        " git branch
-set statusline +=%1*\ \ \ %{&ff}%*  " file format
-set statusline +=%1*%y%*        " file type
-set statusline +=%1*%5l%*       " current line
-set statusline +=%1*/%L%*       " total lines
-set statusline +=%1*%4v\ %*     " virtual column number
-set statusline +=%1*0x%04B\ %*  " character under cursor
+set statusline +=%#StatusLineBufferNr#\ %n\ %*   " buffer number
+set statusline +=\ %<%f%*   " file
+set statusline +=%m%r%w%q%*     " modified flag
+set statusline +=%#StatusLineGit#\ \ %(%{b:gitstatus}%)\ %* " git branch
+set statusline +=%=
+set statusline +=\ %{&ff}%*  " file format
+set statusline +=%y%*   " file type
+set statusline +=%5l%*  " current line
+set statusline +=/%L\ \ %*  " total lines
 
 
 " ---------------------------------------------------------------------------- "

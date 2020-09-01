@@ -26,9 +26,8 @@ source /Users/philliporeggio/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Keybinds
 bindkey \^U backward-kill-line
-
-# FZF
-# export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+bindkey OA history-beginning-search-backward
+bindkey OB history-beginning-search-forward
 
 # --- Alias
 # Vim
@@ -94,28 +93,21 @@ alias dotc='dot commit -m'
 # ----- Set Up Path
 # node
 export PATH="/usr/local/opt/node@8/bin:$PATH"
-
 # python conda
 export PATH="/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH"
-
 # Vim and Emacs
 export PATH="/Users/philliporeggio/.vimpkg/bin:/Users/philliporeggio/.emacs.d/bin:$PATH"
-
 # Rust
 export PATH="$HOME/.cargo/bin:$PATH"
-
 # the bins
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-
 # laTEX
 export PATH="/usr/texbin:/usr/texbin:$PATH"
 path+=('/Library/TeX/texbin/')
 export PATH
-
 # go
 path+=('/usr/local/go/bin')
 export PATH
-
 # Custom bins/scripts
 export PATH="$HOME/bin_scripts/bin:$PATH"
 export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
@@ -125,7 +117,9 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # opam configuration
 test -r /Users/philliporeggio/.opam/opam-init/init.zsh && . /Users/philliporeggio/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-source ~/powerlevel10k/powerlevel10k.zsh-theme
 
+
+# final p10k stuff
+source ~/powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -53,24 +53,21 @@
                           (require 'lsp-python-ms)
                           (lsp))))  ; or lsp-deferred
 
-;;(use-package lsp-mode
-;;  :ensure t
-;;  :config
-;;  (add-hook '+javascript-npm-mode-hook 'lsp)
-;;  (add-hook 'c++-mode-hook 'lsp)
-;;  (add-hook 'c-mode-hook 'lsp)
-;;  (add-hook 'csharp-mode-hook 'lsp)
-;;  (add-hook 'go-mode-hook 'lsp)
-;;  (add-hook 'java-mode-hook 'lsp)
-;;  (add-hook 'latex-mode-hook 'lsp)
-;;  (add-hook 'swift-mode-hook 'lsp)
-;;  (add-hook 'typescript-mode-hook 'lsp)
-;;  )
+(use-package lsp-mode
+  :ensure t
+  :config
+  (add-hook '+javascript-npm-mode-hook 'lsp)
+  (add-hook 'c++-mode-hook 'lsp)
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'csharp-mode-hook 'lsp)
+  (add-hook 'go-mode-hook 'lsp)
+  (add-hook 'java-mode-hook 'lsp)
+  (add-hook 'latex-mode-hook 'lsp)
+  (add-hook 'swift-mode-hook 'lsp)
+  (add-hook 'typescript-mode-hook 'lsp)
+  )
 
 (use-package lsp-ui
-  :ensure t)
-
-(use-package company-lsp
   :ensure t)
 
 (use-package lsp-sourcekit
@@ -78,12 +75,12 @@
   :config
   (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
 
-(require 'lsp-sourcekit)
-(setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
-;;(setq lsp-sourcekit-executable "/Users/rudedogg/Desktop/Contrib/sourcekit-lsp/.build/debug/sourcekit-lsp")
-
 (use-package swift-mode
   :hook (swift-mode . (lambda () (lsp))))
+
+;;(require 'lsp-sourcekit)
+;;(setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
+;;(setq lsp-sourcekit-executable "/Users/rudedogg/Desktop/Contrib/sourcekit-lsp/.build/debug/sourcekit-lsp")
 
 (use-package doom-modeline
   :ensure t
@@ -92,6 +89,9 @@
 (use-package company-quickhelp
   :ensure t)
 
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
 (use-package company-jedi
   :ensure t)
 
@@ -99,3 +99,6 @@
   (add-to-list 'company-backends 'company-jedi))
 
 (add-hook 'python-mode-hook 'my/python-mode-hook)
+
+(package! company-sourcekit :disable t)
+(package! company-lsp :disable t)

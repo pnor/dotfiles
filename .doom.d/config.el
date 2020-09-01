@@ -53,7 +53,6 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (add-load-path! "lisp")
-(require 'magit-pretty-graph)
 (load! "~/.doom.d/lisp/magit-pretty-graph.el")
 
 ;; Keymaps
@@ -61,8 +60,10 @@
   ;; Command
   ";" 'evil-ex
   ;; Windows
-  "\\w" 'evil-window-next
-  "\\W" 'evil-window-prev
+  " l" 'evil-window-right
+  " H" 'evil-window-left
+  " j" 'evil-window-down
+  " k" 'evil-window-up
   ; Change workspace
   "\\gt" '+workspace/cycle
   ;; Browsing the Web
@@ -73,9 +74,6 @@
   "\\l" 'flyspell-auto-correct-word
   ;; Buffers
   "\\b" 'helm-buffers-list
-  ;; Arrow Motion
-  ;;"up" 'evil-forward-paragraph
-  ;;"<down>" 'evil-backward-paragraph
   )
 
  (evil-define-key 'visual 'global
@@ -83,23 +81,12 @@
   ";" 'evil-ex
    )
 
-;; (define-key evil-normal-state-map ";" 'evil-ex)
-;; (define-key evil-visual-state-map ";" 'evil-ex)
-;; ;; Windows with \w
-;; (define-key evil-normal-state-map "\\w" 'evil-window-next)
-;; (define-key evil-normal-state-map "\\W" 'evil-window-prev)
-;; ;; Fuzzy-ish finding
-;; (define-key evil-normal-state-map "\\f" 'helm-find-files)
-;; ;; list buffers
-;; (define-key evil-normal-state-map "\\b" 'helm-buffers-list)
-;; ;; Spelling
-;; (define-key evil-normal-state-map "\\l" 'flyspell-auto-correct-word)
-;; ;; Quick search
-;; (define-key evil-normal-state-map "\\s" 'browse-web)
-
 (require 'evil-snipe)
 (setq evil-snipe-scope 'buffer)
 (evil-snipe-mode +1)
+
+;; Markdown Previews
+(use-package vmd-mode)
 
 ;;(require 'doom-modeline) is this doing anything??
 ;;(setq doom-modeline-modal-icon 'ryo)
@@ -107,8 +94,7 @@
 ;; Company config
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
-
-;; Writing Prose
+;; Show help when writing prose
 (set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
 
 ;; Trailing whitespace (?)
