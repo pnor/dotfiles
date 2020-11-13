@@ -1,3 +1,5 @@
+let b:gitstatus = '(?)'
+
 " Functions for Statusline
 function CurrentGitStatus() " Gets the current git status for the statusline
     let b:gitstatus = FugitiveStatusline()
