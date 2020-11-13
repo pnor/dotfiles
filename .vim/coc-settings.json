@@ -18,9 +18,6 @@
       "command": "ocaml-language-server",
       "args": ["--stdio"],
       "filetypes": ["ocaml", "reason"]
-    },
-    "python": {
-        "python.jediPath": "/usr/local/lib/python3.8/site-packages/jedi"
     }
   },
   "clangd.path": "/Users/philliporeggio/.config/coc/extensions/coc-clangd-data/install/10.0.0/clangd_10.0.0/bin/clangd",
