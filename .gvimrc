@@ -1,7 +1,7 @@
 set guifont=MesloLGSNerdFontComplete-Regular:h14
-set background=light
-colorscheme PaperColor
-AirlineTheme transparent
+
+"set background=light
+"colorscheme PaperColor
 
 if has("gui_macvim")
     " Setup TouchBar Menu

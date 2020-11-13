@@ -9,12 +9,13 @@ Plug 'lervag/vimtex'                                            " Vimtex
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
 Plug 'sheerun/vim-polyglot'                                     " Language support
 Plug 'w0rp/ale'                                                 " ALE
-" - Display
+Plug 'scrooloose/nerdcommenter'                                 " Commenting stuff out
+" " - Display
 Plug 'junegunn/rainbow_parentheses.vim'                         " Rainbow Parenthesis
 Plug 'markonm/traces.vim'                                       " Live Pattern Substituion
 Plug 'romainl/vim-cool'                                         " Clear search on move
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }       " Color Highlighter
-" - Integrations
+" " - Integrations
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
 Plug 'junegunn/fzf.vim'
 Plug 'jceb/vim-orgmode'                                         " Org-mode Support
@@ -54,7 +55,7 @@ set expandtab
 set smartcase
 set ignorecase
 
-" Filetype config
+" Filetype configs
 filetype plugin indent on
 
 " Redirect backups
@@ -66,13 +67,16 @@ set undodir=$HOME/.vim/undo//
 " ins-completion
 set completeopt=menuone,longest,preview
 
+" Show a max of 5 options when the popup menu opens
+set pumheight=5
+
 " backspace can delete whitespace/break indents
 set backspace=indent,eol,start
 
 " When diffing files, show them vertical side by side
 set diffopt+=vertical
 
-" Load matchit so % matches if-else-endif
+" Load matchit so % matches if-else-endif, and related
 runtime! macros/matchit.vim
 
 if has("autocmd")
@@ -158,14 +162,14 @@ inoremap JK <Esc>
 vnoremap <CR> <Esc>
 
 " Change , to ;
-nnoremap , ;
+noremap , ;
 vnoremap , ;
 
 " Map ; to :
 map ; :
 
 " Brace completion
-inoremap {<Enter> {<CR>}<Esc>ko
+inoremap {<CR> {<CR>}<ESC>O
 
 " Fix spelling errors
 imap *L <Esc>[s1z=`]a
@@ -181,19 +185,6 @@ vnoremap <Down> 5j
 nnoremap <Right> 4l
 nnoremap <Left> 4h
 
-" Fold based on a search pattern
-command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
-
-" Open a Terminal Sidebar
-command STerm execute "vert term" | execute "normal! <C-w>45<"
-
-" Open a VSCode-Style File Explorer Sidebar
-command Fexplore
-    \ execute "let g:netrw_liststyle = 3" |
-    \ execute "let g:netrw_browse_split = 4" |
-    \ execute "Vexplore" |
-    \ execute "normal! <C-w>55<<C-w>w"
-
 " Completion Writing code
 command CodeSuggest
     \ setlocal nospell
@@ -206,14 +197,34 @@ command CodeSuggest
 command DocSuggest
     \ setlocal spell
     \ complete+=k/usr/share/dict/words
-    \ pumheight=3
+    \ pumheight=5
     \ dictionary+=/usr/share/dict/words
     \ thesaurus+=~/.vim/dict_thes/thes.text
 
-" Turn on DocSuggest if likely writing prose
+" Open a VSCode-Style File Explorer Sidebar
+command Fexplore
+    \ execute "let g:netrw_liststyle = 3" |
+    \ execute "let g:netrw_browse_split = 4" |
+    \ execute "Vexplore" |
+    \ execute "normal! <C-w>55<<C-w>w"
+
+" Fold based on a search pattern
+command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
+
+" Compare branch against master for PR reviews
+command PRReview execute "Gdiff master"
+
+" Open a Terminal Sidebar
+command STerm execute "topleft vert term" | execute "normal! <C-w>N" | execute "vertical resize 40"
+
+" Create a "*scratch*" buffer in a small horizontal split
+command Scratch execute "new *scratch*"  | execute "resize 8" | execute "setlocal buftype=nofile"
+
+" Turn on DocSuggest if writing prose
 if has("autocmd")
     autocmd BufReadPost,BufNewFile *.md,*.txt,*.org DocSuggest
     autocmd BufReadPost,BufNewFile *.txt setlocal linebreak wrap nolist textwidth=0
+    autocmd BuFReadPost *COMMIT_EDITMSG DocSuggest
 endif
 
 
@@ -229,25 +240,15 @@ let g:ale_set_highlights = 1    " No ale highlights on line
 let g:ale_sign_error = '#'      " Error symbol
 let g:ale_sign_warning = '~'    " Warning Symbol
 
-let g:ale_rust_cargo_use_check = 1
-let g:ale_linter_aliases={'txt': 'text'}
-let g:ale_linters={
-            \ 'rust': ['analyzer', 'rustc', 'cargo'],
-            \ 'python': ['flake8', 'mypy', 'pylint', 'pyls'],
-            \ 'pandoc': ['languagetool', 'mdl'],
-            \ 'markdown': ['languagetool', 'mdl'],
-            \ 'text': ['languagetool'],
-            \ 'tex': ['chktex']
-            \ }
-
 " - FZF
 " Us rg with fzf
 let $FZF_DEFAULT_COMMAND = 'rg --files --ignore-case --hidden -g "!{.git,node_modules,vendor,venv,__pycache__}/*"'
 " Color preview
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4"
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9 } }
+let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 " Maps for fzf
 nnoremap <Space><Space> :Files<CR>
+nnoremap <Space>b :Buffers<CR>
 
 " - Git Gutter
 if has("autocmd")
@@ -260,12 +261,7 @@ if has("autocmd")
 endif
 
 " - Gutentags
-" Have gutentags generate tags frequently
-let g:gutentags_generate_on_new = 1
-let g:gutentags_generate_on_missing = 1
-let g:gutentags_generate_on_write = 1
-let g:gutentags_generate_on_empty_buffer = 0
-" Gen extra info for tags
+" Generate extra info for tags
 let g:gutentags_ctags_extra_args = [
       \ '--tag-relative=yes',
       \ '--fields=+ailmnS',
@@ -280,21 +276,42 @@ vmap <Leader>g <Plug>(openbrowser-search)
 " - Rainbow Parenthesis
 autocmd VimEnter * RainbowParentheses
 
+" - Tagbar
+" Remove space binding in Tagbar, since window navigation uses space
+let g:tagbar_map_showproto=''
+" Info to show for swift files
+let g:tagbar_type_swift = {
+  \ 'ctagstype': 'swift',
+  \ 'kinds' : [
+    \ 'n:Enums',
+    \ 't:Typealiases',
+    \ 'p:Protocols',
+    \ 's:Structs',
+    \ 'c:Classes',
+    \ 'f:Functions',
+    \ 'v:Variables',
+    \ 'e:Extensions'
+  \ ],
+  \ 'sort' : 0
+\ }
+
 " - Vim-better-whitespace
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'
 let g:better_whitespace_guicolor = '#676b7d'
 
 " - Vim Cool
+" show number of matches in the command-line
 let g:CoolTotalMatches = 1
 
 " - Vim Floaterm
 let g:floaterm_autoclose = 2
+let g:floaterm_position='bottomright'
 nnoremap <Leader>s :FloatermNew<CR>
 hi link Floaterm Type
 
 " - Vim-hexokinase
-let g:Hexokinase_highlighters = ['backgroundfull']
+let g:Hexokinase_highlighters = ['foregroundfull']
 
 " - Vim-orgmode
 command -nargs=* -range SpeedDatingFormat

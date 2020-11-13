@@ -29,6 +29,15 @@ bindkey \^U backward-kill-line
 bindkey OA history-beginning-search-backward
 bindkey OB history-beginning-search-forward
 
+# --- Set global variables
+export EDITOR="vim"
+export BAT_THEME="cornell"
+
+# --- Functions
+function movgif {
+  ffmpeg -y -i $1 -f image2pipe -vcodec ppm - | convert -delay 2 -loop 0 -layers Optimize - gif:- | gifsicle -d 3 -O3 -o $2
+}
+
 # --- Alias
 # Vim
 alias v="vim -u ~/.simplevimrc"
@@ -55,11 +64,11 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-alias movgif='ffmpeg -y -i $1 -f image2pipe -vcodec ppm - | convert -delay 2 -loop 0 -layers Optimize - gif:- | gifsicle -d 3 -O3 -o $2'
-
+#alias movgif=
 # iOS Grading
 alias ios_rename='~/bin_scripts/ios_rename_grade.sh'
 alias ios_init='~/bin_scripts/ios_init.sh'
+alias ios_repo='open https://github.coecis.cornell.edu/cuappdev/ios-course'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv
@@ -74,6 +83,9 @@ alias incognito='~/bin_scripts/open_incognito_safari'
 # Mail
 alias gmail_personal='open -a /Applications/Google\ Chrome\ 2.app '\''https://mail.google.com/mail/u/0/#inbox'\'''
 alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'\'''
+
+# AMPL
+alias ampl='~/bin_scripts/ampl_msg.sh'
 
 # Emacs
 alias emacs='~/bin_scripts/emacs.sh .'

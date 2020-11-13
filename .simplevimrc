@@ -127,13 +127,8 @@ map ; :
 nnoremap , ;
 vnoremap , ;
 
-" Ctrl-W to Leader W
-nnoremap <Leader>w <C-w>w
-nnoremap <Leader>W <C-w>W
-tnoremap <Leader>w <C-w>w
-
-" Map spacebar to leader
-map <Space> <Leader>
+" Use Spacebar for window navigation
+nmap <Space> <C-w>
 
 " Move Faster with arrows
 nnoremap <Up> 8k

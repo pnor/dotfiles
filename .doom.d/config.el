@@ -105,3 +105,6 @@
 
 ;; Retina display / less fuzzy pdfs
 (setq pdf-view-use-scaling t pdf-view-use-imagemagick nil)
+
+;; Org mode
+(setq org-hide-emphasis-markers t)

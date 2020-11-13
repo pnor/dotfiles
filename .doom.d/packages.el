@@ -100,5 +100,7 @@
 
 (add-hook 'python-mode-hook 'my/python-mode-hook)
 
+(add-hook 'org-mode-hook 'org-toggle-pretty-entities)
+
 (package! company-sourcekit :disable t)
 (package! company-lsp :disable t)
