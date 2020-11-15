@@ -72,8 +72,9 @@ alias ios_repo='open https://github.coecis.cornell.edu/cuappdev/ios-course'
 
 # Python
 alias venv='source venv/bin/activate' # activate venv
-alias initvenv='virtualenv --no-site-packages -p python3 venv' # create venv with no site packages
-alias python='python3'
+alias initvenv='virtualenv -p python3 venv' # create venv with no site packages
+alias python='/usr/bin/python3'
+alias pip3='/usr/bin/pip3'
 
 # Web Browsers
 alias chrome='open -a "Google Chrome 2"'

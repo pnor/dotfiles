@@ -37,19 +37,6 @@
   # Zsh >= 5.1 is required.
   autoload -Uz is-at-least && is-at-least 5.1 || return
 
-  # Prompt colors.
-  local grey='242'
-  local red='1'
-  local yellow='3'
-  local blue='4'
-  local magenta='5'
-  local cyan='6'
-  local white='7'
-
-  local pink=200
-  local lemon=180
-  local melon=150
-
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # context                 # user@host
@@ -72,73 +59,38 @@
 
   local env_color=cyan
   local failed_arrow=244
-  case $[$RANDOM%12] in
-    0) # DIR: cyan ARROW: magenta GIT: white
-      local git_col=$white
-      local dir_name_color=$cyan
-      local arrow_color=$magenta
-      ;;
-    1) # DIR: blue ARROW: blue GIT: cyan
-      local git_col=$cyan
-      local dir_name_color=$blue
-      local arrow_color=$blue
-      ;;
-    2) # DIR: blue ARROW: blue GIT: cyan
-      local git_col=$white
-      local dir_name_color=$cyan
-      local arrow_color=$cyan
-      ;;
-    3) # DIR: yellow ARROW: white GIT: yellow
-      local git_col=$yellow
-      local dir_name_color=$white
-      local arrow_color=$white
-      ;;
-    4) # DIR: yellow ARROW: yellow GIT: white
-      local git_col=$white
-      local dir_name_color=$yellow
-      local arrow_color=$yellow
-      ;;
-    5) # DIR: blue ARROW: pink GIT: pink
-      local git_col=$pink
-      local dir_name_color=$blue
-      local arrow_color=$pink
-      ;;
-    6) # DIR: melon ARROW: pink GIT: white
-      local git_col=$white
-      local dir_name_color=$melon
-      local arrow_color=$pink
-      ;;
-    7) # DIR: melon ARROW: pink GIT: white
-      local git_col=$white
-      local dir_name_color=$melon
-      local arrow_color=$pink
-      ;;
-    8) # blue fade
-      local git_col=57
-      local dir_name_color=69
-      local arrow_color=63
-      ;;
-    9) # red fade
-      local git_col=160
-      local dir_name_color=172
-      local arrow_color=166
-      ;;
-  10) # green fade
-      local git_col=45
-      local dir_name_color=47
-      local arrow_color=34
-      ;;
-  11) # cherry blossom
-      local git_col=130
-      local dir_name_color=206
-      local arrow_color=212
-      ;;
-    *) # DIR: magenta ARROW: red GIT: red
-      local git_col=red
-      local dir_name_color=magenta
-      local arrow_color=red
-      ;;
-  esac
+  # want colors from 19 to 231
+  # complement is 130-156 distance
+  # 0 .. 212
+
+  # Get ranges
+  base_color=$[$RANDOM%212]
+  complement_color=$(echo "($base_color + 90 + $[$RANDOM%20]) % 212" | bc)
+  supporting_color=$(echo "($base_color + 40 + $[$RANDOM%20]) % 212" | bc)
+
+  # Offset by 19 and bound in range
+  base_color=$(echo "$base_color + 19" | bc)
+  complement_color=$(echo "$complement_color + 19" | bc)
+  supporting_color=$(echo "$supporting_color + 19" | bc)
+
+  # Set colors
+  local dir_name_color=$base_color
+
+  random_result=$[RANDOM%3]
+  if (( $random_result == 0 )); then
+      local arrow_color=$base_color
+  elif (( $random_result == 1 )); then
+      local arrow_color=$complement_color
+  else
+      local arrow_color=$supporting_color
+  fi
+
+  random_result=$[RANDOM%2]
+  if (( $random_result == 0 )); then
+      local git_col=$complement_color
+  else
+      local git_col=$supporting_color
+  fi
 
   # Basic style options that define the overall prompt look.
   typeset -g POWERLEVEL9K_BACKGROUND=                            # transparent background
