@@ -108,3 +108,4 @@
 
 ;; Org mode
 (setq org-hide-emphasis-markers t)
+(setq org-pretty-entities t)
