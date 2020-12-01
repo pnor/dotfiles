@@ -45,6 +45,5 @@ set statusline +=%#StatusLineGit#\ \ %(%{b:gitstatus}%)\ %* " git branch
 set statusline +=%=
 set statusline +=\ %{&ff}%*  " file format
 set statusline +=%y%*   " file type
-set statusline +=%5l%*  " current line
-set statusline +=/%L\ \ %*  " total lines
+set statusline +=\ %p%%\ %* " file percentage
 set statusline +=%#CocStatusLine#%{StatusDiagnostic()}\ %* "Coc Diagonstics"

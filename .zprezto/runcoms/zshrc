@@ -4,9 +4,9 @@ source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#fi
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -52,6 +52,7 @@ alias gb="git branch"
 alias gch="git checkout"
 alias gpu="git push"
 alias gpl="git pull"
+alias gcl="git clone"
 alias gpsuo="git push --set-upstream origin"
 alias glog="git log"
 alias glogs="git log --stat"
@@ -99,7 +100,7 @@ alias leett='leetcode test'
 alias leetget='~/bin_scripts/leetget.sh'
 
 # Dotfiles repo
-alias dot='/usr/bin/git --git-dir=/Users/philliporeggio/.cfg/ --work-tree=/Users/philliporeggio'
+alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias dots='dot status'
 alias dotc='dot commit -m'
 
@@ -117,7 +118,6 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # laTEX
 export PATH="/usr/texbin:/usr/texbin:$PATH"
 path+=('/Library/TeX/texbin/')
-export PATH
 # go
 path+=('/usr/local/go/bin')
 export PATH

@@ -22,9 +22,9 @@ hi StatusLineTerm   guifg=#FF8833 guibg=#010517 gui=NONE cterm=NONE
 hi StatusLineTermNC guifg=#777777 guibg=#010517 gui=NONE cterm=NONE
 hi MatchParen     guifg=#FF8833 guibg=#010517 gui=underline cterm=underline
 hi Pmenu          guifg=#CCCCCC guibg=#121628
-hi PmenuSbar      guifg=#34353b guibg=#32384a
-hi PmenuSel       guifg=#ffffff guibg=#FF8833
-hi PmenuThumb     guifg=#43454b guibg=#121628
+hi PmenuSbar      guifg=#43454b guibg=#121628
+hi PmenuSel       guifg=#efffff guibg=#FF8833
+hi PmenuThumb     guifg=#34353b guibg=#32384a
 hi IncSearch      guifg=#f856b5 guibg=#000000 gui=NONE
 hi Search         guifg=#00ffff guibg=#010517 gui=NONE
 hi Directory      guifg=#7AA1EB guibg=#010517 gui=NONE
@@ -107,11 +107,13 @@ hi goType               guifg=#AABFE6 guibg=NONE gui=NONE
 hi goUnsignedInts       guifg=#AABFE6 guibg=NONE gui=NONE
 hi goVar                guifg=#7AA1EB guibg=NONE gui=NONE
 
+" ALE
 hi ALEErrorSign      guifg=#FB8496 guibg=#010517 gui=NONE
 hi ALEError          guifg=#FB8496 guibg=#010517 gui=NONE
 hi ALEWarningSign    guifg=#5eb2f2 guibg=#010517 gui=NONE
 hi ALEWarning        guibg=NONE ctermbg=NONE cterm=underline
 
+" Coc
 hi CocErrorSign         guifg=#FB8496
 hi CocInfoSign          guifg=#FDDC87
 hi CocWarningSign       guifg=#5eb2f2
