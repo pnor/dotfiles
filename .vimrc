@@ -10,16 +10,16 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
 Plug 'sheerun/vim-polyglot'                                     " Language support
 Plug 'w0rp/ale'                                                 " ALE
 Plug 'scrooloose/nerdcommenter'                                 " Commenting stuff out
-" " - Display
+" - Display
 Plug 'junegunn/rainbow_parentheses.vim'                         " Rainbow Parenthesis
 Plug 'markonm/traces.vim'                                       " Live Pattern Substituion
 Plug 'romainl/vim-cool'                                         " Clear search on move
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }       " Color Highlighter
-" " - Integrations
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
-Plug 'junegunn/fzf.vim'
+" - Integrations
 Plug 'jceb/vim-orgmode'                                         " Org-mode Support
 Plug 'jpalardy/vim-slime'                                       " Emacs slime
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " FZF
+Plug 'junegunn/fzf.vim'
 Plug 'ludovicchabant/vim-gutentags'                             " Tag Management
 Plug 'ntpeters/vim-better-whitespace'                           " Show Trailing Whitespace
 Plug 'tpope/vim-fugitive'                                       " Git Fugitive
@@ -27,12 +27,16 @@ Plug 'tyru/open-browser.vim'                                    " Search Web bro
 Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown Support
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'voldikss/vim-floaterm'                                    " Floaterm
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex live preview
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar
 Plug 'tpope/vim-surround'                                       " Vim-Surround
+" - Other
+Plug 'unblevable/quick-scope'                                   " Highlight unique f/F characters
+
 call plug#end()
 
 
@@ -119,8 +123,8 @@ set scrolloff=4
 set path+=&pwd,src/**,config/**
 set wildmenu
 
-" Line for over 120 characters
-set textwidth=120
+" Line for over 110 characters
+set textwidth=115
 set colorcolumn=+0
 
 " Cursor Line coloring
@@ -209,10 +213,17 @@ command Fexplore
     \ execute "normal! <C-w>55<<C-w>w"
 
 " Fold based on a search pattern
-command! -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
+command -nargs=+ Foldsearch exe "normal /".<q-args>."\r" | setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\|\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=0
 
 " Compare branch against master for PR reviews
 command PRReview execute "Gdiff master"
+
+" Change gitgutter to diff differences from a specific commit hash, and change appearence
+command -nargs=1 PRGutter execute
+            \ "let g:gitgutter_diff_base=\"<args>\"" |
+            \ hi GitGutterAdd       guifg=#44AA44 guibg=#44AA44 |
+            \ hi GitGutterChange    guifg=#44AAAA guibg=#44AAAA |
+            \ hi GitGutterDelete    guifg=#AA4444 guibg=#AA4444
 
 " Open a Terminal Sidebar
 command STerm execute "topleft vert term" | execute "normal! <C-w>N" | execute "vertical resize 40"
@@ -326,6 +337,13 @@ hi! link Sneak Search
 
 " - Vimtex
 let g:tex_flavor = 'latex'
+
+" - Latex live preview
+let g:livepreview_previewer = 'open -a Skim'
+
+" - Quickscope
+let g:qs_second_highlight = 0
+highlight QuickScopePrimary cterm=bold gui=bold
 
 " Load any external config
 runtime coc-config.vim
