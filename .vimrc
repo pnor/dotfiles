@@ -9,7 +9,6 @@ Plug 'lervag/vimtex'                                            " Vimtex
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
 Plug 'sheerun/vim-polyglot'                                     " Language support
 Plug 'w0rp/ale'                                                 " ALE
-Plug 'scrooloose/nerdcommenter'                                 " Commenting stuff out
 " - Display
 Plug 'junegunn/rainbow_parentheses.vim'                         " Rainbow Parenthesis
 Plug 'markonm/traces.vim'                                       " Live Pattern Substituion
@@ -30,6 +29,7 @@ Plug 'voldikss/vim-floaterm'                                    " Floaterm
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex live preview
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
+Plug 'ryanoasis/vim-devicons'                                   " Fancy icons
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'majutsushi/tagbar'                                        " Tagbar

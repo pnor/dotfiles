@@ -38,12 +38,12 @@ hi! link StatusLineBufferNr PmenuSel
 set laststatus=2
 
 set statusline=
-set statusline +=%#StatusLineBufferNr#\ %n\ %*   " buffer number
-set statusline +=\ %<%f%*   " file
-set statusline +=%m%r%w%q%*     " modified flag
-set statusline +=%#StatusLineGit#\ \ %(%{b:gitstatus}%)\ %* " git branch
+set statusline +=%#StatusLineBufferNr#\ %n\ %*                  " buffer number
+set statusline +=\ %<%f%*                                       " file
+set statusline +=%m%r%w%q%*                                     " modified/readonly/etc. flag
+set statusline +=%#StatusLineGit#\ \ %(%{b:gitstatus}%)\ %*     " git branch
+set statusline +=%#CocStatusLine#%{StatusDiagnostic()}\ %*      "Coc Diagonstics"
 set statusline +=%=
-set statusline +=\ %{&ff}%*  " file format
-set statusline +=%y%*   " file type
-set statusline +=\ %p%%\ %* " file percentage
-set statusline +=%#CocStatusLine#%{StatusDiagnostic()}\ %* "Coc Diagonstics"
+set statusline +=%{WebDevIconsGetFileTypeSymbol()}\ %y%*        " file type
+set statusline +=[%{&ff}]%*                                     " file format
+set statusline +=\ %p%%\ %*                                     " file percentage
