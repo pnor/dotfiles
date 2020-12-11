@@ -49,9 +49,6 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Start maximised
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
 (add-load-path! "lisp")
 (load! "~/.doom.d/lisp/magit-pretty-graph.el")
 
@@ -66,12 +63,6 @@
   " k" 'evil-window-up
   ; Change workspace
   "\\gt" '+workspace/cycle
-  ;; Browsing the Web
-  "\\s" 'browse-web
-  ;; Finder
-  "\\f" 'helm-find-files
-  ;; Spelling Correction
-  "\\l" 'flyspell-auto-correct-word
   ;; Buffers
   "\\b" 'helm-buffers-list
   )
@@ -88,14 +79,18 @@
 ;; Markdown Previews
 (use-package vmd-mode)
 
-;;(require 'doom-modeline) is this doing anything??
-;;(setq doom-modeline-modal-icon 'ryo)
-;;
 ;; Company config
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
+
+;; ========== Company
+(require 'company-sourcekit)
+(add-to-list 'company-backends 'company-sourcekit)
 ;; Show help when writing prose
-(set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
+(set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
+
+;; Swift
+(set-company-backend! 'swift-mode 'company-sourcekit)
 
 ;; Trailing whitespace (?)
 (doom-enable-show-trailing-whitespace-h)

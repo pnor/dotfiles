@@ -5,7 +5,6 @@ call plug#begin('~/.vim/plugged')
 " - Completion
 Plug 'townk/vim-autoclose'                                      " Autoclose Parens
 " - Language
-Plug 'lervag/vimtex'                                            " Vimtex
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Coc
 Plug 'sheerun/vim-polyglot'                                     " Language support
 Plug 'w0rp/ale'                                                 " ALE
@@ -26,16 +25,17 @@ Plug 'tyru/open-browser.vim'                                    " Search Web bro
 Plug 'vim-pandoc/vim-pandoc'                                    " Pandoc/Markdown Support
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'voldikss/vim-floaterm'                                    " Floaterm
-Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex live preview
 " - Interface
 Plug 'airblade/vim-gitgutter'                                   " git-gutter
 Plug 'ryanoasis/vim-devicons'                                   " Fancy icons
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
-Plug 'majutsushi/tagbar'                                        " Tagbar
-Plug 'tpope/vim-surround'                                       " Vim-Surround
+Plug 'tpope/vim-surround'                                       " vim-surround
 " - Other
 Plug 'unblevable/quick-scope'                                   " Highlight unique f/F characters
+" - Latex
+Plug 'lervag/vimtex'                                            " Vimtex
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }          " Latex live preview
 
 call plug#end()
 
@@ -124,7 +124,7 @@ set path+=&pwd,src/**,config/**
 set wildmenu
 
 " Line for over 110 characters
-set textwidth=115
+set textwidth=116
 set colorcolumn=+0
 
 " Cursor Line coloring

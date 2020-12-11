@@ -46,4 +46,4 @@ set statusline +=%#CocStatusLine#%{StatusDiagnostic()}\ %*      "Coc Diagonstics
 set statusline +=%=
 set statusline +=%{WebDevIconsGetFileTypeSymbol()}\ %y%*        " file type
 set statusline +=[%{&ff}]%*                                     " file format
-set statusline +=\ %p%%\ %*                                     " file percentage
+set statusline +=\ %-03.3p%%\ %*                                     " file percentage
