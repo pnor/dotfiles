@@ -49,9 +49,6 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
-(add-load-path! "lisp")
-(load! "~/.doom.d/lisp/magit-pretty-graph.el")
-
 ;; Keymaps
 (evil-define-key 'normal 'global
   ;; Command

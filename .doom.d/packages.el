@@ -46,12 +46,20 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-;;package settings
-(use-package lsp-python-ms
-  :ensure t
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-python-ms)
-                          (lsp))))  ; or lsp-deferred
+;; external packages
+(package! company-box)
+(package! company-lsp :disable t)
+(package! company-sourcekit :disable t)
+;; (package! company-sourcekit) OUTDATED ):
+(package! gnuplot)
+(package! latex-preview-pane)
+
+;; Complete text
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 2)
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
 (use-package lsp-mode
   :ensure t
@@ -67,40 +75,7 @@
   (add-hook 'typescript-mode-hook 'lsp)
   )
 
-(use-package lsp-ui
-  :ensure t)
-
-(use-package lsp-sourcekit
-  :after lsp-mode
-  :config
-  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
-
 (use-package swift-mode
   :hook (swift-mode . (lambda () (lsp))))
 
-;;(require 'lsp-sourcekit)
-;;(setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
-;;(setq lsp-sourcekit-executable "/Users/rudedogg/Desktop/Contrib/sourcekit-lsp/.build/debug/sourcekit-lsp")
-
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1))
-
-(use-package company-quickhelp
-  :ensure t)
-
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-
-(use-package company-jedi
-  :ensure t)
-
-(defun my/python-mode-hook ()
-  (add-to-list 'company-backends 'company-jedi))
-
-(add-hook 'python-mode-hook 'my/python-mode-hook)
-
 (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
-
-(package! company-sourcekit :disable t)
-(package! company-lsp :disable t)
