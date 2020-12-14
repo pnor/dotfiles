@@ -49,6 +49,9 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
+;; Default window size
+(setq initial-frame-alist '((top . 100) (left . 100) (width . 120) (height . 45)))
+
 ;; Keymaps
 (evil-define-key 'normal 'global
   ;; Command
@@ -60,8 +63,6 @@
   " k" 'evil-window-up
   ; Change workspace
   "\\gt" '+workspace/cycle
-  ;; Buffers
-  "\\b" 'helm-buffers-list
   )
 
  (evil-define-key 'visual 'global
@@ -73,24 +74,29 @@
 (setq evil-snipe-scope 'buffer)
 (evil-snipe-mode +1)
 
+
 ;; Markdown Previews
 (use-package vmd-mode)
 
-;; Company config
-(setq company-idle-delay 0.1)
-(setq company-minimum-prefix-length 2)
 
-;; ========== Company
-(require 'company-sourcekit)
-(add-to-list 'company-backends 'company-sourcekit)
+;; Company config
+(setq company-idle-delay 0.1
+      company-minimum-prefix-length 3)
+
+(use-package lsp-sourcekit
+  :after lsp-mode
+  :config
+  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
+(use-package swift-mode
+  :hook (swift-mode . (lambda () (lsp))))
+
+;; (use-package company-box
+;;   :hook (company-mode . company-box-mode))
+
+
 ;; Show help when writing prose
 (set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
-
-;; Swift
-(set-company-backend! 'swift-mode 'company-sourcekit)
-
-;; Trailing whitespace (?)
-(doom-enable-show-trailing-whitespace-h)
+(set-company-backend! 'swift-mode 'company-lsp)
 
 ;; Latex
 (latex-preview-pane-enable)

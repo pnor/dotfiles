@@ -48,34 +48,8 @@
 
 ;; external packages
 (package! company-box)
-(package! company-lsp :disable t)
-(package! company-sourcekit :disable t)
-;; (package! company-sourcekit) OUTDATED ):
+(package! company-lsp)
 (package! gnuplot)
 (package! latex-preview-pane)
-
-;; Complete text
-(setq company-idle-delay 0.2
-      company-minimum-prefix-length 2)
-
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-
-(use-package lsp-mode
-  :ensure t
-  :config
-  (add-hook '+javascript-npm-mode-hook 'lsp)
-  (add-hook 'c++-mode-hook 'lsp)
-  (add-hook 'c-mode-hook 'lsp)
-  (add-hook 'csharp-mode-hook 'lsp)
-  (add-hook 'go-mode-hook 'lsp)
-  (add-hook 'java-mode-hook 'lsp)
-  (add-hook 'latex-mode-hook 'lsp)
-  (add-hook 'swift-mode-hook 'lsp)
-  (add-hook 'typescript-mode-hook 'lsp)
-  )
-
-(use-package swift-mode
-  :hook (swift-mode . (lambda () (lsp))))
-
-(add-hook 'org-mode-hook 'org-toggle-pretty-entities)
+(package! lsp-sourcekit)
+(package! vmd-mode)
