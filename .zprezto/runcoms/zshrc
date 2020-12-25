@@ -43,6 +43,10 @@ function movgif {
   ffmpeg -y -i $1 -f image2pipe -vcodec ppm - | convert -delay 2 -loop 0 -layers Optimize - gif:- | gifsicle -d 3 -O3 -o $2
 }
 
+function shrinkgif {
+    gifsicle -O3 --lossy=80 $1 -o $2
+}
+
 # --- Alias
 # Vim
 alias v="vim -u ~/.simplevimrc"
@@ -96,6 +100,7 @@ alias ampl='~/bin_scripts/ampl_msg.sh'
 
 # Emacs
 alias emacs='~/bin_scripts/emacs.sh .'
+alias update_eshell_alias="~/bin_scripts/update_eshell_alias.zsh"
 
 # IntelliJ
 alias intellij='~/bin_scripts/intellij.sh "$(pwd)"'
@@ -129,7 +134,9 @@ path+=('/usr/local/go/bin')
 export PATH
 # Custom bins/scripts
 export PATH="$HOME/bin_scripts/bin:$PATH"
+# Rust
 export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
+#export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

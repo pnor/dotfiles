@@ -53,3 +53,11 @@
 (package! latex-preview-pane)
 (package! lsp-sourcekit)
 (package! vmd-mode)
+(package! ampl-mode :recipe
+  (:host github
+   :repo "dpo/ampl-mode"
+   :files ("emacs/ampl-mode.el")))
+(package! magit-pretty-graph :recipe
+  (:host github
+   :repo "georgek/magit-pretty-graph"
+   :files ("magit-pretty-graph.el")))

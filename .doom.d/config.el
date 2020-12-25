@@ -49,10 +49,12 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Default window size
-(setq initial-frame-alist '((top . 100) (left . 100) (width . 120) (height . 45)))
+;; --- Default window size on startup
+(setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
 
-;; Keymaps
+;; --- Eshell
+
+;; --- Keymaps
 (evil-define-key 'normal 'global
   ;; Command
   ";" 'evil-ex
@@ -74,12 +76,7 @@
 (setq evil-snipe-scope 'buffer)
 (evil-snipe-mode +1)
 
-
-;; Markdown Previews
-(use-package vmd-mode)
-
-
-;; Company config
+;; --- Company config
 (setq company-idle-delay 0.1
       company-minimum-prefix-length 3)
 
@@ -90,20 +87,40 @@
 (use-package swift-mode
   :hook (swift-mode . (lambda () (lsp))))
 
-;; (use-package company-box
-;;   :hook (company-mode . company-box-mode))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
-
-;; Show help when writing prose
+;; Company Completion
 (set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
-(set-company-backend! 'swift-mode 'company-lsp)
+(set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
 
-;; Latex
+;; --- AMPL editing
+(setq auto-mode-alist
+      (cons '("\\.mod$" . ampl-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.dat$" . ampl-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.ampl$" . ampl-mode) auto-mode-alist))
+(setq interpreter-mode-alist
+      (cons '("ampl" . ampl-mode)
+            interpreter-mode-alist))
+(autoload 'ampl-mode "ampl-mode" "Ampl editing mode." t)
+
+;; --- Latex and PDFs
 (latex-preview-pane-enable)
 
 ;; Retina display / less fuzzy pdfs
 (setq pdf-view-use-scaling t pdf-view-use-imagemagick nil)
 
-;; Org mode
+;; --- Org mode
 (setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
+;; Fix bug(?) where newline is set to void in orgmode
+(add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
+
+;; --- Fill column
+(setq-default fill-column 116)
+
+;; --- Set transparency
+(set-frame-parameter (selected-frame) 'alpha '(85 85))
+(add-to-list 'default-frame-alist '(alpha 85 85))
