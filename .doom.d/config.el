@@ -52,25 +52,19 @@
 ;; --- Default window size on startup
 (setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
 
-;; --- Eshell
-
 ;; --- Keymaps
-(evil-define-key 'normal 'global
-  ;; Command
-  ";" 'evil-ex
-  ;; Windows
-  " l" 'evil-window-right
-  " H" 'evil-window-left
-  " j" 'evil-window-down
-  " k" 'evil-window-up
-  ; Change workspace
-  "\\gt" '+workspace/cycle
+(map! :leader :mode 'global
+  "h" #'evil-window-left
+  "l" #'evil-window-right
+  "j" #'evil-window-down
+  "k" #'evil-window-up
+  "gt" '+workspace/cycle
   )
-
- (evil-define-key 'visual 'global
-  ;; Command
+(map! :nv
   ";" 'evil-ex
-   )
+  )
+(map! :leader :g
+      "gt" #'+workspace/cycle)
 
 (require 'evil-snipe)
 (setq evil-snipe-scope 'buffer)

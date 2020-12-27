@@ -49,7 +49,6 @@
 ;; external packages
 (package! company-box)
 (package! company-lsp)
-(package! gnuplot)
 (package! latex-preview-pane)
 (package! lsp-sourcekit)
 (package! vmd-mode)
@@ -57,7 +56,3 @@
   (:host github
    :repo "dpo/ampl-mode"
    :files ("emacs/ampl-mode.el")))
-(package! magit-pretty-graph :recipe
-  (:host github
-   :repo "georgek/magit-pretty-graph"
-   :files ("magit-pretty-graph.el")))
