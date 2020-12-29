@@ -1,0 +1,183 @@
+#+TITLE: Org Mode Configuration
+#+AUTHOR: Phillip O'Reggio
+#+PROPERTY: header-args :emacs-lisp :tangle yes :comments link
+#+BEGIN_SRC emacs-lisp
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+#+END_SRC
+
+* Private Information
+Load some personal information from =Secret.el=
+#+BEGIN_SRC emacs-lisp
+(load! "Secret.el")
+#+END_SRC emacs-lisp
+
+* Font, Themes, and the General Look
+Set the color theme and font
+#+BEGIN_SRC emacs-lisp
+(setq doom-theme 'doom-city-lights)
+
+(setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
+#+END_SRC
+
+Make the emacs frame transparent because I like my laptop background 🙃
+#+BEGIN_SRC emacs-lisp
+(set-frame-parameter (selected-frame) 'alpha '(85 85))
+(add-to-list 'default-frame-alist '(alpha 85 85))
+#+END_SRC
+
+Make emacs start centered on my macbook pro, and in a decently large frame.
+#+BEGIN_SRC emacs-lisp
+(setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
+#+END_SRC
+
+Add a fill column to prevent long lines (116 is the width of the vertical monitor)
+#+BEGIN_SRC emacs-lisp
+(setq-default fill-column 116)
+#+END_SRC
+
+Show Line numbers...
+#+BEGIN_SRC emacs-lisp
+(setq display-line-numbers-type t)
+#+END_SRC
+
+Set the org directory for org related files
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/org/")
+#+END_SRC
+
+* Key-mappings and Related
+Make moving around splits as easy as pressing space.
+#+BEGIN_SRC emacs-lisp
+(map! :leader :mode 'global
+  "h" #'evil-window-left
+  "l" #'evil-window-right
+  "j" #'evil-window-down
+  "k" #'evil-window-up
+  )
+#+END_SRC
+
+Change ";" to ":" (for vim ex mode)
+#+BEGIN_SRC emacs-lisp
+(map! :nv
+  ";" 'evil-ex
+  )
+#+END_SRC
+
+* Org Mode
+Make org-mode documents look a little nicer
+#+BEGIN_SRC emacs-lisp
+(setq org-hide-emphasis-markers t)
+(setq org-pretty-entities t)
+#+END_SRC
+
+Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
+#+END_SRC
+
+* Ivy
+Config for the search engine, Ivy.
+
+Allow fuzzy searches to make it easier to find matches with less thought.
+#+BEGIN_SRC emacs-lisp
+
+(setq ivy-re-builders-alist
+      '((t . ivy--regex-fuzzy)))
+#+END_SRC
+
+* Evil-Snipe
+Jump around buffers using 2 character searches.
+#+BEGIN_SRC emacs-lisp
+(require 'evil-snipe)
+#+END_SRC
+
+Enable it globally...
+#+BEGIN_SRC emacs-lisp
+(evil-snipe-mode +1)
+#+END_SRC
+
+and search the rest of the buffer *that is on screen* for matches
+#+BEGIN_SRC emacs-lisp
+(setq evil-snipe-scope 'visible)
+#+END_SRC
+
+* Working with PDFs
+Settings that make PDFs more pleasant to work with.
+
+Enable ~latex-preview-pane-mode~ which allows previewing latex in a buffer (like Overleaf)
+#+BEGIN_SRC emacs-lisp
+(latex-preview-pane-enable)
+#+END_SRC
+
+Make PDFs look sharper on MacOS
+#+BEGIN_SRC emacs-lisp
+(setq pdf-view-use-scaling t pdf-view-use-imagemagick nil)
+#+END_SRC
+
+* Company
+Configurations for Company.
+
+Make completions show up quickly after typing 3 characters.
+#+BEGIN_SRC emacs-lisp
+(setq company-idle-delay 0.1
+      company-minimum-prefix-length 3)
+#+END_SRC
+
+Add neat symbols to completion results ♻
+#+BEGIN_SRC emacs-lisp
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+#+END_SRC
+
+** Set up extra completions for certain modes
+Recommend words when typing in text or org mode files:
+#+BEGIN_SRC emacs-lisp
+(set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
+#+END_SRC
+Recommend previously used wojds in swift files to compensate for spotty sourcekit support:
+#+BEGIN_SRC emacs-lisp
+(set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
+#+END_SRC
+
+
+* OR Tools
+Useful stuff for working with linear programs and the like.
+
+Hook AMPL relate files to [[https://github.com/dpo/ampl-mode][ampl-mode]].
+#+BEGIN_SRC emacs-lisp
+(setq auto-mode-alist
+      (cons '("\\.mod$" . ampl-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.dat$" . ampl-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.ampl$" . ampl-mode) auto-mode-alist))
+(setq interpreter-mode-alist
+      (cons '("ampl" . ampl-mode)
+            interpreter-mode-alist))
+(autoload 'ampl-mode "ampl-mode" "Ampl editing mode." t)
+#+END_SRC
+
+* Rust
+Configs for coding in the rust programming language.
+
+Set ~RUST_SRC_PATH~ for racer:
+#+BEGIN_SRC emacs-lisp
+(setq racer-rust-src-path
+      "/Users/philliporeggio/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/library")
+#+END_SRC
+
+* Swift
+Config for the swift programming language.
+
+Setup lsp-sourcekit to work swift files...
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-sourcekit
+  :after lsp-mode
+  :config
+  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
+(use-package swift-mode
+  :hook (swift-mode . (lambda () (lsp))))
+#+END_SRC
+** TODO good completion for .xcodeprojs and modules would be nice
+
+#+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit

@@ -136,7 +136,7 @@ export PATH
 export PATH="$HOME/bin_scripts/bin:$PATH"
 # Rust
 export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
-#export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
