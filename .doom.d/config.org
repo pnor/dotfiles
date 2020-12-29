@@ -5,13 +5,14 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 #+END_SRC
 
-* Private Information
+* General
+** Private Information
 Load some personal information from =Secret.el=
 #+BEGIN_SRC emacs-lisp
 (load! "Secret.el")
 #+END_SRC emacs-lisp
 
-* Font, Themes, and the General Look
+** Font, Themes, and the General Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
 (setq doom-theme 'doom-city-lights)
@@ -45,7 +46,7 @@ Set the org directory for org related files
 (setq org-directory "~/org/")
 #+END_SRC
 
-* Key-mappings and Related
+** Key-mappings and Related
 Make moving around splits as easy as pressing space.
 #+BEGIN_SRC emacs-lisp
 (map! :leader :mode 'global
@@ -63,7 +64,8 @@ Change ";" to ":" (for vim ex mode)
   )
 #+END_SRC
 
-* Org Mode
+* Modes
+** Org Mode
 Make org-mode documents look a little nicer
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
@@ -75,7 +77,7 @@ Fix a bug (?) where inserting newlines using the enter key doesn't work in org-m
 (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
 #+END_SRC
 
-* Ivy
+** Ivy
 Config for the search engine, Ivy.
 
 Allow fuzzy searches to make it easier to find matches with less thought.
@@ -85,7 +87,7 @@ Allow fuzzy searches to make it easier to find matches with less thought.
       '((t . ivy--regex-fuzzy)))
 #+END_SRC
 
-* Evil-Snipe
+** Evil-Snipe
 Jump around buffers using 2 character searches.
 #+BEGIN_SRC emacs-lisp
 (require 'evil-snipe)
@@ -101,7 +103,7 @@ and search the rest of the buffer *that is on screen* for matches
 (setq evil-snipe-scope 'visible)
 #+END_SRC
 
-* Working with PDFs
+** Working with PDFs
 Settings that make PDFs more pleasant to work with.
 
 Enable ~latex-preview-pane-mode~ which allows previewing latex in a buffer (like Overleaf)
@@ -114,7 +116,7 @@ Make PDFs look sharper on MacOS
 (setq pdf-view-use-scaling t pdf-view-use-imagemagick nil)
 #+END_SRC
 
-* Company
+** Company
 Configurations for Company.
 
 Make completions show up quickly after typing 3 characters.
@@ -129,7 +131,7 @@ Add neat symbols to completion results ♻
   :hook (company-mode . company-box-mode))
 #+END_SRC
 
-** Set up extra completions for certain modes
+*** Set up extra completions for certain modes
 Recommend words when typing in text or org mode files:
 #+BEGIN_SRC emacs-lisp
 (set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
@@ -139,8 +141,8 @@ Recommend previously used wojds in swift files to compensate for spotty sourceki
 (set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
 #+END_SRC
 
-
-* OR Tools
+* Programming Languages
+** OR Tools
 Useful stuff for working with linear programs and the like.
 
 Hook AMPL relate files to [[https://github.com/dpo/ampl-mode][ampl-mode]].
@@ -157,7 +159,7 @@ Hook AMPL relate files to [[https://github.com/dpo/ampl-mode][ampl-mode]].
 (autoload 'ampl-mode "ampl-mode" "Ampl editing mode." t)
 #+END_SRC
 
-* Rust
+** Rust
 Configs for coding in the rust programming language.
 
 Set ~RUST_SRC_PATH~ for racer:
@@ -166,7 +168,7 @@ Set ~RUST_SRC_PATH~ for racer:
       "/Users/philliporeggio/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/library")
 #+END_SRC
 
-* Swift
+** Swift
 Config for the swift programming language.
 
 Setup lsp-sourcekit to work swift files...
@@ -178,6 +180,6 @@ Setup lsp-sourcekit to work swift files...
 (use-package swift-mode
   :hook (swift-mode . (lambda () (lsp))))
 #+END_SRC
-** TODO good completion for .xcodeprojs and modules would be nice
+*** TODO good completion for .xcodeprojs and modules would be nice
 
 #+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit
