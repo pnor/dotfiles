@@ -1,16 +1,17 @@
 #+TITLE: Org Mode Configuration
 #+AUTHOR: Phillip O'Reggio
 #+PROPERTY: header-args :emacs-lisp :tangle yes :comments link
+#+STARTUP: hideblocks
 #+BEGIN_SRC emacs-lisp
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 #+END_SRC
 
 * General
 ** Private Information
-Load some personal information from =Secret.el=
+Load some personal information
 #+BEGIN_SRC emacs-lisp
 (load! "Secret.el")
-#+END_SRC emacs-lisp
+#+END_SRC
 
 ** Font, Themes, and the General Look
 Set the color theme and font
@@ -36,7 +37,7 @@ Add a fill column to prevent long lines (116 is the width of the vertical monito
 (setq-default fill-column 116)
 #+END_SRC
 
-Show Line numbers...
+Show Line numbers
 #+BEGIN_SRC emacs-lisp
 (setq display-line-numbers-type t)
 #+END_SRC
@@ -46,7 +47,14 @@ Set the org directory for org related files
 (setq org-directory "~/org/")
 #+END_SRC
 
-** Key-mappings and Related
+Fix flickering bug with emacs
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+#+END_SRC
+
+** Key-mappings and Custom Commands
+
+*** Key-mappings
 Make moving around splits as easy as pressing space.
 #+BEGIN_SRC emacs-lisp
 (map! :leader :mode 'global
@@ -62,6 +70,46 @@ Change ";" to ":" (for vim ex mode)
 (map! :nv
   ";" 'evil-ex
   )
+#+END_SRC
+
+*** Custom ex Commands
+~:G~ for magit status
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "G" #'magit-status)
+#+END_SRC
+
+~:Fexplore~ to open a project drawer
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "Fexplore" #'treemacs)
+#+END_SRC
+
+~:PRReview~ to diff between two branches
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "PRReview" #'magit-diff-range)
+#+END_SRC
+
+~:STerm~ to open terminal in a split
+(TODO)
+#+BEGIN_SRC emacs-lisp
+(defun sterm ()
+  "Opens a terminal in a split on the left"
+  (interactive)
+  (progn
+    (split-window-right 45)
+    (+vterm/here t)
+    )
+  )
+
+(evil-ex-define-cmd "STerm" #'sterm)
+#+END_SRC
+
+** Fun Stuff
+Fun Emacs things
+
+Zone mode screen saver after a good amount of idle time
+#+BEGIN_SRC emacs-lisp
+(require 'zone)
+(zone-when-idle 180)
 #+END_SRC
 
 * Modes

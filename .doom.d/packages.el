@@ -56,3 +56,6 @@
   (:host github
    :repo "dpo/ampl-mode"
    :files ("emacs/ampl-mode.el")))
+(package! ord-d20 :recipe
+  (:host github
+   :repo "spwhitton/org-d20"))
