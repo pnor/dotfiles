@@ -99,8 +99,8 @@ alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'
 alias ampl='~/bin_scripts/ampl_msg.sh'
 
 # Emacs
-alias emacs='~/bin_scripts/emacs.sh .'
-alias update_eshell_alias="~/bin_scripts/update_eshell_alias.zsh"
+# alias emacs='~/bin_scripts/emacs.sh .'
+# alias update_eshell_alias="~/bin_scripts/update_eshell_alias.zsh"
 
 # IntelliJ
 alias intellij='~/bin_scripts/intellij.sh "$(pwd)"'

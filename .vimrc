@@ -287,25 +287,6 @@ vmap <Leader>g <Plug>(openbrowser-search)
 " - Rainbow Parenthesis
 autocmd VimEnter * RainbowParentheses
 
-" - Tagbar
-" Remove space binding in Tagbar, since window navigation uses space
-let g:tagbar_map_showproto=''
-" Info to show for swift files
-let g:tagbar_type_swift = {
-  \ 'ctagstype': 'swift',
-  \ 'kinds' : [
-    \ 'n:Enums',
-    \ 't:Typealiases',
-    \ 'p:Protocols',
-    \ 's:Structs',
-    \ 'c:Classes',
-    \ 'f:Functions',
-    \ 'v:Variables',
-    \ 'e:Extensions'
-  \ ],
-  \ 'sort' : 0
-\ }
-
 " - Vim-better-whitespace
 nnoremap <Leader><Leader>s :StripWhitespace<Enter>
 let g:better_whitespace_ctermcolor = 'cyan'

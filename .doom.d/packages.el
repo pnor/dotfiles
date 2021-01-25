@@ -47,15 +47,29 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 ;; external packages
+;; company
 (package! company-box)
 (package! company-lsp)
+
+;; markup
 (package! latex-preview-pane)
-(package! lsp-sourcekit)
 (package! vmd-mode)
+
+;; lsp
+(package! lsp-sourcekit)
+
+;; OR tools
 (package! ampl-mode :recipe
   (:host github
    :repo "dpo/ampl-mode"
    :files ("emacs/ampl-mode.el")))
+
+;; Org
+(package! org-download)
 (package! ord-d20 :recipe
   (:host github
    :repo "spwhitton/org-d20"))
+
+;; Misc
+(package! zenscript-mode)
+(package! rainbow-mode)

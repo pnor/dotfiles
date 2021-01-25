@@ -16,7 +16,8 @@ Load some personal information
 ** Font, Themes, and the General Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-city-lights)
+;; (setq doom-theme 'doom-city-lights)
+(setq doom-theme 'cornell)
 
 (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
 #+END_SRC
@@ -42,16 +43,10 @@ Show Line numbers
 (setq display-line-numbers-type t)
 #+END_SRC
 
-Set the org directory for org related files
+Enable rainbow mode to preview color codes
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/org/")
+(rainbow-mode)
 #+END_SRC
-
-Fix flickering bug with emacs
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-#+END_SRC
-
 ** Key-mappings and Custom Commands
 
 *** Key-mappings
@@ -109,12 +104,17 @@ Fun Emacs things
 Zone mode screen saver after a good amount of idle time
 #+BEGIN_SRC emacs-lisp
 (require 'zone)
-(zone-when-idle 180)
+(zone-when-idle 600)
 #+END_SRC
 
 * Modes
 ** Org Mode
-Make org-mode documents look a little nicer
+Set the org directory for org related files
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/org/")
+#+END_SRC
+
+Make org-mode documents look a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
@@ -123,6 +123,14 @@ Make org-mode documents look a little nicer
 Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
+#+END_SRC
+
+Can drag and drop images into orgmode (? TODO not working)
+#+BEGIN_SRC emacs-lisp
+(require 'org-download)
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+(setq org-download-screenshot-method "pngpaste %s")
 #+END_SRC
 
 ** Ivy
@@ -189,7 +197,7 @@ Recommend previously used wojds in swift files to compensate for spotty sourceki
 (set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
 #+END_SRC
 
-* Programming Languages
+* Programming
 ** OR Tools
 Useful stuff for working with linear programs and the like.
 
