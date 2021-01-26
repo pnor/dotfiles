@@ -16,9 +16,7 @@ Load some personal information
 ** Font, Themes, and the General Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-;; (setq doom-theme 'doom-city-lights)
 (setq doom-theme 'cornell)
-
 (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
 #+END_SRC
 
