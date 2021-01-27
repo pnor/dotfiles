@@ -195,6 +195,12 @@ Recommend previously used wojds in swift files to compensate for spotty sourceki
 (set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
 #+END_SRC
 
+** Flycheck
+Set python path
+#+BEGIN_SRC emacs-lisp
+(setq flycheck-json-python-json-executable "/usr/bin/python3")
+
+#+END_SRC
 * Programming
 ** OR Tools
 Useful stuff for working with linear programs and the like.

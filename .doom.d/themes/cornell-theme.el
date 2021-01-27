@@ -1,5 +1,5 @@
 (deftheme cornell
-  "Created 2021-01-25.")
+  "Created 2021-01-26.")
 
 (custom-theme-set-variables
  'cornell
@@ -24,7 +24,7 @@
  '(trailing-whitespace ((t (:background "#10151C"))))
  '(nobreak-space ((t (:inherit default :underline nil))))
  '(vertical-border ((t (:background "#333749" :foreground "#333749"))))
- '(link ((((class color) (min-colors 257)) (:weight bold :underline (:color nil :style nil) :foreground "#5EC4FF")) (((class color) (min-colors 256)) (:weight bold :underline (:color nil :style nil) :foreground "#55CCFF")) (((class color) (min-colors 16)) (:weight bold :underline (:color nil :style nil) :foreground "brightblue"))))
+ '(link ((((class color) (min-colors 257)) (:foreground "#5EC4FF" :underline t :weight bold)) (((class color) (min-colors 256)) (:foreground "#5EC4FF" :underline t :weight bold)) (((class color) (min-colors 16)) (:foreground "brightblue" :underline t :weight bold))))
  '(error ((t (:foreground "#FB8496"))))
  '(warning ((t (:foreground "#5eb2f2"))))
  '(success ((((class color) (min-colors 257)) (:foreground "#8BD49C")) (((class color) (min-colors 256)) (:foreground "#99bb66")) (((class color) (min-colors 16)) (:foreground "green"))))
@@ -43,8 +43,8 @@
  '(font-lock-preprocessor-face ((((class color) (min-colors 257)) (:foreground "#FDDC87" :inherit bold)) (((class color) (min-colors 256)) (:foreground "#5EC4FF" :inherit bold)) (((class color) (min-colors 16)) (:foreground "brightblue" :inherit bold))))
  '(font-lock-regexp-grouping-backslash ((((class color) (min-colors 257)) (:foreground "#FDDC87" :inherit bold)) (((class color) (min-colors 256)) (:foreground "#5EC4FF" :inherit bold)) (((class color) (min-colors 16)) (:foreground "brightblue" :inherit bold))))
  '(font-lock-regexp-grouping-construct ((((class color) (min-colors 257)) (:inherit bold :foreground "#FDDC87")) (((class color) (min-colors 256)) (:inherit bold :foreground "#FDDC87")) (((class color) (min-colors 16)) (:inherit bold :foreground "brightblue"))))
- '(mode-line ((((class color) (min-colors 257)) (:background "#1B1E2C" :foreground nil :box nil)) (((class color) (min-colors 256)) (:background "black" :foreground nil :box nil)) (((class color) (min-colors 16)) (:background "black" :foreground nil :box nil))))
- '(mode-line-inactive ((t (:background "#151926" :foreground "#333333" :box nil))))
+ '(mode-line ((((class color) (min-colors 257)) (:box nil :foreground nil :background "#1B1E2C")) (((class color) (min-colors 256)) (:box nil :foreground nil :background "black")) (((class color) (min-colors 16)) (:box nil :foreground nil :background "black"))))
+ '(mode-line-inactive ((t (:background "#181C2A" :foreground "#333333" :box nil))))
  '(mode-line-emphasis ((t (:foreground "#7AA1EB"))))
  '(mode-line-highlight ((((class color) (min-colors 257)) (:inherit bold :foreground "#FF8833")) (((class color) (min-colors 256)) (:inherit bold :foreground "#FF8833")) (((class color) (min-colors 16)) (:inherit bold :foreground "brightblue"))))
  '(mode-line-buffer-id ((t (:weight bold))))
