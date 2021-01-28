@@ -1,5 +1,5 @@
 (deftheme cornell
-  "Created 2021-01-26.")
+  "Created 2021-01-27.")
 
 (custom-theme-set-variables
  'cornell
@@ -19,8 +19,8 @@
  '(minibuffer-prompt ((t (:foreground "#7AA1EB"))))
  '(tooltip ((t (:background "#181E24" :foreground "#AAAAAA"))))
  '(secondary-selection ((((class color) (min-colors 257)) (:background "#41505E" :extend t)) (((class color) (min-colors 256)) (:background "#ff6655" :extend t)) (((class color) (min-colors 16)) (:background "red" :extend t))))
- '(lazy-highlight ((t (:background "#010517" :distant-foreground "#00ffff" :foreground "#00ffff" :weight bold))))
- '(match ((t (:background "#010517" :foreground "#11A9EB" :weight bold))))
+ '(lazy-highlight ((t (:background "#151926" :distant-foreground "#00ffff" :foreground "#00ffff" :weight bold))))
+ '(match ((t (:background "#151926" :foreground "#11A9EB" :weight bold))))
  '(trailing-whitespace ((t (:background "#10151C"))))
  '(nobreak-space ((t (:inherit default :underline nil))))
  '(vertical-border ((t (:background "#333749" :foreground "#333749"))))

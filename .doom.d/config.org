@@ -31,6 +31,11 @@ Make emacs start centered on my macbook pro, and in a decently large frame.
 (setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
 #+END_SRC
 
+Make the top bar on macos blend with the rest of the window (TODO)
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+#+END_SRC
+
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 116)
@@ -41,12 +46,7 @@ Show Line numbers
 (setq display-line-numbers-type t)
 #+END_SRC
 
-Enable rainbow mode to preview color codes
-#+BEGIN_SRC emacs-lisp
-(rainbow-mode)
-#+END_SRC
 ** Key-mappings and Custom Commands
-
 *** Key-mappings
 Make moving around splits as easy as pressing space.
 #+BEGIN_SRC emacs-lisp
@@ -82,7 +82,6 @@ Change ";" to ":" (for vim ex mode)
 #+END_SRC
 
 ~:STerm~ to open terminal in a split
-(TODO)
 #+BEGIN_SRC emacs-lisp
 (defun sterm ()
   "Opens a terminal in a split on the left"
@@ -105,6 +104,23 @@ Zone mode screen saver after a good amount of idle time
 (zone-when-idle 600)
 #+END_SRC
 
+** Useful Functions
+Toggle the transparency of emacs
+#+BEGIN_SRC emacs-lisp
+(put 'cfg-transparency 'state t)
+
+(defun toggle-transparency ()
+  "Toggle the transparency of emacs"
+  (interactive)
+  (if (get 'cfg-transparency 'state)
+      (progn
+        (set-frame-parameter (selected-frame) 'alpha '(100 100))
+        (put 'cfg-transparency 'state nil))
+    (progn
+      (set-frame-parameter (selected-frame) 'alpha '(85 85))
+      (put 'cfg-transparency 'state t))
+    ))
+#+END_SRC
 * Modes
 ** Org Mode
 Set the org directory for org related files
@@ -201,6 +217,12 @@ Set python path
 (setq flycheck-json-python-json-executable "/usr/bin/python3")
 
 #+END_SRC
+** Palette Mode
+Load =palette mode=
+#+BEGIN_SRC emacs-lisp
+(require 'palette)
+#+END_SRC
+
 * Programming
 ** OR Tools
 Useful stuff for working with linear programs and the like.

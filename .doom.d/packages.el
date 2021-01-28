@@ -73,3 +73,5 @@
 ;; Misc
 (package! zenscript-mode)
 (package! rainbow-mode)
+(package! palette :recipe
+  (:local-repo "palette/"))
