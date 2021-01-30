@@ -13,7 +13,8 @@ Load some personal information
 (load! "Secret.el")
 #+END_SRC
 
-** Font, Themes, and the General Look
+** Font, Themes, and the General Look and Behavior
+*** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
 (setq doom-theme 'cornell)
@@ -31,19 +32,18 @@ Make emacs start centered on my macbook pro, and in a decently large frame.
 (setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
 #+END_SRC
 
-Make the top bar on macos blend with the rest of the window (TODO)
+Show Line numbers
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(setq display-line-numbers-type t)
 #+END_SRC
-
+*** Behavior
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 116)
 #+END_SRC
-
-Show Line numbers
+and automatically break long lines
 #+BEGIN_SRC emacs-lisp
-(setq display-line-numbers-type t)
+(auto-fill-mode)
 #+END_SRC
 
 ** Key-mappings and Custom Commands
@@ -107,6 +107,7 @@ Zone mode screen saver after a good amount of idle time
 ** Useful Functions
 Toggle the transparency of emacs
 #+BEGIN_SRC emacs-lisp
+;; Initialize transparency to `true`
 (put 'cfg-transparency 'state t)
 
 (defun toggle-transparency ()
@@ -139,12 +140,46 @@ Fix a bug (?) where inserting newlines using the enter key doesn't work in org-m
 (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
 #+END_SRC
 
-Can drag and drop images into orgmode (? TODO not working)
+Setup =org-download=, which makes the process of putting images into orgmode much easier
+Put downloaded images into an =images= directory and include timestamp. Use the command =pngpaste= to get the image
+from the clipboard.
 #+BEGIN_SRC emacs-lisp
 (require 'org-download)
+(setq org-download-method 'directory)
+(setq-default org-download-image-dir "images")
+(setq org-download-timestamp "%Y%m%d-%H%M%S_")
+(setq org-download-screenshot-method "/usr/local/bin/pngpaste %s")
+#+END_SRC
+
+Allow pasting of images in org-mode with "Control-⌘-y"
+#+BEGIN_SRC emacs-lisp
+(map! :mode 'org-mode
+      "C-s-v" #'org-download-screenshot
+      )
+#+END_SRC
+
+Allow pasting of images with control of the width
+#+BEGIN_SRC emacs-lisp
+(defun org-download-screenshot-with-size ()
+  "Prompt user for a width to paste the image. Only lasts for this one function"
+  (interactive)
+  (let ((width (read-number "Enter width: ")) (prev-width org-download-image-html-width))
+    (progn
+      (setq org-download-image-html-width width)
+      (org-download-screenshot)
+      (setq org-download-image-html-width prev-width))
+    ))
+
+(map! :mode 'org-mode
+      "C-M-s-V" #'org-download-screenshot-with-size
+      )
+#+END_SRC
+
+
+Make drag-and-drop of images work with dired (untested)
+#+BEGIN_SRC emacs-lisp
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
-(setq org-download-screenshot-method "pngpaste %s")
 #+END_SRC
 
 ** Ivy
@@ -206,7 +241,7 @@ Recommend words when typing in text or org mode files:
 #+BEGIN_SRC emacs-lisp
 (set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
 #+END_SRC
-Recommend previously used wojds in swift files to compensate for spotty sourcekit support:
+Recommend previously used words in swift files to compensate for spotty sourcekit support:
 #+BEGIN_SRC emacs-lisp
 (set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
 #+END_SRC
@@ -247,7 +282,7 @@ Configs for coding in the rust programming language.
 Set ~RUST_SRC_PATH~ for racer:
 #+BEGIN_SRC emacs-lisp
 (setq racer-rust-src-path
-      "/Users/philliporeggio/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/library")
+      "$HOME/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/library")
 #+END_SRC
 
 ** Swift

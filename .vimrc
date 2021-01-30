@@ -153,7 +153,8 @@ runtime statusline.vim
 " ---------------------------------------------------------------------------- "
 " Key-Bindings / Commands                                                      "
 " ---------------------------------------------------------------------------- "
-nnoremap <silent> <C-l> :nohl<CR><C-l> " <Ctrl-l> redraws, removing search highlighting.
+" <Ctrl-l> redraws, removing search highlighting.
+nnoremap <silent> <C-l> :nohl<CR><C-l> 
 
 " Source vimrc
 nnoremap <Leader>v :source ~/.vimrc<CR>
@@ -230,6 +231,8 @@ command STerm execute "topleft vert term" | execute "normal! <C-w>N" | execute "
 
 " Create a "*scratch*" buffer in a small horizontal split
 command Scratch execute "new *scratch*"  | execute "resize 8" | execute "setlocal buftype=nofile"
+" and map it to <Space>x
+nnoremap <Space>x :Scratch<CR>
 
 " Turn on DocSuggest if writing prose
 if has("autocmd")
