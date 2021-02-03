@@ -46,32 +46,42 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-;; external packages
+;; --- external packages
+;; appearence
+(package! rainbow-mode)                 ;; Preview color codes in-line
+(package! magit-pretty-graph :recipe    ;; Better looking magit log graph
+  (:local-repo "./local_packages/magit-pretty-graph"))
+
 ;; company
-(package! company-box)
-(package! company-lsp)
+(package! company-box)                  ;; Make the company completion look better
+(package! company-lsp)                  ;; Company + LSP mode
 
 ;; markup
-(package! latex-preview-pane)
-(package! vmd-mode)
+(package! latex-preview-pane)           ;; Preview LaTex in a seperate pane
+(package! vmd-mode)                     ;; Preview markdown
 
 ;; lsp
-(package! lsp-sourcekit)
+(package! lsp-sourcekit)                ;; LSP suppport for sourcekit
 
 ;; OR tools
-(package! ampl-mode :recipe
+(package! ampl-mode :recipe             ;; Syntax support for AMPL
   (:host github
    :repo "dpo/ampl-mode"
    :files ("emacs/ampl-mode.el")))
 
 ;; Org
-(package! org-download)
-(package! ord-d20 :recipe
+(package! org-download)                 ;; Download images via command
+(package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github
    :repo "spwhitton/org-d20"))
 
+;; Shell syncing
+(package! exec-path-from-shell)         ;; Sync paths to the ones in shell when started from app
+
 ;; Misc
-(package! zenscript-mode)
-(package! rainbow-mode)
-(package! palette :recipe
-  (:local-repo "palette/"))
+(package! zenscript-mode)               ;; Syntax support for a minecraft modding scripting language
+(package! palette :recipe               ;; Select colors from a pallete
+  (:local-repo "local_packages/palette"))
+(package! epaint :recipe                ;; paint drawing for emacs (don't know how to use...)
+  (:host github
+   :repo "chuntaro/epaint"))

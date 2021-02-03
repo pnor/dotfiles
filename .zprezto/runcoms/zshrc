@@ -84,6 +84,7 @@ alias ios_repo='open https://github.coecis.cornell.edu/cuappdev/ios-course'
 alias venv='source venv/bin/activate' # activate venv
 alias initvenv='virtualenv -p python3 venv' # create venv with no site packages
 alias python='/usr/bin/python3'
+alias python3='/usr/bin/python3'
 alias pip3='/usr/bin/pip3'
 
 # Web Browsers
@@ -101,6 +102,7 @@ alias ampl='~/bin_scripts/ampl_msg.sh'
 # Emacs
 # alias emacs='~/bin_scripts/emacs.sh .'
 # alias update_eshell_alias="~/bin_scripts/update_eshell_alias.zsh"
+alias fix_ispell='~/bin_scripts/fix_ispell.bash'
 
 # IntelliJ
 alias intellij='~/bin_scripts/intellij.sh "$(pwd)"'
