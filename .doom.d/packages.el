@@ -47,10 +47,18 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 ;; --- external packages
+(package! solaire-mode :disable t)
 ;; appearence
 (package! rainbow-mode)                 ;; Preview color codes in-line
 (package! magit-pretty-graph :recipe    ;; Better looking magit log graph
   (:local-repo "./local_packages/magit-pretty-graph"))
+
+;; functinality
+(package! palette :recipe               ;; Select colors from a pallete
+  (:local-repo "local_packages/palette"))
+(package! epaint :recipe                ;; paint drawing for emacs (don't know how to use...)
+  (:host github
+   :repo "chuntaro/epaint"))
 
 ;; company
 (package! company-box)                  ;; Make the company completion look better
@@ -60,8 +68,9 @@
 (package! latex-preview-pane)           ;; Preview LaTex in a seperate pane
 (package! vmd-mode)                     ;; Preview markdown
 
-;; lsp
-(package! lsp-sourcekit)                ;; LSP suppport for sourcekit
+;; language support
+(package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
+(package! zenscript-mode)               ;; Syntax support for a minecraft modding scripting language
 
 ;; OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
@@ -75,13 +84,5 @@
   (:host github
    :repo "spwhitton/org-d20"))
 
-;; Shell syncing
-(package! exec-path-from-shell)         ;; Sync paths to the ones in shell when started from app
-
 ;; Misc
-(package! zenscript-mode)               ;; Syntax support for a minecraft modding scripting language
-(package! palette :recipe               ;; Select colors from a pallete
-  (:local-repo "local_packages/palette"))
-(package! epaint :recipe                ;; paint drawing for emacs (don't know how to use...)
-  (:host github
-   :repo "chuntaro/epaint"))
+(package! exec-path-from-shell)         ;; Sync paths to the ones in shell when started from app

@@ -23,8 +23,14 @@ Set the color theme and font
 
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
-(set-frame-parameter (selected-frame) 'alpha '(85 85))
-(add-to-list 'default-frame-alist '(alpha 85 85))
+(set-frame-parameter (selected-frame) 'alpha '(80 80))
+(add-to-list 'default-frame-alist '(alpha 80 80))
+#+END_SRC
+
+Remove solaire mode
+#+BEGIN_SRC emacs-lisp
+;; (after! solaire-mode
+;;   (solaire-global-mode -1))
 #+END_SRC
 
 Make emacs start centered on my macbook pro, and in a decently large frame.
@@ -72,6 +78,9 @@ Make moving around splits as easy as pressing space.
   )
 #+END_SRC
 
+#+RESULTS:
+: evil-window-up
+
 Change ";" to ":" (for vim ex mode)
 #+BEGIN_SRC emacs-lisp
 (map! :nv
@@ -87,16 +96,65 @@ Map "s" to the sneak motion
       "s" nil
       "S" nil)
 (map! :after evil-snipe
-      :map evil-snipe-mode-map :n
-      "s" nil
-      "S" nil)
+      :map evil-snipe-local-mode-map
+      :mno "s" nil
+      :mno "S" nil)
 ;; Then bind it
-(map! :after evil :nv
-      "s" #'evil-avy-goto-char-2-below
-      "S" #'evil-avy-goto-char-2-above
-      )
+(map!
+ :nv "s" #'evil-avy-goto-char-2-below
+ :nv "S" #'evil-avy-goto-char-2-above
+ )
 #+END_SRC
 
+#+RESULTS:
+
+*** Custom ex Commands
+~:G~ for magit status
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "G" #'magit-status)
+#+END_SRC
+
+~:Fexplore~ to open a project drawer
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "Fexplore" #'treemacs)
+#+END_SRC
+
+~:PRReview~ to diff between two branches
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "PRReview" #'magit-diff-range)
+#+END_SRC
+
+~:STerm~ to open terminal in a split
+#+BEGIN_SRC emacs-lisp
+(defun sterm ()
+  "Opens a terminal in a split on the left"
+  (interactive)
+  (progn
+    (split-window-right 45)
+    (+vterm/here t)
+    )
+  )
+
+(evil-ex-define-cmd "STerm" #'sterm)
+#+END_SRC
+** Useful Functions
+Toggle the transparency of emacs
+#+BEGIN_SRC emacs-lisp
+;; Initialize transparency to `true`
+(put 'cfg-transparency 'state t)
+
+(defun toggle-transparency ()
+  "Toggle the transparency of emacs"
+  (interactive)
+  (if (get 'cfg-transparency 'state)
+      (progn
+        (set-frame-parameter (selected-frame) 'alpha '(100 100))
+        (put 'cfg-transparency 'state nil))
+    (progn
+      (set-frame-parameter (selected-frame) 'alpha '(80 80))
+      (put 'cfg-transparency 'state t))
+    ))
+#+END_SRC
 * Modes
 ** Org Mode
 Set the org directory for org related files
@@ -183,10 +241,16 @@ Make PDFs look sharper on MacOS
 ** Company
 Configurations for Company.
 
-Make completions show up quickly after typing 3 characters.
+Configure completion settings;
+Make it faster for code buffers, but slow for org-mode when writing prose
 #+BEGIN_SRC emacs-lisp
-(setq company-idle-delay 0.1
-      company-minimum-prefix-length 3)
+(add-hook! org-mode
+  (setq company-idle-delay 0.8
+        company-minimum-prefix-length 4))
+
+(add-hook! prog-mode
+  (setq company-idle-delay 0
+        company-minimum-prefix-length 2))
 #+END_SRC
 
 Add neat symbols to completion results ♻
