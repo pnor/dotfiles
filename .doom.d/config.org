@@ -27,12 +27,6 @@ Make the emacs frame transparent because I like my laptop background 🙃
 (add-to-list 'default-frame-alist '(alpha 80 80))
 #+END_SRC
 
-Remove solaire mode
-#+BEGIN_SRC emacs-lisp
-;; (after! solaire-mode
-;;   (solaire-global-mode -1))
-#+END_SRC
-
 Make emacs start centered on my macbook pro, and in a decently large frame.
 #+BEGIN_SRC emacs-lisp
 (setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
@@ -106,8 +100,6 @@ Map "s" to the sneak motion
  )
 #+END_SRC
 
-#+RESULTS:
-
 *** Custom ex Commands
 ~:G~ for magit status
 #+BEGIN_SRC emacs-lisp
@@ -155,6 +147,49 @@ Toggle the transparency of emacs
       (put 'cfg-transparency 'state t))
     ))
 #+END_SRC
+
+Enable a "focusing" state that disables buffer/workspace switching, and disables the games
+Good for lectures and situations where I don't want ot be tempted by working on something else
+#+BEGIN_SRC elisp
+;; List of commands to disable
+(defvar focus-commands-to-disable '() "commands to disable when doing `start-focusing`")
+(setq focus-commands-to-disable
+  '(
+    ;; Switching workspaces
+    +ivy/switch-workspace-buffer
+    ivy-switch-buffer
+    +workspace:switch-next
+    +workspace/switch-to
+    +workspace/switch-to-0
+    +workspace/switch-to-1
+    +workspace/switch-to-2
+    +workspace/switch-to-3
+    +workspace/switch-to-4
+    +workspace/switch-to-5
+    +workspace/switch-to-6
+    +workspace/switch-to-7
+    +workspace/switch-to-8
+    ;; Games
+    tetris
+    gomoku
+    )
+  )
+
+(defun start-focusing ()
+  "Disable games and some workspace keybinds to better focus."
+  (interactive)
+  (dolist (command focus-commands-to-disable)
+    (disable-command command))
+  )
+
+(defun stop-focusing ()
+  (interactive)
+  "Re-enable gaes and workspce switching keybinds disabled by `start-focusing`"
+  (dolist (command focus-commands-to-disable)
+    (enable-command command))
+  )
+#+END_SRC
+
 * Modes
 ** Org Mode
 Set the org directory for org related files
@@ -162,7 +197,7 @@ Set the org directory for org related files
 (setq org-directory "~/org/")
 #+END_SRC
 
-Make org-mode documents look a little nicer by hiding markers and showing symbols
+Make org-mode documents loo     k a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
@@ -226,11 +261,13 @@ Allow fuzzy searches to make it easier to find matches with less thought.
 #+END_SRC
 
 ** Working with PDFs
-Settings that make PDFs more pleasant to work with.
+Settings that make PDFs more pleasant to wor  k with.
 
 Enable ~latex-preview-pane-mode~ which allows previewing latex in a buffer (like Overleaf)
+- TODO now giving error...
 #+BEGIN_SRC emacs-lisp
-(latex-preview-pane-enable)
+;; (require 'latex-preview-pane)
+;; (latex-preview-pane-enable)
 #+END_SRC
 
 Make PDFs look sharper on MacOS
@@ -244,13 +281,26 @@ Configurations for Company.
 Configure completion settings;
 Make it faster for code buffers, but slow for org-mode when writing prose
 #+BEGIN_SRC emacs-lisp
-(add-hook! org-mode
-  (setq company-idle-delay 0.8
-        company-minimum-prefix-length 4))
+(defun set-company-for-prose ()
+  "Change company configs for writing prose"
+  (interactive)
+  (setq
+   company-idle-delay 0.6
+   company-minimum-prefix-length 4
+   )
+)
 
-(add-hook! prog-mode
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 2))
+(defun set-company-for-code ()
+  "Change company configs for writing code"
+  (interactive)
+  (setq
+   company-idle-delay 0.1
+   company-minimum-prefix-length 2
+   )
+)
+
+(after! company (add-hook! org-mode (set-company-for-prose)))
+(after! company (add-hook! prog-mode (set-company-for-code)))
 #+END_SRC
 
 Add neat symbols to completion results ♻
@@ -273,7 +323,6 @@ Recommend previously used words in swift files to compensate for spotty sourceki
 Set python path
 #+BEGIN_SRC emacs-lisp
 (setq flycheck-json-python-json-executable "/usr/bin/python3")
-
 #+END_SRC
 ** Palette Mode
 Load =palette mode=

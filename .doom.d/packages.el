@@ -51,7 +51,7 @@
 ;; appearence
 (package! rainbow-mode)                 ;; Preview color codes in-line
 (package! magit-pretty-graph :recipe    ;; Better looking magit log graph
-  (:local-repo "./local_packages/magit-pretty-graph"))
+  (:local-repo "local_packages/magit-pretty-graph"))
 
 ;; functinality
 (package! palette :recipe               ;; Select colors from a pallete
@@ -59,13 +59,16 @@
 (package! epaint :recipe                ;; paint drawing for emacs (don't know how to use...)
   (:host github
    :repo "chuntaro/epaint"))
+(package! ess)
 
 ;; company
 (package! company-box)                  ;; Make the company completion look better
 (package! company-lsp)                  ;; Company + LSP mode
 
 ;; markup
-(package! latex-preview-pane)           ;; Preview LaTex in a seperate pane
+(package! latex-preview-pane :recipe    ;; Preview LaTex in a seperate pane
+  (:host github
+   :repo "jsinglet/latex-preview-pane"))
 (package! vmd-mode)                     ;; Preview markdown
 
 ;; language support

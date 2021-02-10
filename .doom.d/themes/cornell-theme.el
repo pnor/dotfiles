@@ -1,5 +1,5 @@
 (deftheme cornell
-  "Created 2021-02-04.")
+  "Created 2021-02-05.")
 
 (custom-theme-set-variables
  'cornell
@@ -15,7 +15,7 @@
  '(region ((t (:extend t :background "#2a2a2a" :distant-foreground "#5eb2f2" :foreground "#5eb2f2"))))
  '(highlight ((t (:background "#2a2a2a" :distant-foreground "#5eb2f2" :foreground "#5eb2f2"))))
  '(cursor ((((class color) (min-colors 257)) (:background "#5EC4FF")) (((class color) (min-colors 256)) (:background "#55CCFF")) (((class color) (min-colors 16)) (:background "brightblue"))))
- '(shadow ((t (:foreground "#151926"))))
+ '(shadow ((t (:foreground "#252936"))))
  '(minibuffer-prompt ((t (:foreground "#7AA1EB"))))
  '(tooltip ((t (:background "#181E24" :foreground "#AAAAAA"))))
  '(secondary-selection ((((class color) (min-colors 257)) (:background "#41505E" :extend t)) (((class color) (min-colors 256)) (:background "#ff6655" :extend t)) (((class color) (min-colors 16)) (:background "red" :extend t))))
@@ -89,7 +89,7 @@
  '(dired-perm-write ((((class color) (min-colors 257)) (:foreground "#A0B3C5" :underline t)) (((class color) (min-colors 256)) (:foreground "#AABBCC" :underline t)) (((class color) (min-colors 16)) (:foreground "white" :underline t))))
  '(dired-symlink ((((class color) (min-colors 257)) (:foreground "#70E1E8" :weight bold)) (((class color) (min-colors 256)) (:foreground "#77EEEE" :weight bold)) (((class color) (min-colors 16)) (:foreground "brightcyan" :weight bold))))
  '(dired-warning ((((class color) (min-colors 257)) (:foreground "#EBBF83")) (((class color) (min-colors 256)) (:foreground "#EEBB88")) (((class color) (min-colors 16)) (:foreground "yellow"))))
- '(hl-line ((t (:extend t :background "#151926"))))
+ '(hl-line ((t (:extend t :background "#252936"))))
  '(isearch ((t (:inherit lazy-highlight :weight bold))))
  '(isearch-fail ((((class color) (min-colors 257)) (:background "#D95468" :foreground "#10151C" :weight bold)) (((class color) (min-colors 256)) (:background "#ff6655" :foreground "black" :weight bold)) (((class color) (min-colors 16)) (:background "red" :foreground "black" :weight bold))))
  '(message-header-name ((((class color) (min-colors 257)) (:foreground "#8BD49C")) (((class color) (min-colors 256)) (:foreground "#99bb66")) (((class color) (min-colors 16)) (:foreground "green"))))
