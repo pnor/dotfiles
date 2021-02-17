@@ -75,7 +75,7 @@ alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-#alias movgif=
+
 # iOS Grading
 alias ios_rename='~/bin_scripts/ios_rename_grade.sh'
 alias ios_init='~/bin_scripts/ios_init.sh'
@@ -101,8 +101,6 @@ alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'
 alias ampl='~/bin_scripts/ampl_msg.sh'
 
 # Emacs
-# alias emacs='~/bin_scripts/emacs.sh .'
-# alias update_eshell_alias="~/bin_scripts/update_eshell_alias.zsh"
 alias fix_ispell='~/bin_scripts/fix_ispell.bash'
 
 # IntelliJ
@@ -117,6 +115,9 @@ alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias dots='dot status'
 alias dotc='dot commit -m'
 alias dotchanged='$HOME/bin_scripts/dotchanged.sh'
+
+# CS 4410 Harmony
+alias harmony='python3 $HOME/bin_scripts/harmony-1.0/harmony.py'
 
 # ----- Set Up Path
 # node

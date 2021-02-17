@@ -52,6 +52,8 @@
 (package! rainbow-mode)                 ;; Preview color codes in-line
 (package! magit-pretty-graph :recipe    ;; Better looking magit log graph
   (:local-repo "local_packages/magit-pretty-graph"))
+;; (package! all-the-icons-ivy)
+(package! all-the-icons-ivy-rich)
 
 ;; functinality
 (package! palette :recipe               ;; Select colors from a pallete
@@ -66,20 +68,23 @@
 (package! company-lsp)                  ;; Company + LSP mode
 
 ;; markup
-(package! latex-preview-pane :recipe    ;; Preview LaTex in a seperate pane
-  (:host github
-   :repo "jsinglet/latex-preview-pane"))
+(package! latex-preview-pane)           ;; Preview LaTex in a seperate pane
 (package! vmd-mode)                     ;; Preview markdown
 
 ;; language support
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
 (package! zenscript-mode)               ;; Syntax support for a minecraft modding scripting language
+(package! harmony-mode :recipe          ;; Syntax support for Harmony, a language used in CS 4410 at Cornell
+  (:local-repo "local_packages/harmony-mode"))
 
 ;; OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
   (:host github
    :repo "dpo/ampl-mode"
    :files ("emacs/ampl-mode.el")))
+
+;; Json
+(package! json-navigator)
 
 ;; Org
 (package! org-download)                 ;; Download images via command

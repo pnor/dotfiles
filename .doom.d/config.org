@@ -36,14 +36,20 @@ Show Line numbers
 #+BEGIN_SRC emacs-lisp
 (setq display-line-numbers-type t)
 #+END_SRC
+
+Modify the appearance of the mode-line
+#+BEGIN_SRC elisp
+(setq doom-modeline-major-mode-icon t)
+#+END_SRC
+
 *** Behavior
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 116)
 #+END_SRC
-and automatically break long lines
+and automatically break long lines in source code buffers
 #+BEGIN_SRC emacs-lisp
-(auto-fill-mode)
+(add-hook! prog-mode (auto-fill-mode t))
 #+END_SRC
 
 Show a message when doing garbage collection
@@ -71,9 +77,6 @@ Make moving around splits as easy as pressing space.
   "k" #'evil-window-up
   )
 #+END_SRC
-
-#+RESULTS:
-: evil-window-up
 
 Change ";" to ":" (for vim ex mode)
 #+BEGIN_SRC emacs-lisp
@@ -152,13 +155,13 @@ Enable a "focusing" state that disables buffer/workspace switching, and disables
 Good for lectures and situations where I don't want ot be tempted by working on something else
 #+BEGIN_SRC elisp
 ;; List of commands to disable
-(defvar focus-commands-to-disable '() "commands to disable when doing `start-focusing`")
 (setq focus-commands-to-disable
   '(
     ;; Switching workspaces
     +ivy/switch-workspace-buffer
     ivy-switch-buffer
     +workspace:switch-next
+    counsel-recentf
     +workspace/switch-to
     +workspace/switch-to-0
     +workspace/switch-to-1
@@ -194,7 +197,7 @@ Good for lectures and situations where I don't want ot be tempted by working on 
 ** Org Mode
 Set the org directory for org related files
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/org/")
+(setq org-directory "~/org/agenda/")
 #+END_SRC
 
 Make org-mode documents loo     k a little nicer by hiding markers and showing symbols
@@ -260,14 +263,19 @@ Allow fuzzy searches to make it easier to find matches with less thought.
       '((t . ivy--regex-fuzzy)))
 #+END_SRC
 
+Show icons in ivy buffer
+#+BEGIN_SRC emacs-lisp
+(all-the-icons-ivy-rich-mode 1)
+(ivy-rich-mode)
+#+END_SRC
+
 ** Working with PDFs
 Settings that make PDFs more pleasant to wor  k with.
 
 Enable ~latex-preview-pane-mode~ which allows previewing latex in a buffer (like Overleaf)
 - TODO now giving error...
 #+BEGIN_SRC emacs-lisp
-;; (require 'latex-preview-pane)
-;; (latex-preview-pane-enable)
+(after! latex-preview-pane (latex-preview-pane-enable))
 #+END_SRC
 
 Make PDFs look sharper on MacOS
@@ -299,24 +307,42 @@ Make it faster for code buffers, but slow for org-mode when writing prose
    )
 )
 
-(after! company (add-hook! org-mode (set-company-for-prose)))
+(after! company (add-hook! '(org-mode text-mode) (set-company-for-prose)))
 (after! company (add-hook! prog-mode (set-company-for-code)))
 #+END_SRC
 
 Add neat symbols to completion results ♻
 #+BEGIN_SRC emacs-lisp
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+(after! company (add-hook! company-mode (company-box-mode)))
 #+END_SRC
 
 *** Set up extra completions for certain modes
-Recommend words when typing in text or org mode files:
+Recommend words when typing in text mode files:
 #+BEGIN_SRC emacs-lisp
-(set-company-backend! '(text-mode org-mode) 'company-ispell 'company-dabbrev)
+(add-hook! text-mode
+  (set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
+)
 #+END_SRC
+
+Recommend previously used words in AMPL mode
+#+BEGIN_SRC emacs-lisp
+(add-hook! ampl-mode
+  (set-company-backend! 'ampl-mode 'company-dabbrev)
+)
+#+END_SRC
+
 Recommend previously used words in swift files to compensate for spotty sourcekit support:
 #+BEGIN_SRC emacs-lisp
-(set-company-backend! 'swift-mode 'company-capf 'company-dabbrev)
+(add-hook! swift-mode
+  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet))
+)
+#+END_SRC
+
+And in rust
+#+BEGIN_SRC emacs-lisp
+(add-hook! rust-mode
+  (set-company-backend! 'rust-mode '(company-capf company-dabbrev company-yasnippet))
+  )
 #+END_SRC
 
 ** Flycheck
@@ -329,6 +355,7 @@ Load =palette mode=
 #+BEGIN_SRC emacs-lisp
 (require 'palette)
 #+END_SRC
+
 ** Evil-snipe mode
 Disable its keybindings to use =evil-avy-goto-char-2-below=
 #+BEGIN_SRC emacs-lisp
@@ -338,6 +365,12 @@ Disable its keybindings to use =evil-avy-goto-char-2-below=
 #+END_SRC
 
 * Programming
+** Class Specific
+Harmony
+#+BEGIN_SRC emacs-lisp
+(autoload 'harmony-mode "harmony-mode" "Harmony editing mode." t)
+#+END_SRC
+
 ** OR Tools
 Useful stuff for working with linear programs and the like.
 
@@ -370,16 +403,11 @@ Config for the swift programming language.
 
 Setup lsp-sourcekit to work swift files...
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-sourcekit
-  :after lsp-mode
-  :config
-  (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"))
-(use-package swift-mode
-  :hook (swift-mode . (lambda () (lsp))))
+(setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
+(add-hook! swift-mode (lambda () (lsp)))
 #+END_SRC
-*** TODO good completion for .xcodeprojs and modules would be nice
+- TODO good completion for .xcodeprojs and modules would be nice
 
-#+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit
 ** TODO Python
 Fix paths to python since homebrew on Macos is seemingly broken
 #+BEGIN_SRC emacs-lisp
@@ -387,3 +415,6 @@ Fix paths to python since homebrew on Macos is seemingly broken
 (setq flycheck-python-flake8-executable "/usr/bin/python3")
 (setq flycheck-python-pycompile-executable "/usr/bin/python3")
 #+END_SRC
+
+* Orgmode footer args
+#+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit, flycheck

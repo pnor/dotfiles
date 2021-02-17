@@ -31,6 +31,7 @@ Plug 'ryanoasis/vim-devicons'                                   " Fancy icons
 " - Commands
 Plug 'justinmk/vim-sneak'                                       " vim-sneak
 Plug 'tpope/vim-surround'                                       " vim-surround
+Plug 'pechorin/any-jump.vim'
 " - Other
 Plug 'unblevable/quick-scope'                                   " Highlight unique f/F characters
 " - Latex
