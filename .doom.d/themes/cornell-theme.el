@@ -1,5 +1,5 @@
 (deftheme cornell
-  "Created 2021-02-12.")
+  "Created 2021-02-21.")
 
 (custom-theme-set-variables
  'cornell
@@ -338,7 +338,7 @@
  '(outline-8 ((t (:extend t :foreground "#FF8833" :weight bold))))
  '(org-archived ((((class color) (min-colors 257)) (:foreground "#707b86")) (((class color) (min-colors 256)) (:foreground "#ff8c7f")) (((class color) (min-colors 16)) (:foreground "red"))))
  '(org-block ((t (:extend t :background "#212537"))))
- '(org-block-begin-line ((t (:extend t :background "#212537" :foreground "#41505E"))))
+ '(org-block-begin-line ((t (:extend t :background "#2f354f" :foreground "#AAAAAA"))))
  '(org-block-end-line ((t (:inherit org-block-begin-line))))
  '(org-checkbox ((t (:inherit org-todo))))
  '(org-checkbox-statistics-done ((t (:inherit org-done))))

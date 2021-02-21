@@ -91,6 +91,7 @@
 (package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github
    :repo "spwhitton/org-d20"))
+(package! org-bullets)
 
 ;; Misc
 (package! exec-path-from-shell)         ;; Sync paths to the ones in shell when started from app

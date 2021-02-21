@@ -75,6 +75,11 @@ Make moving around splits as easy as pressing space.
   "l" #'evil-window-right
   "j" #'evil-window-down
   "k" #'evil-window-up
+
+  "H" #'+evil/window-move-left
+  "L" #'+evil/window-move-right
+  "K" #'+evil/window-move-up
+  "J" #'+evil/window-move-down
   )
 #+END_SRC
 
@@ -195,17 +200,59 @@ Good for lectures and situations where I don't want ot be tempted by working on 
 
 * Modes
 ** Org Mode
+*** Look
 Set the org directory for org related files
 #+BEGIN_SRC emacs-lisp
 (setq org-directory "~/org/agenda/")
 #+END_SRC
 
-Make org-mode documents loo     k a little nicer by hiding markers and showing symbols
+Make org-mode documents look a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
 #+END_SRC
 
+_Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
+
+Replace bullets with symbols
+#+BEGIN_SRC emacs-lisp
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([-]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+#+END_SRC
+
+Enable =org-bullets= mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+
+Make org-mode use variable pitch fonts, and add a hook to set the mode
+#+BEGIN_SRC emacs-lisp
+ (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Times" :height 200 :weight thin))))
+   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
+
+(add-hook 'org-mode-hook 'variable-pitch-mode)
+#+END_SRC
+
+But not for things that shouldn't be variable pitch
+#+BEGIN_SRC emacs-lisp
+(custom-theme-set-faces
+   'user
+   '(org-block ((t (:inherit fixed-pitch))))
+   '(org-block-begin-line ((t (:inherit fixed-pitch))))
+   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-table ((t (:inherit fixed-pitch))))
+   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+#+END_SRC
+*** Functionality
 Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
@@ -222,14 +269,7 @@ from the clipboard.
 (setq org-download-screenshot-method "/usr/local/bin/pngpaste %s")
 #+END_SRC
 
-Allow pasting of images in org-mode with "Control-⌘-y"
-#+BEGIN_SRC emacs-lisp
-(map! :mode 'org-mode
-      "C-s-v" #'org-download-screenshot
-      )
-#+END_SRC
-
-Allow pasting of images with control of the width
+Allow pasting of images with control over the width, and bind it to keybind
 #+BEGIN_SRC emacs-lisp
 (defun org-download-screenshot-with-size ()
   "Prompt user for a width to paste the image. Only lasts for this one function"
@@ -241,11 +281,10 @@ Allow pasting of images with control of the width
       (setq org-download-image-html-width prev-width))
     ))
 
-(map! :mode 'org-mode
-      "C-M-s-V" #'org-download-screenshot-with-size
+(map! :mode 'org-mode :leader
+      "v" #'org-download-screenshot-with-size
       )
 #+END_SRC
-
 
 Make drag-and-drop of images work with dired (untested)
 #+BEGIN_SRC emacs-lisp
@@ -275,7 +314,7 @@ Settings that make PDFs more pleasant to wor  k with.
 Enable ~latex-preview-pane-mode~ which allows previewing latex in a buffer (like Overleaf)
 - TODO now giving error...
 #+BEGIN_SRC emacs-lisp
-(after! latex-preview-pane (latex-preview-pane-enable))
+(after! latex-mode (latex-preview-pane-enable))
 #+END_SRC
 
 Make PDFs look sharper on MacOS
