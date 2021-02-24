@@ -104,7 +104,7 @@ Map "s" to the sneak motion
 ;; Then bind it
 (map!
  :nv "s" #'evil-avy-goto-char-2-below
- :nv "S" #'evil-avy-goto-char-2-above
+ :n "S" #'evil-avy-goto-char-2-above
  )
 #+END_SRC
 
@@ -215,7 +215,7 @@ Make org-mode documents look a little nicer by hiding markers and showing symbol
 _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
 
 Replace bullets with symbols
-#+BEGIN_SRC emacs-lisp
+,#+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 'org-mode
                         '(("^ *\\([-]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -226,15 +226,22 @@ Enable =org-bullets= mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-Make org-mode use variable pitch fonts, and add a hook to set the mode
+Make org-mode files use variable pitch fonts to look more like text documents
 #+BEGIN_SRC emacs-lisp
  (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Times" :height 200 :weight thin))))
+   '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
    '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
 
 (add-hook 'org-mode-hook 'variable-pitch-mode)
 #+END_SRC
+
+Files can opt out by having this at the *end* of the file:
+#+BEGIN_EXAMPLE org
+;; Local Variables:
+;; eval: (variable-pitch-mode 0)
+;; End:
+#+END_EXAMPLE
 
 But not for things that shouldn't be variable pitch
 #+BEGIN_SRC emacs-lisp
@@ -249,9 +256,14 @@ But not for things that shouldn't be variable pitch
    '(org-property-value ((t (:inherit fixed-pitch))) t)
    '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
    '(org-table ((t (:inherit fixed-pitch))))
+   '(org-drawer ((t (:inherit fixed-pitch))))
    '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-   '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+   '(line-number ((t (:inherit fixed-pitch))))
+   '(line-number-current-line ((t (:inherit fixed-pitch))))
+   '(font-lock-comment-face ((t (:inherit fixed-pitch)))))
 #+END_SRC
+
 *** Functionality
 Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
 #+BEGIN_SRC emacs-lisp
