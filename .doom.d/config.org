@@ -215,7 +215,7 @@ Make org-mode documents look a little nicer by hiding markers and showing symbol
 _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
 
 Replace bullets with symbols
-,#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 'org-mode
                         '(("^ *\\([-]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
