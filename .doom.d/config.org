@@ -27,9 +27,9 @@ Make the emacs frame transparent because I like my laptop background 🙃
 (add-to-list 'default-frame-alist '(alpha 80 80))
 #+END_SRC
 
-Make emacs start centered on my macbook pro, and in a decently large frame.
+Make emacs start centered, in a large frame.
 #+BEGIN_SRC emacs-lisp
-(setq initial-frame-alist '((top . 50) (left . 240) (width . 120) (height . 45)))
+(setq initial-frame-alist '((top . 50) (left . 40) (width . 160) (height . 45)))
 #+END_SRC
 
 Show Line numbers
@@ -83,7 +83,7 @@ Make moving around splits as easy as pressing space.
   )
 #+END_SRC
 
-Change ";" to ":" (for vim ex mode)
+Change =;= to =:= (for vim ex mode)
 #+BEGIN_SRC emacs-lisp
 (map! :nv
   ";" 'evil-ex
@@ -138,6 +138,7 @@ Map "s" to the sneak motion
 (evil-ex-define-cmd "STerm" #'sterm)
 #+END_SRC
 ** Useful Functions
+*** New Functions
 Toggle the transparency of emacs
 #+BEGIN_SRC emacs-lisp
 ;; Initialize transparency to `true`
@@ -198,7 +199,28 @@ Good for lectures and situations where I don't want ot be tempted by working on 
   )
 #+END_SRC
 
+*** Changing Old Ones
+... coming soon
+
+** Fun Stuff
+ Fun Emacs things
+
+ Zone mode screen saver after a good amount of idle time
+ #+BEGIN_SRC emacs-lisp
+ (require 'zone)
+ (zone-when-idle 600) ;; 10 minutes
+ #+END_SRC
 * Modes
+** Text Mode
+Mode for human readable text
+
+Recommend words when typing in text mode files:
+#+BEGIN_SRC emacs-lisp
+(add-hook! text-mode
+  (set-company-backend! 'text-mode 'company-dabbrev 'company-ispell)
+)
+#+END_SRC
+
 ** Org Mode
 *** Look
 Set the org directory for org related files
@@ -210,6 +232,12 @@ Make org-mode documents look a little nicer by hiding markers and showing symbol
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq
+    org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
+)
 #+END_SRC
 
 _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
@@ -249,7 +277,7 @@ But not for things that shouldn't be variable pitch
    'user
    '(org-block ((t (:inherit fixed-pitch))))
    '(org-block-begin-line ((t (:inherit fixed-pitch))))
-   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+   '(org-code ((t (:inherit (fixed-pitch)))))
    '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
    '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
    '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
@@ -257,7 +285,7 @@ But not for things that shouldn't be variable pitch
    '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
    '(org-table ((t (:inherit fixed-pitch))))
    '(org-drawer ((t (:inherit fixed-pitch))))
-   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-tag ((t (:inherit (fixed-pitch) :height 0.8))))
    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
    '(line-number ((t (:inherit fixed-pitch))))
    '(line-number-current-line ((t (:inherit fixed-pitch))))
@@ -265,8 +293,21 @@ But not for things that shouldn't be variable pitch
 #+END_SRC
 
 *** Functionality
-Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
+Set up completion for org mode files
+Recommend words when typing in text mode files:
 #+BEGIN_SRC emacs-lisp
+(add-hook! org-mode
+  (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell)
+)
+#+END_SRC
+
+Add =proselint= to lint org-mode
+#+BEGIN_SRC elisp
+(setq flycheck-proselint-executable "~/Library/Python/3.8/bin/proselint")
+#+END_SRC
+
+Fix a bug (?) where inserting newlines using the enter key doesn't work in org-mode ("symbol definition is void")
+,#+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
 #+END_SRC
 
@@ -362,40 +403,6 @@ Make it faster for code buffers, but slow for org-mode when writing prose
 (after! company (add-hook! prog-mode (set-company-for-code)))
 #+END_SRC
 
-Add neat symbols to completion results ♻
-#+BEGIN_SRC emacs-lisp
-(after! company (add-hook! company-mode (company-box-mode)))
-#+END_SRC
-
-*** Set up extra completions for certain modes
-Recommend words when typing in text mode files:
-#+BEGIN_SRC emacs-lisp
-(add-hook! text-mode
-  (set-company-backend! 'text-mode 'company-ispell 'company-dabbrev)
-)
-#+END_SRC
-
-Recommend previously used words in AMPL mode
-#+BEGIN_SRC emacs-lisp
-(add-hook! ampl-mode
-  (set-company-backend! 'ampl-mode 'company-dabbrev)
-)
-#+END_SRC
-
-Recommend previously used words in swift files to compensate for spotty sourcekit support:
-#+BEGIN_SRC emacs-lisp
-(add-hook! swift-mode
-  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet))
-)
-#+END_SRC
-
-And in rust
-#+BEGIN_SRC emacs-lisp
-(add-hook! rust-mode
-  (set-company-backend! 'rust-mode '(company-capf company-dabbrev company-yasnippet))
-  )
-#+END_SRC
-
 ** Flycheck
 Set python path
 #+BEGIN_SRC emacs-lisp
@@ -415,13 +422,36 @@ Disable its keybindings to use =evil-avy-goto-char-2-below=
 (evil-snipe-override-mode nil)
 #+END_SRC
 
-* Programming
-** Class Specific
-Harmony
-#+BEGIN_SRC emacs-lisp
-(autoload 'harmony-mode "harmony-mode" "Harmony editing mode." t)
+** Disable evil-bindings in modes that don't work
+#+BEGIN_SRC elisp
+(evil-set-initial-state 'pacmacs-mode 'emacs)
+(evil-set-initial-state 'palette-mode 'emacs)
+(evil-set-initial-state 'epaint 'emacs)
 #+END_SRC
 
+* Programming
+** Class Specific
+Use custom file for Harmony (4410)
+#+BEGIN_SRC emacs-lisp
+(require 'harmony-mode)
+(autoload 'harmony-mode "harmony-mode" "Harmony editing mode." t)
+
+(setq auto-mode-alist
+      (cons '("\\.hny$" . harmony-mode) auto-mode-alist))
+
+(add-hook! harmony-mode (display-line-numbers--turn-on))
+#+END_SRC
+
+** C Family
+Setup LSP-mode with clangd based on this: [[file:~/.emacs.d/modules/lang/cc/README.org::*LSP-mode with clangd][LSP-mode with clangd]]
+#+BEGIN_SRC elisp
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+#+END_SRC
 ** OR Tools
 Useful stuff for working with linear programs and the like.
 
@@ -439,6 +469,12 @@ Hook AMPL relate files to [[https://github.com/dpo/ampl-mode][ampl-mode]].
 (autoload 'ampl-mode "ampl-mode" "Ampl editing mode." t)
 #+END_SRC
 
+Recommend previously used words in AMPL mode
+#+BEGIN_SRC emacs-lisp
+(add-hook! ampl-mode
+  (set-company-backend! 'ampl-mode 'company-dabbrev)
+)
+#+END_SRC
 ** Rust
 Configs for coding in the rust programming language.
 
@@ -449,6 +485,13 @@ Set ~RUST_SRC_PATH~ for racer:
   (setq racer-rust-src-path rust-full-path))
 #+END_SRC
 
+Setup completion in rust
+#+BEGIN_SRC emacs-lisp
+(add-hook! rust-mode
+  (set-company-backend! 'rust-mode '(company-capf company-dabbrev company-yasnippet))
+  )
+#+END_SRC
+
 ** Swift
 Config for the swift programming language.
 
@@ -457,14 +500,34 @@ Setup lsp-sourcekit to work swift files...
 (setq lsp-sourcekit-executable "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
 (add-hook! swift-mode (lambda () (lsp)))
 #+END_SRC
-- TODO good completion for .xcodeprojs and modules would be nice
 
-** TODO Python
+Recommend previously used words in swift files to compensate for spotty sourcekit support:
+#+BEGIN_SRC emacs-lisp
+(add-hook! swift-mode
+  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet))
+)
+#+END_SRC
+** Python
 Fix paths to python since homebrew on Macos is seemingly broken
 #+BEGIN_SRC emacs-lisp
-(setq flycheck-python-pylint-executable "/usr/bin/python3")
-(setq flycheck-python-flake8-executable "/usr/bin/python3")
-(setq flycheck-python-pycompile-executable "/usr/bin/python3")
+(setq flycheck-python-flake8-executable "~/Library/Python/3.8/bin/flake8")
+#+END_SRC
+
+Setup completion in python
+#+BEGIN_SRC emacs-lisp
+(add-hook! python-mode
+  (set-company-backend! 'python-mode 'company-capf 'company-dabbrev 'company-yasnippet)
+  )
+#+END_SRC
+* Misc/Random
+In =pacmacs=, bind movement to evil movement
+#+BEGIN_SRC elisp
+(map! :map pacmacs-mode-map
+      "k" #'pacmacs-up
+      "j" #'pacmacs-down
+      "h" #'pacmacs-left
+      "l" #'pacmacs-right
+      )
 #+END_SRC
 
 * Orgmode footer args
