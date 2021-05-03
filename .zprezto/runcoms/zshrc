@@ -117,14 +117,11 @@ alias dotc='dot commit -m'
 alias dotchanged='$HOME/bin_scripts/dotchanged.sh'
 
 # CS 4410 Harmony
-# alias harmony='python3 $HOME/bin_scripts/harmony-1.1/harmony.py'
 alias harmony='$HOME/bin_scripts/harmony-1.1/harmony'
 
 # ----- Set Up Path
 # node
 export PATH="/usr/local/opt/node@8/bin:$PATH"
-# python conda
-export PATH="/anaconda3/bin:/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH"
 # python user path
 export PATH="$HOME/Library/Python/3.8/bin:$PATH"
 # Vim and Emacs
@@ -144,6 +141,8 @@ export PATH="$HOME/bin_scripts/bin:$PATH"
 # Rust
 export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
+# Scala
+export PATH="$PATH:/Users/philliporeggio/Library/Application Support/Coursier/bin"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
