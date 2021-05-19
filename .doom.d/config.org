@@ -23,13 +23,16 @@ Set the color theme and font
 
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
-(set-frame-parameter (selected-frame) 'alpha '(70 70))
-(add-to-list 'default-frame-alist '(alpha 70 70))
+;; (set-frame-parameter (selected-frame) 'alpha '(70 70))
+;; (add-to-list 'default-frame-alist '(alpha 70 70))
+
+(set-frame-parameter (selected-frame) 'alpha '(65 65))
+(add-to-list 'default-frame-alist '(alpha 65 65))
 #+END_SRC
 
 Make emacs start centered, in a large frame.
 #+BEGIN_SRC emacs-lisp
-(setq initial-frame-alist '((top . 50) (left . 40) (width . 160) (height . 45)))
+(setq initial-frame-alist '((fullscreen . maximized)))
 #+END_SRC
 
 Show Line numbers
@@ -316,12 +319,10 @@ Allow pasting of images with control over the width, and bind it to keybind
     (progn
       (setq org-download-image-html-width width)
       (org-download-screenshot)
-      (setq org-download-image-html-width prev-width))
-    ))
+      (setq org-download-image-html-width prev-width))))
 
 (map! :mode 'org-mode :leader
-      "v" #'org-download-screenshot-with-size
-      )
+      "v" #'org-download-screenshot-with-size)
 #+END_SRC
 
 Make drag-and-drop of images work with dired (untested)
@@ -494,7 +495,8 @@ Setup =lsp-sourcekit= to work swift files...
          (setq lsp-sourcekit-executable
                (expand-file-name "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")))
 
-(add-hook! swift-mode (defun personal-start-lsp () lsp))
+(after! '(lsp swift-mode)
+  (add-hook! swift-mode (defun personal-start-lsp () lsp)))
 #+END_SRC
 
 Recommend previously used words in swift files to compensate for spotty sourcekit support:
@@ -555,6 +557,42 @@ Enable sound support
              (subrp (symbol-function 'play-sound-internal)))
   (require 'play-sound))
 #+END_SRC
+
+Set some faces to change color when idle
+#+BEGIN_SRC elisp
+(require 'huecycle)
+
+(after! (huecycle company-box doom-modeline hl-line)
+  (huecycle-set-faces
+   (hl-line
+    background)
+   (line-number-current-line
+    foreground
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8))
+   (doom-modeline-evil-normal-state
+    foreground
+    :start-color "#8BD49C"
+    :speed 1.0
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8))
+   (doom-modeline-evil-insert-state
+    foreground
+    :start-color "#FDDC87"
+    :speed 1.0
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8))
+   (doom-modeline-buffer-major-mode
+    foreground
+    :random-color-saturation-range (0.8 1.0))
+   (company-box-selection
+    foreground))
+  (huecycle-when-idle 10.0))
+#+END_SRC
+
 ** Scratch Space
 Space for random elisp
 #+BEGIN_SRC elisp

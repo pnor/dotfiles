@@ -33,7 +33,6 @@
 (package! harmony-mode :recipe          ;; Syntax support for Harmony, a language used in CS 4410 at Cornell
   (:local-repo "local_packages/harmony-mode"))
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
-(package! zenscript-mode)               ;; Syntax support for a minecraft modding scripting language
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
@@ -58,3 +57,5 @@
 (package! tetris-sounds :recipe         ;; Sounds for emacs tetris
   (:local-repo "local_packages/tetris-sounds"))
 (package! leetcode)                     ;; Leetcode
+(package! huecycle :recipe              ;; Colorize fonts
+ (:local-repo "local_packages/huecycle"))
