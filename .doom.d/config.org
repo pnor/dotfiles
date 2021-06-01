@@ -106,16 +106,26 @@ Open up terminal in narrow vertical split
 
 Open up google in a split
 #+BEGIN_SRC elisp
-(defun personal-open-google-xwidget () (interactive)
-       "Open google in vertical split using xwidget-webkit"
-       (let ((google-url "https://www.google.com")
-             (xwidget-buffer (lambda ()
-                               (seq-find
-                                (lambda (b) (eq (buffer-local-value 'major-mode b) 'xwidget-webkit-mode))
-                                (buffer-list)))))
-         (split-window-right)
-         (xwidget-webkit-browse-url google-url)
-         (switch-to-buffer (funcall xwidget-buffer))))
+(defun personal-google-split ()
+  "Open google in vertical split using xwidget-webkit"
+  (interactive)
+  (let ((google-url "https://www.google.com")
+        (xwidget-buffer (lambda ()
+                          (seq-find
+                           (lambda (b) (eq (buffer-local-value 'major-mode b) 'xwidget-webkit-mode))
+                           (buffer-list)))))
+    (split-window-right)
+    (xwidget-webkit-browse-url google-url)
+    (switch-to-buffer (funcall xwidget-buffer))))
+#+END_SRC
+
+Open google in window with xwidget
+#+BEGIN_SRC elisp
+(defun personal-open-google ()
+  "Open google in in window using xwidget-webkit"
+  (interactive)
+  (let ((google-url "https://www.google.com"))
+    (xwidget-webkit-browse-url google-url)))
 #+END_SRC
 
 Add =company-tabnine= to front of completions, which uses GPT-2 to power completions
@@ -179,8 +189,7 @@ Map "s" to the sneak motion
 ;; Then bind it
 (map!
  :nv "s" #'evil-avy-goto-char-2-below
- :n "S" #'evil-avy-goto-char-2-above
- )
+ :n "S" #'evil-avy-goto-char-2-above)
 #+END_SRC
 
 *** Custom ex Commands
@@ -191,13 +200,7 @@ Map "s" to the sneak motion
 
 ~:S~ to search google
 #+BEGIN_SRC emacs-lisp
-(evil-ex-define-cmd "S" #'personal-open-google-xwidget)
-
-(defun tester (str)
-  (print str))
-
-(evil-ex-define-cmd "Tester" #'tester)
-
+(evil-ex-define-cmd "S" #'personal-google-split)
 #+END_SRC
 
 ~:Fexplore~ to open a project drawer
@@ -342,7 +345,6 @@ Config for the search engine, Ivy.
 
 Allow fuzzy searches to make it easier to find matches with less thought.
 #+BEGIN_SRC emacs-lisp
-
 (setq ivy-re-builders-alist
       '((t . ivy--regex-fuzzy)))
 #+END_SRC
@@ -427,7 +429,24 @@ Set =webkit-katex-render--client-path= to the repos directory, and use a light b
 
 (setq webkit-katex-render--background-color (doom-color 'bg))
 #+END_SRC
-
+** Epaint
+Disable evil mode in =epaint= mode by default, add back the space based window navigation, and the ability to kill the
+buffer with "zx"
+#+BEGIN_SRC elisp
+(after! epaint
+  (evil-set-initial-state 'epaint-mode 'emacs)
+  (map! :after epaint
+        :map epaint-mode-map
+        " h" #'evil-window-left
+        " l" #'evil-window-right
+        " j" #'evil-window-down
+        " k" #'evil-window-up
+        " H" #'+evil/window-move-left
+        " L" #'+evil/window-move-right
+        " K" #'+evil/window-move-up
+        " J" #'+evil/window-move-down
+        "zx" #'kill-current-buffer))
+#+END_SRC
 * Programming
 ** Emacs Lisp
 Set company backend so it gives better support
@@ -491,9 +510,8 @@ Configurations for the swift programming language.
 Setup =lsp-sourcekit= to work swift files...
 #+BEGIN_SRC emacs-lisp
 (after! lsp-sourcekit
-         (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
-         (setq lsp-sourcekit-executable
-               (expand-file-name "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")))
+  (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
+  (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
 
 (after! '(lsp swift-mode)
   (add-hook! swift-mode (defun personal-start-lsp () lsp)))
@@ -502,8 +520,7 @@ Setup =lsp-sourcekit= to work swift files...
 Recommend previously used words in swift files to compensate for spotty sourcekit support:
 #+BEGIN_SRC emacs-lisp
 (add-hook! swift-mode
-  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet))
-)
+  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet)))
 #+END_SRC
 
 Add =swiftlint= as a linter in swift files
@@ -562,34 +579,14 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle company-box doom-modeline hl-line)
+(after! (huecycle doom-modeline hl-line)
   (huecycle-set-faces
-   (hl-line
-    background)
-   (line-number-current-line
-    foreground
+   ((background . hl-line)
+    (foreground . (line-number-current-line )))
+   ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.8 1.0)
-    :random-color-luminance-range (0.5 0.8))
-   (doom-modeline-evil-normal-state
-    foreground
-    :start-color "#8BD49C"
-    :speed 1.0
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.8 1.0)
-    :random-color-luminance-range (0.5 0.8))
-   (doom-modeline-evil-insert-state
-    foreground
-    :start-color "#FDDC87"
-    :speed 1.0
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.8 1.0)
-    :random-color-luminance-range (0.5 0.8))
-   (doom-modeline-buffer-major-mode
-    foreground
-    :random-color-saturation-range (0.8 1.0))
-   (company-box-selection
-    foreground))
+    :random-color-luminance-range (0.5 0.8)))
   (huecycle-when-idle 10.0))
 #+END_SRC
 
