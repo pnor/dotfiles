@@ -27,9 +27,6 @@
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
 (package! graphql-mode)                 ;; Syntax support for the graphql query language
-(package! harmony-mode                  ;; Syntax support for Harmony, a language used in CS 4410 at Cornell
-  :recipe (:local-repo "local_packages/harmony-mode"))
-
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
 
 ;; ===== OR tools
@@ -44,14 +41,10 @@
   (:host github :repo "spwhitton/org-d20"))
 
 ;; ===== Misc / Fun
-(package! font-lock-studio)             ;; Debugging font-lock regexes
 (package! zone-rainbow)                 ;; Another zone program
 (package! play-sound-osx                ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
-(package! leetcode)                     ;; Leetcode
-(package! huecycle              ;; Colorize fonts
-  :recipe (:local-repo "local_packages/huecycle"))
-(package! svg-tag-mode
-  :recipe (:host github :repo "rougier/svg-tag-mode"))
+(package! huecycle                      ;; Colorize fonts
+  :recipe (:host github :repo "pnor/huecycle"))

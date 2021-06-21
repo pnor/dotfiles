@@ -541,18 +541,6 @@ Setup completion in python
   (set-company-backend! 'python-mode 'company-capf 'company-dabbrev 'company-yasnippet)
   )
 #+END_SRC
-** Class Specific
-Use custom file for Harmony (4410)
-#+BEGIN_SRC emacs-lisp
-(require 'harmony-mode)
-(autoload 'harmony-mode "harmony-mode" "Harmony editing mode." t)
-
-(setq auto-mode-alist
-      (cons '("\\.hny$" . harmony-mode) auto-mode-alist))
-
-(add-hook! harmony-mode (display-line-numbers--turn-on))
-#+END_SRC
-
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
