@@ -15,7 +15,6 @@
   (:host github :repo "chuntaro/epaint" :files ("*")))
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
 (package! forge)                        ;; Work with git forges (like reviewing PRs)
-(package! webkit-color-picker)          ;; Selct colors from a palette (using webkit)
 
 ;; ===== markup
 (package! vmd-mode)                     ;; Preview markdown
@@ -46,5 +45,6 @@
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
-(package! huecycle                      ;; Colorize fonts
-  :recipe (:host github :repo "pnor/huecycle"))
+(package! huecycle)                      ;; Colorize fonts
+;;  :recipe (:host github :repo "pnor/huecycle"))
+(package! package-lint)

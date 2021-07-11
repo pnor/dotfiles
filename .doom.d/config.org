@@ -23,16 +23,17 @@ Set the color theme and font
 
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
-;; (set-frame-parameter (selected-frame) 'alpha '(70 70))
-;; (add-to-list 'default-frame-alist '(alpha 70 70))
-
-(set-frame-parameter (selected-frame) 'alpha '(65 65))
-(add-to-list 'default-frame-alist '(alpha 65 65))
+(set-frame-parameter (selected-frame) 'alpha '(70 70))
+(add-to-list 'default-frame-alist '(alpha 70 70))
 #+END_SRC
 
-Make emacs start centered, in a large frame.
+Make emacs start full screen
+I call it *3 times* so that it will be full screen, but also transparent. (Surely there is a less janky way to acheive
+that though)
 #+BEGIN_SRC emacs-lisp
-(setq initial-frame-alist '((fullscreen . maximized)))
+(toggle-frame-fullscreen)
+(toggle-frame-fullscreen)
+(toggle-frame-fullscreen)
 #+END_SRC
 
 Show Line numbers
@@ -92,6 +93,50 @@ Toggle the transparency of emacs
       (set-frame-parameter (selected-frame) 'alpha '(70 70))
       (put 'cfg-transparency 'state t))
     ))
+#+END_SRC
+
+Control size of Emacs frame
+#+BEGIN_SRC emacs-lisp
+(defun personal-frame-change-size (width height)
+  "Modify size of window frame by increasing it by WIDTH and HEIGHT."
+  (let ((cur-width (frame-width (window-frame)))
+        (cur-height (frame-height (window-frame))))
+    (set-frame-size (window-frame) (+ cur-width width) (+ cur-height height))))
+
+(defun personal-frame-full-screen ()
+  "Toggle frame to be fullscreen"
+  (interactive)
+  (toggle-frame-fullscreen))
+
+(defun personal-frame-increase-width ()
+  "Increase frame width by 1."
+  (interactive)
+  (personal-frame-change-size 1 0))
+
+(defun personal-frame-decrease-width ()
+    "Decrease frame width  by 1."
+    (interactive)
+    (personal-frame-change-size -1 0))
+
+(defun personal-frame-increase-height ()
+    "Increase frame height by 1."
+    (interactive)
+    (personal-frame-change-size 0 1))
+
+(defun personal-frame-decrease-height ()
+    "Decrease frame height by 1."
+    (interactive)
+    (personal-frame-change-size 0 -1))
+
+(defun personal-frame-increase-diag ()
+    "Increase frame width and height by 1."
+    (interactive)
+    (personal-frame-change-size 1 1))
+
+(defun personal-frame-decrease-diag ()
+    "Decrease frame width and height by 1."
+    (interactive)
+    (personal-frame-change-size -1 -1))
 #+END_SRC
 
 Open up terminal in narrow vertical split
@@ -391,6 +436,17 @@ Make the company-box frame not transparent
   (push '(alpha . 100) company-box-frame-parameters))
 #+END_SRC
 
+Fix an issue with =company-box= mode in Doom Emacs, where using perspectives will cause an error that will stop it
+from working until Emacs is restarted
+#+BEGIN_SRC emacs-lisp
+(defun personal-company-box-recreate-main-frame ()
+  (interactive)
+    (company-box--set-frame (company-box--make-frame)))
+
+(defun personal-company-box-kill-doc-frame ()
+  (interactive)
+  (delete-frame (frame-local-getq company-box-doc-frame)))
+#+END_SRC
 ** Flycheck
 Set python path
 #+BEGIN_SRC emacs-lisp
@@ -570,12 +626,24 @@ Set some faces to change color when idle
 (after! (huecycle doom-modeline hl-line)
   (huecycle-set-faces
    ((background . hl-line)
-    (foreground . (line-number-current-line )))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.1 0.5)
+    :random-color-luminance-range (0.1 0.3)
+    :persist t)
    ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8))
+   ((foreground . (line-number-current-line ))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
+    :random-color-luminance-range (0.5 0.8)
+    :persist t)
+   ((foreground . region)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
     :random-color-luminance-range (0.5 0.8)))
-  (huecycle-when-idle 10.0))
+  (huecycle-when-idle 1.0))
 #+END_SRC
 
 ** Scratch Space
