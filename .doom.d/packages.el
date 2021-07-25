@@ -3,6 +3,7 @@
 
 ;; ===== disabling packages
 (package! solaire-mode :disable t)
+(package! evil-snipe :disable t)
 
 ;; ===== appearence
 (package! all-the-icons-ivy-rich)       ;; Add icons to ivy
@@ -15,11 +16,13 @@
   (:host github :repo "chuntaro/epaint" :files ("*")))
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
 (package! forge)                        ;; Work with git forges (like reviewing PRs)
+(package! floatbuf                      ;; Floating buffers
+  :recipe (:host github :repo "pnor/floatbuf"))
 
 ;; ===== markup
 (package! vmd-mode)                     ;; Preview markdown
 
-;; ===== Latex
+;; ===== latex
 (package! webkit-katex-render    ;; Show preview of equation in popup
   :recipe (:host github :repo "fuxialexander/emacs-webkit-katex-render"))
 
@@ -27,24 +30,27 @@
 (package! flycheck-swiftlint)           ;; Swiftlint
 (package! graphql-mode)                 ;; Syntax support for the graphql query language
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
+(package! package-lint)                 ;; Static linter for Emacs Packages
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
   (:host github :repo "dpo/ampl-mode" :files ("emacs/ampl-mode.el")))
 
-;; ===== Json
+;; ===== json
 (package! json-navigator)               ;; Navigate json with tree structure
 
-; ===== Org
+; ===== org
 (package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github :repo "spwhitton/org-d20"))
 
-;; ===== Misc / Fun
+;; ===== python
+(package! lsp-pyright)                  ;; python LSP
+
+;; ===== misc / Fun
 (package! zone-rainbow)                 ;; Another zone program
+(package! huecycle)                     ;; Colorize fonts
+(package! chess)                        ;; Chess
 (package! play-sound-osx                ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
-(package! huecycle)                      ;; Colorize fonts
-;;  :recipe (:host github :repo "pnor/huecycle"))
-(package! package-lint)

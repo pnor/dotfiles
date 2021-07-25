@@ -13,6 +13,17 @@ Load some personal information
 (load! "Secret.el")
 #+END_SRC
 
+** Library Functions
+Functions used in other places in the configs
+#+BEGIN_SRC emacs-lisp
+;; Get a live xwidget buffer with url opened
+(defun personal--xwidget-buffer (url)
+  (xwidget-webkit-browse-url url)
+  (let ((xwidget-buf (seq-find
+                      (lambda (b) (eq (buffer-local-value 'major-mode b) 'xwidget-webkit-mode))
+                      (buffer-list))))
+    xwidget-buf))
+#+END_SRC
 ** Font, Themes, and the General Look and Behavior
 *** Look
 Set the color theme and font
@@ -36,6 +47,11 @@ that though)
 (toggle-frame-fullscreen)
 #+END_SRC
 
+Show global display fill column
+#+BEGIN_SRC emacs-lisp
+(global-display-fill-column-indicator-mode t)
+#+END_SRC
+
 Show Line numbers
 #+BEGIN_SRC emacs-lisp
 (setq display-line-numbers-type t)
@@ -49,7 +65,7 @@ Modify the appearance of the mode-line
 *** Behavior
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
 #+BEGIN_SRC emacs-lisp
-(setq-default fill-column 116)
+(setq-default fill-column 100)
 #+END_SRC
 
 and automatically break long lines in source code buffers and org mode files
@@ -139,6 +155,10 @@ Control size of Emacs frame
     (personal-frame-change-size -1 -1))
 #+END_SRC
 
+Change fill-column
+#+BEGIN_SRC elisp
+#+END_SRC
+
 Open up terminal in narrow vertical split
 #+BEGIN_SRC emacs-lisp
 (defun personal-sterm ()
@@ -162,6 +182,12 @@ Open up google in a split
     (split-window-right)
     (xwidget-webkit-browse-url google-url)
     (switch-to-buffer (funcall xwidget-buffer))))
+
+(defun personal-google-here ()
+  "Open google in current buffer"
+  (interactive)
+  (let ((google-url "https://www.google.com"))
+    (personal--xwidget-buffer google-url)))
 #+END_SRC
 
 Open google in window with xwidget
@@ -223,14 +249,31 @@ Change =;= to =:= (for vim ex mode)
 Map "s" to the sneak motion
 #+BEGIN_SRC emacs-lisp
 ;; Unbind "s" from everything else
-(map! :after evil
-      :map evil-normal-state-map
-      "s" nil
-      "S" nil)
-(map! :after evil-snipe
-      :map evil-snipe-local-mode-map
-      :mno "s" nil
-      :mno "S" nil)
+;; (after! (evil evil-snipe)
+;;   (map!
+;;    :map evil-normal-state-map
+;;    "s" nil
+;;    "S" nil)
+;;   (map!
+;;    :map evil-snipe-local-mode-map
+;;    :mno "s" nil
+;;    :mno "S" nil)
+;;   ;; Then bind it
+;;   (map!
+;;    :nv "s" #'evil-avy-goto-char-2-below
+;;    :n "S" #'evil-avy-goto-char-2-above))
+
+
+(map!
+ :map evil-normal-state-map
+ "s" nil
+ "S" nil)
+
+;; (map!
+;;  :map evil-snipe-local-mode-map
+;;  :mno "s" nil
+;;  :mno "S" nil)
+
 ;; Then bind it
 (map!
  :nv "s" #'evil-avy-goto-char-2-below
@@ -243,9 +286,10 @@ Map "s" to the sneak motion
 (evil-ex-define-cmd "G" #'magit-status)
 #+END_SRC
 
-~:S~ to search google
+~:S~ to search google and ~:SS~ to open google in current frame
 #+BEGIN_SRC emacs-lisp
 (evil-ex-define-cmd "S" #'personal-google-split)
+(evil-ex-define-cmd "SS" #'personal-google-here)
 #+END_SRC
 
 ~:Fexplore~ to open a project drawer
@@ -262,6 +306,51 @@ Map "s" to the sneak motion
 #+BEGIN_SRC emacs-lisp
 (evil-ex-define-cmd "STerm" #'personal-sterm)
 #+END_SRC
+
+** Fixing Things
+A place for hacks and functions to fix fires
+
+Fix icons when run as daemon
+#+BEGIN_SRC emacs-lisp
+(defun personal-set-company-box-icons ()
+  (interactive)
+  (setq company-box-icons-all-the-icons
+        (let ((all-the-icons-scale-factor 0.8))
+          `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
+            (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
+            (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
+            (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+            (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
+            (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
+            (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
+            (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
+            (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
+            (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
+            (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
+            (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
+            (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
+            (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
+            (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
+            (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
+            (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
+            (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
+            (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
+            (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
+            (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
+            (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+            (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
+            (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
+            (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
+            (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink))))))
+
+;; (add-to-list 'after-make-frame-functions #'personal-set-company-box-icons)
+#+END_SRC
+
 
 * Modes
 ** Text Mode
@@ -426,8 +515,9 @@ Make it faster for code buffers, but slow for org-mode when writing prose
    company-idle-delay 0.1
    company-minimum-prefix-length 2))
 
-(after! company (add-hook! '(org-mode text-mode) (personal-set-company-for-prose)))
-(after! company (add-hook! prog-mode (personal-set-company-for-code)))
+(after! company
+  (add-hook! '(org-mode text-mode) (personal-set-company-for-prose))
+  (after! company (add-hook! prog-mode (personal-set-company-for-code))))
 #+END_SRC
 
 Make the company-box frame not transparent
@@ -453,11 +543,14 @@ Set python path
 (setq flycheck-json-python-json-executable "/usr/bin/python3")
 #+END_SRC
 ** Evil-snipe mode
-Disable its keybindings to use =evil-avy-goto-char-2-below=
+Disable =evil-snipe= mode to use =evil-avy-goto-char-2-below=
+Mainly to get =vim-sneak= like motion when pressing "s" or "S"
+- TODO: not working as intended..., I have to explicitly call it to stop the sniping affect after one of the updates
 #+BEGIN_SRC emacs-lisp
-(after! evil-snipe
-  (evil-snipe-mode nil)
-  (evil-snipe-override-mode nil))
+;; (after! evil-snipe
+;;   (evil-snipe-mode -1))
+;;
+;; (evil-snipe-mode -1)
 #+END_SRC
 
 ** Evil quickscope
@@ -503,13 +596,28 @@ buffer with "zx"
         " J" #'+evil/window-move-down
         "zx" #'kill-current-buffer))
 #+END_SRC
-* Programming
-** Emacs Lisp
-Set company backend so it gives better support
-#+BEGIN_SRC elisp
-(add-hook! elisp-mode
-  (set-company-backend! 'elisp-mode '((company-capf company-dabbrev))))
+** Floatbuf
+Add key mappings for floating buffers
+#+BEGIN_SRC emacs-lisp
+(require 'floatbuf)
+(after! floatbuf
+  (push '(alpha . 100) floatbuf-frame-params)
+  ;; with buffer
+  (defun personal-floatbuf-with-buffer ()
+    (interactive)
+    (floatbuf-make-floatbuf))
+  ;; with terminal
+  (defun personal-floatbuf-with-terminal ()
+    (interactive)
+    (floatbuf-make-floatbuf)
+    (+vterm/here nil))
+
+  ;; mapping
+  (map! :leader :mode 'global
+        "bt" #'personal-floatbuf-with-terminal
+        "bf" #'floatbuf-make-floatbuf)
 #+END_SRC
+* Programming
 ** C Family
 Setup LSP-mode with clangd based on this: [[file:~/.emacs.d/modules/lang/cc/README.org::*LSP-mode with clangd][LSP-mode with clangd]]
 #+BEGIN_SRC elisp
@@ -591,12 +699,12 @@ Fix paths to python since homebrew on Macos is seemingly broken
 (setq flycheck-python-flake8-executable "~/Library/Python/3.8/bin/flake8")
 #+END_SRC
 
-Setup completion in python
+Configure pyright
 #+BEGIN_SRC emacs-lisp
-(add-hook! python-mode
-  (set-company-backend! 'python-mode 'company-capf 'company-dabbrev 'company-yasnippet)
-  )
+(after! python
+  (require 'lsp-pyright))
 #+END_SRC
+
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
@@ -651,7 +759,17 @@ Space for random elisp
 #+BEGIN_SRC elisp
 
 (require 'tetris-sounds)
+#+END_SRC
 
+Splash Screen?
+#+BEGIN_SRC elisp :tangle no
+;; (defun set-splash-screen ()
+;;   (setq +doom-dashboard-banner-dir "~/.doom.d/splash-images/")
+;;   (setq +doom-dashboard-banner-file "emacs-e-template.svg")
+;;   (+doom-dashboard-reload))
+;;
+;; (add-hook 'doom-load-theme-hook #'set-splash-screen)
+;; (add-hook 'window-size-change-functions #'set-splash-screen)
 #+END_SRC
 
 * Orgmode footer args
