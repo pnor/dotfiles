@@ -614,8 +614,8 @@ Add key mappings for floating buffers
 
   ;; mapping
   (map! :leader :mode 'global
-        "bt" #'personal-floatbuf-with-terminal
-        "bf" #'floatbuf-make-floatbuf)
+        "fbt" #'personal-floatbuf-with-terminal
+        "fbf" #'floatbuf-make-floatbuf))
 #+END_SRC
 * Programming
 ** C Family
@@ -676,15 +676,12 @@ Setup =lsp-sourcekit= to work swift files...
 (after! lsp-sourcekit
   (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
   (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
-
-(after! '(lsp swift-mode)
-  (add-hook! swift-mode (defun personal-start-lsp () lsp)))
 #+END_SRC
 
 Recommend previously used words in swift files to compensate for spotty sourcekit support:
 #+BEGIN_SRC emacs-lisp
 (add-hook! swift-mode
-  (set-company-backend! 'swift-mode '(company-dabbrev company-capf company-yasnippet)))
+  (set-company-backend! 'swift-mode '(company-sourcekit company-dabbrev company-capf company-yasnippet)))
 #+END_SRC
 
 Add =swiftlint= as a linter in swift files

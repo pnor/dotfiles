@@ -12,25 +12,20 @@
 
 ;; ===== functionality
 (package! company-tabnine)              ;; Completion + Deep Learning
-(package! epaint :recipe                ;; paint drawing for emacs
-  (:host github :repo "chuntaro/epaint" :files ("*")))
+(package! epaint                        ;; paint drawing for emacs
+  :recipe (:host github :repo "chuntaro/epaint" :files ("*")))
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
 (package! forge)                        ;; Work with git forges (like reviewing PRs)
 (package! floatbuf                      ;; Floating buffers
   :recipe (:host github :repo "pnor/floatbuf"))
 
-;; ===== markup
-(package! vmd-mode)                     ;; Preview markdown
-
-;; ===== latex
-(package! webkit-katex-render    ;; Show preview of equation in popup
-  :recipe (:host github :repo "fuxialexander/emacs-webkit-katex-render"))
-
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
 (package! graphql-mode)                 ;; Syntax support for the graphql query language
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
+(package! company-sourcekit)
 (package! package-lint)                 ;; Static linter for Emacs Packages
+(package! lsp-pyright)                  ;; python LSP
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
@@ -43,13 +38,9 @@
 (package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github :repo "spwhitton/org-d20"))
 
-;; ===== python
-(package! lsp-pyright)                  ;; python LSP
-
 ;; ===== misc / Fun
 (package! zone-rainbow)                 ;; Another zone program
 (package! huecycle)                     ;; Colorize fonts
-(package! chess)                        ;; Chess
 (package! play-sound-osx                ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris

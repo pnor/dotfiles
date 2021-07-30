@@ -152,6 +152,9 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/Emacs:$PATH"
 export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/bin:$PATH"
 
+# swift
+export PATH="$HOME/bin_scripts/SourceKittenDaemon/dist/bin/sourcekittendaemon:$PATH"
+
 # opam configuration
 test -r $HOME/.opam/opam-init/init.zsh && . $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
