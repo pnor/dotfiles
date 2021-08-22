@@ -348,7 +348,15 @@ Fix icons when run as daemon
             (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
             (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink))))))
 
-;; (add-to-list 'after-make-frame-functions #'personal-set-company-box-icons)
+(add-hook! 'server-after-make-frame-hook #'personal-set-company-box-icons)
+#+END_SRC
+
+Turn off evl snipe mode
+#+BEGIN_SRC emacs-lisp
+(defun personal-turn-off-evil-snipe-mode ()
+  (evil-snipe-mode -1))
+
+(add-hook! 'server-after-make-frame-hook #'personal-turn-off-evil-snipe-mode)
 #+END_SRC
 
 * Modes
@@ -727,34 +735,12 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle doom-modeline hl-line)
-  (huecycle-set-faces
-   ((background . hl-line)
-    :color-list ("#252936" "#222222")
-    :next-color-func huecycle-get-next-list-color)
-   ((foreground . (line-number-current-line))
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.9 1.0)
-    :random-color-luminance-range (0.5 0.8)
-    :persist t)
-   ((foreground . region)
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.9 1.0)
-    :random-color-luminance-range (0.5 0.8)))
-  (huecycle-when-idle 1.0))
-
 ;; (after! (huecycle doom-modeline hl-line)
 ;;   (huecycle-set-faces
 ;;    ((background . hl-line)
-;;     :random-color-hue-range (0.0 1.0)
-;;     :random-color-saturation-range (0.1 0.5)
-;;     :random-color-luminance-range (0.1 0.3)
-;;     :persist t)
-;;    ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
-;;     :random-color-hue-range (0.0 1.0)
-;;     :random-color-saturation-range (0.8 1.0)
-;;     :random-color-luminance-range (0.5 0.8))
-;;    ((foreground . (line-number-current-line ))
+;;     :color-list ("#252936" "#222222")
+;;     :next-color-func huecycle-get-next-list-color)
+;;    ((foreground . (line-number-current-line))
 ;;     :random-color-hue-range (0.0 1.0)
 ;;     :random-color-saturation-range (0.9 1.0)
 ;;     :random-color-luminance-range (0.5 0.8)
@@ -764,6 +750,28 @@ Set some faces to change color when idle
 ;;     :random-color-saturation-range (0.9 1.0)
 ;;     :random-color-luminance-range (0.5 0.8)))
 ;;   (huecycle-when-idle 1.0))
+
+(after! (huecycle doom-modeline hl-line)
+  (huecycle-set-faces
+   ((background . hl-line)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.1 0.5)
+    :random-color-luminance-range (0.1 0.3)
+    :persist t)
+   ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8))
+   ((foreground . (line-number-current-line ))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
+    :random-color-luminance-range (0.5 0.8)
+    :persist t)
+   ((foreground . region)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
+    :random-color-luminance-range (0.5 0.8)))
+  (huecycle-when-idle 1.0))
 #+END_SRC
 
 ** Scratch Space
@@ -771,17 +779,12 @@ Space for random elisp
 #+BEGIN_SRC elisp
 
 (require 'tetris-sounds)
+
 #+END_SRC
 
 Splash Screen?
-#+BEGIN_SRC elisp :tangle no
-;; (defun set-splash-screen ()
-;;   (setq +doom-dashboard-banner-dir "~/.doom.d/splash-images/")
-;;   (setq +doom-dashboard-banner-file "emacs-e-template.svg")
-;;   (+doom-dashboard-reload))
-;;
-;; (add-hook 'doom-load-theme-hook #'set-splash-screen)
-;; (add-hook 'window-size-change-functions #'set-splash-screen)
+#+BEGIN_SRC elisp
+;; (load "title-screen.el")
 #+END_SRC
 
 * Orgmode footer args

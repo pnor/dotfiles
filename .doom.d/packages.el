@@ -3,7 +3,7 @@
 
 ;; ===== disabling packages
 (package! solaire-mode :disable t)
-(package! evil-snipe :disable t)
+;; (package! evil-snipe :disable t)
 
 ;; ===== appearence
 (package! all-the-icons-ivy-rich)       ;; Add icons to ivy
@@ -38,7 +38,7 @@
 (package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github :repo "spwhitton/org-d20"))
 
-;; ===== misc / Fun
+;; ===== misc / fun
 (package! zone-rainbow)                 ;; Another zone program
 (package! huecycle)                     ;; Colorize fonts
 (package! play-sound-osx                ;; Sound support in emacs

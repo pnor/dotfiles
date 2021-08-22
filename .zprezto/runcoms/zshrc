@@ -1,60 +1,78 @@
-# Configure with instant prompt if inside emacs, and with zsh-touchbar if in iTerm2 
+# ===== Shell Behaviour =========================================================
+
+# --- Shell Changes
+
+## - powerline10k instant prompt
 if [[ -v INSIDE_EMACS ]]; then
-    # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-    # Initialization code that may require console input (password prompts, [y/n]
+    # Enable Powerlevel10k instant prompt (Should stay close to the top of ~/.zshrc)
+    # ! Init code that may require console input (password prompts, [y/n]
     # confirmations, etc.) must go above this block; everything else may go below.
     if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
         source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
     fi
-else
-    # Apple touchbar (zsh-apple-touchbar)
+fi
+## - zsh apple touchbar
+if ! [[ -v INSIDE_EMACS ]]; then
     source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
 fi
-
-# Source Prezto.
+## - zsh autosuggestions
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+## zsh syntax highlighting
+source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+## - Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
+## - Powerline 10k
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# vi mode for iterm
+# --- Terminal Emulator Specific
+
+## -  vi mode for iterm
 set -o vi
+## - iTerm shell integration
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# autojump
+# --- Setting up Executables
+
+## - autojump
 [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
-
-# zsh-autosuggestions
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-# zsh-syntax highlighting
-source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# direnv
+## - direnv
 eval "$(direnv hook zsh)"
+## - opam config
+test -r $HOME/.opam/opam-init/init.zsh && . $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
-# Keybinds
-bindkey \^U backward-kill-line
-bindkey OA history-beginning-search-backward
-bindkey OB history-beginning-search-forward
-
-# --- Set global variables
+# --- Exported Variables
 export EDITOR="vim"
 export BAT_THEME="cornell"
 
-# --- Functions
-function movgif {
+# ===== Commands, Alias, Keybinds ===============================================
+
+# --- Keybinds
+bindkey \^U backward-kill-line
+bindkey \^k history-beginning-search-backward
+bindkey \^j history-beginning-search-forward
+
+# --- Custom Functions
+# Convert .mov to .gif
+# $1 input $2 output (new file)
+movgif() {
   ffmpeg -y -i $1 -f image2pipe -vcodec ppm - | convert -delay 2 -loop 0 -layers Optimize - gif:- | gifsicle -d 3 -O3 -o $2
 }
-
-function shrinkgif {
+# Optimize gif so it takes less space
+# $1 input $2 output (new gif file)
+shrinkgif() {
     gifsicle -O3 --lossy=80 $1 -o $2
 }
 
 # --- Alias
-# Vim
+## Vim
 alias v="vim -u ~/.simplevimrc"
 alias iv="vim"
 alias vis="vim -S Session.vim"
-
-# git
+## git
 alias gs="git status"
 alias ga="git add"
 alias gc="git commit -m"
@@ -67,99 +85,77 @@ alias gpsuo="git push --set-upstream origin"
 alias glog="git log"
 alias glogs="git log --stat"
 alias ggraph="git log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ad)%C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date=local"
-
-# Commands
+## Commands
 alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
-
-# Xcode/iOS
+## Xcode/iOS
 alias xcode='open -a Xcode'
 alias xvi='open -a XVim'
 alias delete_pods='rm -f Podfile.lock && rm -rf Pods'
-
-# iOS Grading
+## iOS Grading
 alias ios_rename='~/bin_scripts/ios_rename_grade.sh'
 alias ios_init='~/bin_scripts/ios_init.sh'
 alias ios_repo='open https://github.coecis.cornell.edu/cuappdev/ios-course'
-
-# Python
+## Python
 alias venv='source venv/bin/activate' # activate venv
 alias initvenv='virtualenv -p python3 venv' # create venv with no site packages
-# alias python='/usr/bin/python3'
-# alias python3='/usr/bin/python3'
-# alias pip3='/usr/bin/pip3'
-
-# Web Browsers
+## Web Browsers
 alias chrome='open -a "Google Chrome 2"'
 alias safari='open -a "Safari"'
 alias incognito='~/bin_scripts/open_incognito_safari'
-
-# Mail
+## Mail
 alias gmail_personal='open -a /Applications/Google\ Chrome\ 2.app '\''https://mail.google.com/mail/u/0/#inbox'\'''
 alias gmail_cornell='open -a Safari '\''https://mail.google.com/mail/u/0/#inbox'\'''
-
-# AMPL
+## AMPL
 alias ampl='~/bin_scripts/ampl_msg.sh'
-
-# Emacs
+## Emacs
 alias fix_ispell='~/bin_scripts/emacs-fix/fix_ispell.bash'
 alias emacs-fix='~/bin_scripts/emacs-fix/emacs-fix'
 alias ec='emacsclient'
-
-# IntelliJ
+## IntelliJ
 alias intellij='~/bin_scripts/intellij.sh "$(pwd)"'
-
-# LEETCODE
+## LEETCODE
 alias leett='leetcode test'
 alias leetget='~/bin_scripts/leetget.sh'
-
-# Dotfiles repo
+## Dotfiles repo
 alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias dots='dot status'
 alias dotc='dot commit -m'
 alias dotchanged='$HOME/bin_scripts/dotchanged.sh'
-
-# CS 4410 Harmony
+## CS 4410 Harmony
 alias harmony='$HOME/bin_scripts/harmony-1.1/harmony'
 
-# ----- Set Up Path
-# node
-export PATH="/usr/local/opt/node@8/bin:$PATH"
-# python user path
-export PATH="$HOME/Library/Python/3.8/bin:$PATH"
-# Vim and Emacs
-export PATH="$HOME/.vimpkg/bin:$HOME/.emacs.d/bin:$PATH"
-# Rust
-export PATH="$HOME/.cargo/bin:$PATH"
-# the bins
+# --- PATH
+## - the bins
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-# laTEX
-export PATH="/usr/texbin:/usr/texbin:$PATH"
-path+=('/Library/TeX/texbin/')
-# go
-path+=('/usr/local/go/bin')
-export PATH
-# Custom bins/scripts
-export PATH="$HOME/bin_scripts/bin:$PATH"
-# Rust
-export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
-# Scala
-export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# export PATH="$HOME/Documents/Coding/Emacs/build-emacs-for-macos/builds/Emacs.app/Contents/MacOS/Emacs:$PATH"
+## - executables on path
+# Vim
+export PATH="$HOME/.vimpkg/bin$PATH"
+# Emacs
+export PATH="$HOME/.emacs.d/bin:$PATH"
 export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/Emacs:$PATH"
 export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/bin:$PATH"
 
-# swift
+## - Programming Langs
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
+# node
+export PATH="/usr/local/opt/node@8/bin:$PATH"
+# Python
+# ~ user path
+export PATH="$HOME/Library/Python/3.8/bin:$PATH"
+# go
+export PATH="/usr/local/go/bin:$PATH"
+# LaTex
+export PATH="/usr/texbin:/usr/texbin:$PATH"
+path+=('/Library/TeX/texbin/')
+# Scala
+export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+# Swift
 export PATH="$HOME/bin_scripts/SourceKittenDaemon/dist/bin/sourcekittendaemon:$PATH"
 
-# opam configuration
-test -r $HOME/.opam/opam-init/init.zsh && . $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-
-
-# final p10k stuff
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+## - Personal
+# Custom bins/scripts
+export PATH="$HOME/bin_scripts/bin:$PATH"
