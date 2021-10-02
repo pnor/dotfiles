@@ -79,7 +79,7 @@ set pumheight=5
 set backspace=indent,eol,start
 
 " When diffing files, show them vertical side by side
-set diffopt+=vertical
+" set diffopt+=vertical
 
 " Load matchit so % matches if-else-endif, and related
 runtime! macros/matchit.vim
@@ -107,7 +107,7 @@ if $TERM_PROGRAM =~ "iTerm"
 endif
 
 " Source color scheme
-colo cornell
+colo industry " since cornell doens't wanna work anymore ):
 
  " Enable italics
 let &t_ZH="\e[3m"

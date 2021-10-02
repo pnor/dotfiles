@@ -17,8 +17,11 @@ if ! [[ -v INSIDE_EMACS ]]; then
 fi
 ## - zsh autosuggestions
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-## zsh syntax highlighting
+## - zsh syntax highlighting
 source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+## - zsh autopair
+source ~/.zsh-autopair/autopair.zsh
+autopair-init
 ## - Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
@@ -47,13 +50,14 @@ test -r $HOME/.opam/opam-init/init.zsh && . $HOME/.opam/opam-init/init.zsh > /de
 # --- Exported Variables
 export EDITOR="vim"
 export BAT_THEME="cornell"
+# export PYTHONPATH="/usr/local/lib/python3.9/site-packages" # add homebrew python
 
 # ===== Commands, Alias, Keybinds ===============================================
 
 # --- Keybinds
 bindkey \^U backward-kill-line
-bindkey \^k history-beginning-search-backward
-bindkey \^j history-beginning-search-forward
+bindkey  history-beginning-search-backward
+# bindkey ??? history-beginning-search-forward
 
 # --- Custom Functions
 # Convert .mov to .gif
@@ -98,6 +102,10 @@ alias ios_repo='open https://github.coecis.cornell.edu/cuappdev/ios-course'
 ## Python
 alias venv='source venv/bin/activate' # activate venv
 alias initvenv='virtualenv -p python3 venv' # create venv with no site packages
+alias python3='/usr/local/bin/python3'
+# alias pip3='/usr/local/bin/pip3'
+alias pip3_8='/Users/philliporeggio/Library/Python/3.8/bin/pip'
+
 ## Web Browsers
 alias chrome='open -a "Google Chrome 2"'
 alias safari='open -a "Safari"'
@@ -133,13 +141,12 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export PATH="$HOME/.vimpkg/bin$PATH"
 # Emacs
 export PATH="$HOME/.emacs.d/bin:$PATH"
-export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/Emacs:$PATH"
-export PATH="/Applications/Emacs-no-frame.app/Contents/MacOS/bin:$PATH"
+export PATH="/Applications/Emacs.app/Contents/MacOS/Emacs:$PATH"
+export PATH="/Applications/Emacs.app/Contents/MacOS/bin:$PATH"
 
 ## - Programming Langs
 # Rust
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/bin_scripts/rust-analyzer:$PATH"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
 # node
 export PATH="/usr/local/opt/node@8/bin:$PATH"
@@ -151,6 +158,7 @@ export PATH="/usr/local/go/bin:$PATH"
 # LaTex
 export PATH="/usr/texbin:/usr/texbin:$PATH"
 path+=('/Library/TeX/texbin/')
+
 # Scala
 export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
 # Swift

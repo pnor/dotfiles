@@ -111,7 +111,7 @@ Toggle the transparency of emacs
     ))
 #+END_SRC
 
-Control size of Emacs frame
+Control size of Emacs frame:
 #+BEGIN_SRC emacs-lisp
 (defun personal-frame-change-size (width height)
   "Modify size of window frame by increasing it by WIDTH and HEIGHT."
@@ -120,7 +120,7 @@ Control size of Emacs frame
     (set-frame-size (window-frame) (+ cur-width width) (+ cur-height height))))
 
 (defun personal-frame-full-screen ()
-  "Toggle frame to be fullscreen"
+  "Toggle frame to be fullscreen."
   (interactive)
   (toggle-frame-fullscreen))
 
@@ -153,6 +153,54 @@ Control size of Emacs frame
     "Decrease frame width and height by 1."
     (interactive)
     (personal-frame-change-size -1 -1))
+#+END_SRC
+
+Control position of emacs frame:
+#+BEGIN_SRC emacs-lisp
+(defun personal-frame-move (down right)
+  "Move window frame by DOWN and RIGHT."
+  (pcase (frame-position)
+    (`(,x . ,y) (set-frame-position (selected-frame) (+ x right) (+ y down)))))
+
+(defun personal-move-frame-down-30 ()
+  "Move window frame down 30."
+  (interactive)
+  (personal-frame-move 30 0))
+
+(defun personal-move-frame-down-5 ()
+  "Move window frame down 5."
+  (interactive)
+  (personal-frame-move 5 0))
+
+(defun personal-move-frame-up-30 ()
+  "Move window frame up 30."
+  (interactive)
+  (personal-frame-move -30 0))
+
+(defun personal-move-frame-up-5 ()
+  "Move window frame down 5."
+  (interactive)
+  (personal-frame-move -5 0))
+
+(defun personal-move-frame-left-30 ()
+  "Move window frame left 30."
+  (interactive)
+  (personal-frame-move 0 -30))
+
+(defun personal-move-frame-left-5 ()
+  "Move window frame left 5."
+  (interactive)
+  (personal-frame-move 0 -5))
+
+(defun personal-move-frame-right-30 ()
+  "Move window frame right 30."
+  (interactive)
+  (personal-frame-move 0 30))
+
+(defun personal-move-frame-right-5 ()
+  "Move window frame right 5."
+  (interactive)
+  (personal-frame-move 0 5))
 #+END_SRC
 
 Change fill-column
@@ -218,9 +266,16 @@ Some functions to modify =company-backends= on the fly.
   (interactive)
   (setq company-backends (push 'company-capf company-backends)))
 #+END_SRC
-
 *** Changing Old Ones
 ... coming soon
+
+*** School
+ssh into cornell linux box
+#+BEGIN_SRC emacs-lisp
+(defun perosnal-connect-cornell ()
+  (interactive)
+  (dired "/ssh:pno3@ugclinux.cs.cornell.edu:/home/pno3"))
+#+END_SRC
 
 ** Keybindings and Custom Commands
 *** Keybindings
@@ -521,10 +576,6 @@ Make it faster for code buffers, but slow for org-mode when writing prose
   (setq
    company-idle-delay 0.1
    company-minimum-prefix-length 2))
-
-(after! company
-  (add-hook! '(org-mode text-mode) (personal-set-company-for-prose))
-  (after! company (add-hook! prog-mode (personal-set-company-for-code))))
 #+END_SRC
 
 Make the company-box frame not transparent
@@ -547,15 +598,15 @@ from working until Emacs is restarted
 ** Flycheck
 Set python path
 #+BEGIN_SRC emacs-lisp
-(setq flycheck-json-python-json-executable "/usr/bin/python3")
+(setq flycheck-json-python-json-executable "/usr/local/bin/python3")
 #+END_SRC
 ** Evil-snipe mode
 Disable =evil-snipe= mode to use =evil-avy-goto-char-2-below=
 Mainly to get =vim-sneak= like motion when pressing "s" or "S"
 - TODO: not working as intended..., I have to explicitly call it to stop the sniping affect after one of the updates
 #+BEGIN_SRC emacs-lisp
-;; (after! evil-snipe
-;;   (evil-snipe-mode -1))
+(after! evil-snipe
+  (evil-snipe-mode -1))
 ;;
 ;; (evil-snipe-mode -1)
 #+END_SRC
@@ -574,17 +625,6 @@ Disable font for second matches, and make the letter be bold for first matches
    '(evil-quickscope-second-face ((t (:inherit unspecified :weight unspecified)))))
 #+END_SRC
 
-** webkit-katex-render
-Set =webkit-katex-render--client-path= to the repos directory, and use a light background for the preview
-#+BEGIN_SRC elisp
-(setq webkit-katex-render--client-path
-      (concat
-       "file://"
-       (expand-file-name "~/")
-       ".emacs.d/.local/straight/repos/emacs-webkit-katex-render/katex.html"))
-
-(setq webkit-katex-render--background-color (doom-color 'bg))
-#+END_SRC
 ** Epaint
 Disable evil mode in =epaint= mode by default, add back the space based window navigation, and the ability to kill the
 buffer with "zx"
@@ -603,37 +643,76 @@ buffer with "zx"
         " J" #'+evil/window-move-down
         "zx" #'kill-current-buffer))
 #+END_SRC
+** Edraw
+Edraw provides a graphic editor inline in org mode
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+  (require 'edraw-org)
+  (edraw-org-setup-default))
+  #+END_SRC
+
+Just write
+#+BEGIN_EXAMPLE
+[[edraw:]]
+#+END_EXAMPLE
+and press C-c C-o to start
+
 ** Floatbuf
 Add key mappings for floating buffers
 #+BEGIN_SRC emacs-lisp
 (require 'floatbuf)
+
 (after! floatbuf
   (push '(alpha . 100) floatbuf-frame-params)
   ;; with buffer
   (defun personal-floatbuf-with-buffer ()
+    "Create floating buffer with the current buffer."
     (interactive)
     (floatbuf-make-floatbuf))
   ;; with terminal
   (defun personal-floatbuf-with-terminal ()
+    "Create floating buffer with the a terminal."
     (interactive)
     (floatbuf-make-floatbuf)
     (+vterm/here nil))
-
+  ;; scratch buffer
+  (defun personal-floatbuf-with-scratch ()
+    "Create floating buffer with the a scratch buffer"
+    (interactive)
+    (floatbuf-make-floatbuf-with-buffer (get-buffer "*scratch*")))
+  ;; Epaint
+  (defun personal-floatbuf-with-epaint ()
+    "Create floating buffer with an epaint buffer"
+    (interactive)
+    (floatbuf-make-floatbuf)
+    (epaint))
+  ;; web browser
+  (defun personal-floatbuf-with-xwidget ()
+    "Create floating buffer with the xwidget"
+    (interactive)
+    (floatbuf-make-floatbuf)
+    (personal-google-here))
   ;; mapping
   (map! :leader :mode 'global
-        "fbt" #'personal-floatbuf-with-terminal
-        "fbf" #'floatbuf-make-floatbuf))
+        "fbS" #'personal-floatbuf-with-xwidget
+        "fbe" #'personal-floatbuf-with-epaint
+        "fbf" #'floatbuf-make-floatbuf
+        "fbs" #'personal-floatbuf-with-scratch
+        "fbt" #'personal-floatbuf-with-terminal))
 #+END_SRC
+
 * Programming
 ** C Family
-Setup LSP-mode with clangd based on this: [[file:~/.emacs.d/modules/lang/cc/README.org::*LSP-mode with clangd][LSP-mode with clangd]]
+Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
 #+BEGIN_SRC elisp
-(setq lsp-clients-clangd-args '("-j=3"
-                                "--background-index"
-                                "--clang-tidy"
-                                "--completion-style=detailed"
-                                "--header-insertion=never"))
-(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+(set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
+
+;; (setq lsp-clients-clangd-args '("-j=3"
+;;                                 "--background-index"
+;;                                 "--clang-tidy"
+;;                                 "--completion-style=detailed"
+;;                                 "--header-insertion=never"))
+;; (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 #+END_SRC
 ** OR Tools
 Useful stuff for working with linear programs and the like.
@@ -680,9 +759,9 @@ Configurations for the swift programming language.
 
 Setup =lsp-sourcekit= to work swift files...
 #+BEGIN_SRC emacs-lisp
-(after! lsp-sourcekit
-  (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
-  (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
+;; (after! lsp-sourcekit
+;;   (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
+;;   (setq lsp-sourcekit-executable (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp"))))
 #+END_SRC
 
 Recommend previously used words in swift files to compensate for spotty sourcekit support:
@@ -698,15 +777,22 @@ Add =swiftlint= as a linter in swift files
 #+END_SRC
 
 ** Python
-Fix paths to python since homebrew on Macos is seemingly broken
 #+BEGIN_SRC emacs-lisp
 (setq flycheck-python-flake8-executable "~/Library/Python/3.8/bin/flake8")
 #+END_SRC
 
-Configure pyright
+Which python is used:
 #+BEGIN_SRC emacs-lisp
-(after! python
-  (require 'lsp-pyright))
+(setq python-shell-exec-path '("/usr/local/bin/python3"))
+(setq python-shell-remote-exec-path '("/usr/local/bin/python3"))
+#+END_SRC
+
+Map the commands for sending lines to REPL to something less painful
+#+BEGIN_SRC emacs-lisp
+(map! :mode 'pythonn-mode :leader
+      "ml" #'python-shell-send-statement
+      "mr" #'python-shell-send-region
+      "mf" #'python-shell-send-defun)
 #+END_SRC
 
 * Misc/Random
@@ -718,6 +804,16 @@ Configure pyright
  (require 'zone)
  (zone-when-idle 600) ;; 10 minutes
  #+END_SRC
+
+Disable all non productive stuff (for lectures or presentations)
+#+BEGIN_SRC emacs-lisp
+(defun personal-look-professional ()
+  "Disable all idle animations and related."
+  (interactive)
+  (huecycle-stop-idle)
+  (huecycle-reset-all-faces-on-all-buffers)
+  (zone-leave-me-alone))
+#+END_SRC
 
 Add rainbow to zone programs
 #+BEGIN_SRC elisp
@@ -735,24 +831,9 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-;; (after! (huecycle doom-modeline hl-line)
-;;   (huecycle-set-faces
-;;    ((background . hl-line)
-;;     :color-list ("#252936" "#222222")
-;;     :next-color-func huecycle-get-next-list-color)
-;;    ((foreground . (line-number-current-line))
-;;     :random-color-hue-range (0.0 1.0)
-;;     :random-color-saturation-range (0.9 1.0)
-;;     :random-color-luminance-range (0.5 0.8)
-;;     :persist t)
-;;    ((foreground . region)
-;;     :random-color-hue-range (0.0 1.0)
-;;     :random-color-saturation-range (0.9 1.0)
-;;     :random-color-luminance-range (0.5 0.8)))
-;;   (huecycle-when-idle 1.0))
-
 (after! (huecycle doom-modeline hl-line)
   (huecycle-set-faces
+ ;; rainbow stuff
    ((background . hl-line)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.1 0.5)
@@ -770,7 +851,16 @@ Set some faces to change color when idle
    ((foreground . region)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.9 1.0)
-    :random-color-luminance-range (0.5 0.8)))
+    :random-color-luminance-range (0.5 0.8))
+   ((background . company-tooltip-selection)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.2 0.4)
+    :random-color-luminance-range (0.2 0.4)))
+  (setq huecycle-buffers-to-huecycle-in
+        (list
+         #'current-buffer
+         (lambda ()
+           (company-box--get-buffer))))
   (huecycle-when-idle 1.0))
 #+END_SRC
 
@@ -780,11 +870,98 @@ Space for random elisp
 
 (require 'tetris-sounds)
 
+(server-start)
+
 #+END_SRC
 
 Splash Screen?
 #+BEGIN_SRC elisp
-;; (load "title-screen.el")
+(defun personal-change-doom-dashboard-options ()
+  "Change dashboard options for start screen"
+  (setq +doom-dashboard-menu-sections
+        '(("Reload last session" :icon
+          (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+          :when
+          (cond
+           ((featurep! :ui workspaces)
+            (file-exists-p
+             (expand-file-name persp-auto-save-fname persp-save-dir)))
+           ((require 'desktop nil t)
+            (file-exists-p
+             (desktop-full-file-name))))
+          :face
+          (:inherit
+           (doom-dashboard-menu-title bold))
+          :action doom/quickload-session)
+         ("Open private configuration" :icon
+          (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+          :when
+          (file-directory-p doom-private-dir)
+          :action doom/open-private-config)
+         )))
+
+(defun personal-last-crash-delta (crash-log-dir)
+  "Computes time since last crash.
+Return result as a human readable string (thanks ts.el)
+Does this by figuring when crash log was last touched."
+  (require 'ts)
+  (let* ((dir-name (expand-file-name crash-log-dir))
+         (last-crash-log (shell-command-to-string (format "ls -r %s | rg emacs | head -1"
+                                                          dir-name)))
+         (last-crash-time-string (shell-command-to-string
+                                  (format "date -r %s -R"
+                                          (concat dir-name "/" last-crash-log))))
+         (now-string (shell-command-to-string "date -R"))
+         (last-crash-time (ts-parse last-crash-time-string))
+         (now-time (ts-parse now-string)))
+    (ts-human-format-duration (ts-diff now-time last-crash-time))))
+
+(defun doom-last-crash-line ()
+  "Say how long since Emacs last crashed"
+  (format "%s since last incident!" (personal-last-crash-delta "~/Library/Logs/DiagnosticReports")))
+
+(defun doom-dashboard-phrase ()
+  "Get a splash phrase, flow it over multiple lines as needed, and make fontify it."
+  (mapconcat
+   (lambda (line)
+     (+doom-dashboard--center
+      +doom-dashboard--width
+      (with-temp-buffer
+        (insert-text-button
+         line
+         'action
+         (lambda (_) (+doom-dashboard-reload t))
+         'face 'doom-dashboard-menu-title
+         'mouse-face 'doom-dashboard-menu-title
+         'help-echo "Last crash"
+         'follow-link t)
+        (buffer-string))))
+   (split-string
+    (with-temp-buffer
+      (insert (doom-last-crash-line))
+      (setq fill-column (min 70 (/ (* 2 (window-width)) 3)))
+      (fill-region (point-min) (point-max))
+      (buffer-string))
+    "\n")
+   "\n"))
+
+;; Only place this message if ts is available (avoid startup errors)
+(when (require 'ts nil 'noerror)
+  (defadvice! doom-dashboard-widget-loaded-with-phrase ()
+    :override #'doom-dashboard-widget-loaded
+    (setq line-spacing 0.2)
+    (insert
+     "\n\n"
+     (propertize
+      (+doom-dashboard--center
+       +doom-dashboard--width
+       (doom-display-benchmark-h 'return))
+      'face 'doom-dashboard-loaded)
+     "\n"
+     (doom-dashboard-phrase)
+     "\n")))
+
+(add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
 #+END_SRC
 
 * Orgmode footer args

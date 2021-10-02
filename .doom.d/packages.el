@@ -3,7 +3,6 @@
 
 ;; ===== disabling packages
 (package! solaire-mode :disable t)
-;; (package! evil-snipe :disable t)
 
 ;; ===== appearence
 (package! all-the-icons-ivy-rich)       ;; Add icons to ivy
@@ -23,7 +22,7 @@
 (package! flycheck-swiftlint)           ;; Swiftlint
 (package! graphql-mode)                 ;; Syntax support for the graphql query language
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
-(package! company-sourcekit)
+(package! company-sourcekit)            ;; Emacs meets Xcode
 (package! package-lint)                 ;; Static linter for Emacs Packages
 (package! lsp-pyright)                  ;; python LSP
 
@@ -38,6 +37,10 @@
 (package! ord-d20 :recipe               ;; keybinds for table top games
   (:host github :repo "spwhitton/org-d20"))
 
+;; ===== library
+(package! ts.el :recipe                 ;; Time stamps for the last crash calculation
+  (:host github :repo "alphapapa/ts.el"))
+
 ;; ===== misc / fun
 (package! zone-rainbow)                 ;; Another zone program
 (package! huecycle)                     ;; Colorize fonts
@@ -45,3 +48,5 @@
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
+(package! el-easydraw                 ;; Drawing in org mode
+  :recipe (:host github :repo "misohena/el-easydraw"))

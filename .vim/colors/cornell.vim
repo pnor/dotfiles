@@ -6,6 +6,8 @@ if exists("syntax_on")
   syntax reset
 endif
 
+let s:t_Co = exists('&t_Co') && !empty(&t_Co) && &t_Co > 1 ? &t_Co : 2
+
 let g:colors_name = "cornell"
 
 hi Cursor         guifg=#1f1f1f guibg=#f8f8f0 gui=NONE
