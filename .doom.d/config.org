@@ -29,7 +29,9 @@ Functions used in other places in the configs
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
 (setq doom-theme 'starry)
-(setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
+;; (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
+(setq doom-font (font-spec :family "CozetteVector" :size 18))
+;; (setq doom-font (font-spec :family "Cascadia Code" :size 18))
 #+END_SRC
 
 Make the emacs frame transparent because I like my laptop background 🙃
@@ -43,8 +45,8 @@ I call it *3 times* so that it will be full screen, but also transparent. (Surel
 that though)
 #+BEGIN_SRC emacs-lisp
 (toggle-frame-fullscreen)
-(toggle-frame-fullscreen)
-(toggle-frame-fullscreen)
+;; (toggle-frame-fullscreen)
+;; (toggle-frame-fullscreen)
 #+END_SRC
 
 Show global display fill column
@@ -87,6 +89,99 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
     ;; make evil-search-word look for symbol rather than word boundaries
     (setq-default evil-symbol-word-search t))
 
+#+END_SRC
+** Splash Screen Edits
+Remove the options on the splash screen I don't use
+#+BEGIN_SRC emacs-lisp
+(defun personal-change-doom-dashboard-options ()
+  "Change dashboard options for start screen"
+  (setq +doom-dashboard-menu-sections
+        '(("Reload last session" :icon
+           (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+           :when
+           (cond
+            ((featurep! :ui workspaces)
+             (file-exists-p
+              (expand-file-name persp-auto-save-fname persp-save-dir)))
+            ((require 'desktop nil t)
+             (file-exists-p
+              (desktop-full-file-name))))
+           :face
+           (:inherit
+            (doom-dashboard-menu-title bold))
+           :action doom/quickload-session)
+          ("Open private configuration" :icon
+           (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+           :when
+           (file-directory-p doom-private-dir)
+           :action doom/open-private-config))))
+#+END_SRC
+
+Last crash info
+- grabs latest crash log in
+#+BEGIN_SRC elisp
+(defun personal-last-crash-delta (crash-log-dir)
+  "Computes time since last crash.
+Return result as a human readable string (thanks ts.el)
+Does this by figuring when crash log was last touched."
+  (require 'ts)
+  (let* ((dir-name (expand-file-name crash-log-dir))
+         (last-crash-log (shell-command-to-string (format "ls -r %s | rg -i emacs | head -1"
+                                                          dir-name)))
+         (last-crash-time-string (shell-command-to-string
+                                  (format "date -r %s -R"
+                                          (concat dir-name "/" last-crash-log))))
+         (now-string (shell-command-to-string "date -R"))
+         (last-crash-time (ts-parse last-crash-time-string))
+         (now-time (ts-parse now-string)))
+    (ts-human-format-duration (ts-diff now-time last-crash-time))))
+
+(defun doom-last-crash-line ()
+  "Say how long since Emacs last crashed"
+  (format "%s since last incident!" (personal-last-crash-delta "~/Library/Logs/DiagnosticReports")))
+
+(defun doom-dashboard-phrase ()
+  "Get a splash phrase, flow it over multiple lines as needed, and make fontify it."
+  (mapconcat
+   (lambda (line)
+     (+doom-dashboard--center
+      +doom-dashboard--width
+      (with-temp-buffer
+        (insert-text-button
+         line
+         'action
+         (lambda (_) (+doom-dashboard-reload t))
+         'face 'doom-dashboard-menu-title
+         'mouse-face 'doom-dashboard-menu-title
+         'help-echo "Last crash"
+         'follow-link t)
+        (buffer-string))))
+   (split-string
+    (with-temp-buffer
+      (insert (doom-last-crash-line))
+      (setq fill-column (min 70 (/ (* 2 (window-width)) 3)))
+      (fill-region (point-min) (point-max))
+      (buffer-string))
+    "\n")
+   "\n"))
+
+;; Only place this message if ts is available (avoid startup errors)
+(when (require 'ts nil 'noerror)
+  (defadvice! doom-dashboard-widget-loaded-with-phrase ()
+    :override #'doom-dashboard-widget-loaded
+    (setq line-spacing 0.2)
+    (insert
+     "\n\n"
+     (propertize
+      (+doom-dashboard--center
+       +doom-dashboard--width
+       (doom-display-benchmark-h 'return))
+      'face 'doom-dashboard-loaded)
+     "\n"
+     (doom-dashboard-phrase)
+     "\n")))
+
+(add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
 #+END_SRC
 ** Useful Functions
 *** New Functions
@@ -347,6 +442,17 @@ Map "s" to the sneak motion
 (evil-ex-define-cmd "SS" #'personal-google-here)
 #+END_SRC
 
+~:E~ to search google with eww
+#+BEGIN_SRC emacs-lisp
+(defun personal-eww-google ()
+  (interactive)
+  (let* ((query (read-from-minibuffer "Search for: "))
+         (url-extension (replace-regexp-in-string " " "+" query )))
+  (eww (concat "https://www.google.com/search?q=" url-extension))))
+
+(evil-ex-define-cmd "E" #'personal-eww-google)
+#+END_SRC
+
 ~:Fexplore~ to open a project drawer
 #+BEGIN_SRC emacs-lisp
 (evil-ex-define-cmd "Fexplore" #'treemacs)
@@ -408,10 +514,7 @@ Fix icons when run as daemon
 
 Turn off evl snipe mode
 #+BEGIN_SRC emacs-lisp
-(defun personal-turn-off-evil-snipe-mode ()
-  (evil-snipe-mode -1))
-
-(add-hook! 'server-after-make-frame-hook #'personal-turn-off-evil-snipe-mode)
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 #+END_SRC
 
 * Modes
@@ -448,12 +551,19 @@ _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beaut
 
 Make org-mode files use variable pitch fonts to look more like text documents
 #+BEGIN_SRC emacs-lisp
- (custom-theme-set-faces
+(defun personal-set-org-mode-faces ()
+  (custom-theme-set-faces
    'user
    '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
-   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
+   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160))))))
 
-(add-hook 'org-mode-hook 'variable-pitch-mode)
+(custom-theme-set-faces
+ 'user
+ '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
+ '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
+
+(add-hook 'org-mode-hook #'variable-pitch-mode)
+(add-hook 'org-mode-hook #'personal-set-org-mode-faces)
 #+END_SRC
 
 Files can opt out by having this at the *end* of the file:
@@ -488,9 +598,8 @@ Some things shouldn't be variable pitch ever:
 Set up completion for org mode files
 Recommend words when typing in text mode files:
 #+BEGIN_SRC emacs-lisp
-(add-hook! org-mode
-  (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell)
-)
+;; (add-hook! org-mode
+;;   (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell))
 #+END_SRC
 
 Add =proselint= to lint org-mode
@@ -528,6 +637,12 @@ Make drag-and-drop of images work with dired (untested)
 #+BEGIN_SRC emacs-lisp
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
+#+END_SRC
+
+Make latex previews nice and big
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0)))
 #+END_SRC
 
 ** Org Journal
@@ -602,13 +717,8 @@ Set python path
 #+END_SRC
 ** Evil-snipe mode
 Disable =evil-snipe= mode to use =evil-avy-goto-char-2-below=
-Mainly to get =vim-sneak= like motion when pressing "s" or "S"
-- TODO: not working as intended..., I have to explicitly call it to stop the sniping affect after one of the updates
 #+BEGIN_SRC emacs-lisp
-(after! evil-snipe
-  (evil-snipe-mode -1))
-;;
-;; (evil-snipe-mode -1)
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 #+END_SRC
 
 ** Evil quickscope
@@ -701,6 +811,13 @@ Add key mappings for floating buffers
         "fbt" #'personal-floatbuf-with-terminal))
 #+END_SRC
 
+** Lsp mode
+Make =lsp-ui= frame not transparent
+#+BEGIN_SRC elisp
+(after! lsp-ui
+  (push '(alpha . 100) lsp-ui-doc-frame-parameters))
+#+END_SRC
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -713,6 +830,12 @@ Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org
 ;;                                 "--completion-style=detailed"
 ;;                                 "--header-insertion=never"))
 ;; (after! lsp-clangd (set-lsp-priority! 'clangd 2))
+#+END_SRC
+
+Map <Space>ff to =ff-find-other-file= for Cpp
+#+BEGIN_SRC emacs-lisp
+(map! :mode 'cpp-mode :leader
+      " ff" #'ff-find-other-file)
 #+END_SRC
 ** OR Tools
 Useful stuff for working with linear programs and the like.
@@ -836,8 +959,9 @@ Set some faces to change color when idle
  ;; rainbow stuff
    ((background . hl-line)
     :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.1 0.5)
-    :random-color-luminance-range (0.1 0.3)
+    :random-color-saturation-range (0.1 0.45)
+    :random-color-luminance-range (0.1 0.25)
+    :speed 0.5
     :persist t)
    ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
     :random-color-hue-range (0.0 1.0)
@@ -847,6 +971,7 @@ Set some faces to change color when idle
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.9 1.0)
     :random-color-luminance-range (0.5 0.8)
+    :speed 0.6
     :persist t)
    ((foreground . region)
     :random-color-hue-range (0.0 1.0)
@@ -872,96 +997,6 @@ Space for random elisp
 
 (server-start)
 
-#+END_SRC
-
-Splash Screen?
-#+BEGIN_SRC elisp
-(defun personal-change-doom-dashboard-options ()
-  "Change dashboard options for start screen"
-  (setq +doom-dashboard-menu-sections
-        '(("Reload last session" :icon
-          (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
-          :when
-          (cond
-           ((featurep! :ui workspaces)
-            (file-exists-p
-             (expand-file-name persp-auto-save-fname persp-save-dir)))
-           ((require 'desktop nil t)
-            (file-exists-p
-             (desktop-full-file-name))))
-          :face
-          (:inherit
-           (doom-dashboard-menu-title bold))
-          :action doom/quickload-session)
-         ("Open private configuration" :icon
-          (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
-          :when
-          (file-directory-p doom-private-dir)
-          :action doom/open-private-config)
-         )))
-
-(defun personal-last-crash-delta (crash-log-dir)
-  "Computes time since last crash.
-Return result as a human readable string (thanks ts.el)
-Does this by figuring when crash log was last touched."
-  (require 'ts)
-  (let* ((dir-name (expand-file-name crash-log-dir))
-         (last-crash-log (shell-command-to-string (format "ls -r %s | rg emacs | head -1"
-                                                          dir-name)))
-         (last-crash-time-string (shell-command-to-string
-                                  (format "date -r %s -R"
-                                          (concat dir-name "/" last-crash-log))))
-         (now-string (shell-command-to-string "date -R"))
-         (last-crash-time (ts-parse last-crash-time-string))
-         (now-time (ts-parse now-string)))
-    (ts-human-format-duration (ts-diff now-time last-crash-time))))
-
-(defun doom-last-crash-line ()
-  "Say how long since Emacs last crashed"
-  (format "%s since last incident!" (personal-last-crash-delta "~/Library/Logs/DiagnosticReports")))
-
-(defun doom-dashboard-phrase ()
-  "Get a splash phrase, flow it over multiple lines as needed, and make fontify it."
-  (mapconcat
-   (lambda (line)
-     (+doom-dashboard--center
-      +doom-dashboard--width
-      (with-temp-buffer
-        (insert-text-button
-         line
-         'action
-         (lambda (_) (+doom-dashboard-reload t))
-         'face 'doom-dashboard-menu-title
-         'mouse-face 'doom-dashboard-menu-title
-         'help-echo "Last crash"
-         'follow-link t)
-        (buffer-string))))
-   (split-string
-    (with-temp-buffer
-      (insert (doom-last-crash-line))
-      (setq fill-column (min 70 (/ (* 2 (window-width)) 3)))
-      (fill-region (point-min) (point-max))
-      (buffer-string))
-    "\n")
-   "\n"))
-
-;; Only place this message if ts is available (avoid startup errors)
-(when (require 'ts nil 'noerror)
-  (defadvice! doom-dashboard-widget-loaded-with-phrase ()
-    :override #'doom-dashboard-widget-loaded
-    (setq line-spacing 0.2)
-    (insert
-     "\n\n"
-     (propertize
-      (+doom-dashboard--center
-       +doom-dashboard--width
-       (doom-display-benchmark-h 'return))
-      'face 'doom-dashboard-loaded)
-     "\n"
-     (doom-dashboard-phrase)
-     "\n")))
-
-(add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
 #+END_SRC
 
 * Orgmode footer args

@@ -48,5 +48,5 @@
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
-(package! el-easydraw                 ;; Drawing in org mode
-  :recipe (:host github :repo "misohena/el-easydraw"))
+;; (package! el-easydraw                 ;; Drawing in org mode
+;;   :recipe (:host github :repo "misohena/el-easydraw"))
