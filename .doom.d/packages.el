@@ -17,6 +17,7 @@
 (package! forge)                        ;; Work with git forges (like reviewing PRs)
 (package! floatbuf                      ;; Floating buffers
   :recipe (:host github :repo "pnor/floatbuf"))
+(package! realgud-lldb)                 ;; lldb support for debugger
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
@@ -25,6 +26,8 @@
 (package! company-sourcekit)            ;; Emacs meets Xcode
 (package! package-lint)                 ;; Static linter for Emacs Packages
 (package! lsp-pyright)                  ;; python LSP
+(package! clang-format)
+;; (package! clang-format-plus)            ;; Cpp formatting
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
