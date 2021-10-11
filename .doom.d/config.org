@@ -833,6 +833,22 @@ Kill lsp-ui frame when it not showing documentation properly
   (interactive)
   (delete-frame (frame-)))
 #+END_SRC
+** Centaur Tabs
+Turn off tabs when the frame has a lot of splits in it (change function =personal-tab-window-limit=)
+#+begin_src emacs-lisp
+(defun personal-manage-tabs-with-splits (num-splits)
+  "Hide tab bar when >= NUM-SPLITS are on the window."
+  (if (length> (window-list) (- num-splits 1))
+    (walk-windows (lambda (_) (centaur-tabs-local-mode 1)))
+    (walk-windows (lambda (_) (centaur-tabs-local-mode -1)))))
+
+(defun personal-tab-window-limit ()
+  "Function that is used in hook that calls `personal-manage-tabs-with-splits' with arg."
+  (personal-manage-tabs-with-splits 4))
+
+(add-hook! 'window-configuration-change-hook #'personal-tab-window-limit) ;; called too many times
+#+end_src
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
