@@ -35,23 +35,34 @@ Set the color theme and font
 ;; (setq doom-font (font-spec :family "Cascadia Code" :size 18))
 #+END_SRC
 
+Cursor color
+#+begin_src emacs-lisp
+(setq evil-normal-state-cursor '(box "#528AF2")
+      evil-insert-state-cursor '(bar "#528AF2")
+      evil-visual-state-cursor '(hollow "#FDDC87")
+      evil-operator-state-cursor '(evil-half-cursor "#528AF2")
+      evil-replace-state-cursor '(hbar "#FDDC87"))
+#+end_src
+
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
 (set-frame-parameter (selected-frame) 'alpha '(70 70))
 (add-to-list 'default-frame-alist '(alpha 70 70))
 #+END_SRC
 
-Make emacs start full screen
-I call it *3 times* so that it will be full screen, but also transparent. (Surely there is a less janky way to acheive
-that though)
-#+BEGIN_SRC emacs-lisp
-;; (toggle-frame-fullscreen)
-;; (toggle-frame-fullscreen)
-;; (toggle-frame-fullscreen)
-
++Make emacs start full screen+
+Emacs starts in a small frame, and goes full screen when reloading session
+(kinda works, crashes like 20-80 lmao)
+#+begin_src emacs-lisp
+;; (if (display-graphic-p)
+;;     (add-hook 'window-setup-hook #'toggle-frame-fullscreen))
 (if (display-graphic-p)
-    (add-hook 'emacs-startup-hook #'toggle-frame-fullscreen))
-#+END_SRC
+    (defadvice! personal-full-screen-on-reload-last ()
+      :after #'doom/quickload-session
+      (toggle-frame-fullscreen)))
+(setq initial-frame-alist '((top . 100) (left . 400) (width . 100) (height . 40)))
+
+#+end_src
 
 Show global display fill column
 #+BEGIN_SRC emacs-lisp
@@ -94,6 +105,7 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
     (setq-default evil-symbol-word-search t))
 
 #+END_SRC
+
 ** Splash Screen Edits
 Remove the options on the splash screen I don't use
 #+BEGIN_SRC emacs-lisp
@@ -119,28 +131,49 @@ Remove the options on the splash screen I don't use
            :when
            (file-directory-p doom-private-dir)
            :action doom/open-private-config))))
+
+(personal-change-doom-dashboard-options)
 #+END_SRC
 
 Last crash info
-- grabs latest crash log in
 #+begin_src emacs-lisp
-(defun personal-last-crash-delta (crash-log-dir)
+(defun personal--last-crash-delta (crash-log-dir emacs-crash-cache-file)
   "Computes time since last crash.
 Return result as a numeric number that needs to be converted to human readable string using `ts-human-format-duration'.
-CRASH-LOG-DIR is the directory where Emacs crash log is located (used to run touch)"
+
+CRASH-LOG-DIR is the directory where Emacs crash log is located (used to run touch).
+
+EMACS-CRASH-CACHE-file is a file (may not exist yet) that stores the time of the latest crash. Is
+used when the CRASH-LOG-DIR has no information for the last crash time, and is created/updated on
+each parse."
   (require 'ts)
   (let* ((dir-name (expand-file-name crash-log-dir))
          (last-crash-log (shell-command-to-string (format "ls -r %s | rg -i emacs | head -1"
-                                                          dir-name)))
-         (last-crash-time-string (shell-command-to-string
-                                  (format "date -r %s -R"
-                                          (concat dir-name "/" last-crash-log))))
-         (now-string (shell-command-to-string "date -R"))
-         (last-crash-time (ts-parse last-crash-time-string))
-         (now-time (ts-parse now-string)))
-    (ts-diff now-time last-crash-time)))
+                                                          dir-name))))
+    (if (length= last-crash-log 0)
+        (personal--use-crash-cache (expand-file-name emacs-crash-cache-file))
+      (personal--use-crash-log
+       (expand-file-name crash-log-dir)
+       (expand-file-name emacs-crash-cache-file)))))
 
-(defun personal-is-longest-no-crash-time (delta best-time-file)
+(defun personal--use-crash-cache (emacs-crash-cache-file)
+  (unless (file-exists-p emacs-crash-cache-file)
+    (write-region (shell-command-to-string "date -R") nil emacs-crash-cache-file))
+  (let ((last-crash-string (with-temp-buffer
+                        (insert-file-contents emacs-crash-cache-file)
+                        (buffer-string))))
+    (personal--compute-delta last-crash-string)))
+
+(defun personal--use-crash-log (log-file cache-file)
+  (let ((last-crash-string
+         (shell-command-to-string (format "date -r %s -R" (concat dir-name "/" log-file)))))
+    (write-region last-crash-string nil cache-file)
+    (personal--compute-delta last-crash-string)))
+
+(defun personal--compute-delta (last-crash-time-string)
+  (ts-diff (ts-parse (shell-command-to-string "date -R")) (ts-parse last-crash-time-string)))
+
+(defun personal--is-longest-no-crash-time (delta best-time-file)
   "Return `t' if DELTA is bigger than the number in BEST-TIME-FILE.
 Also handles updating the number if it is bigger, or creating it if it doesn't exist."
   (let ((best-time-file-name (expand-file-name best-time-file)))
@@ -158,12 +191,12 @@ Also handles updating the number if it is bigger, or creating it if it doesn't e
         nil))))
 
 
-(defun doom-last-crash-line (&optional best-time-file)
+(defun doom-last-crash-line ()
   "Say how long since Emacs last crashed.
 BEST-TIME-NAME is optional and specifies absolute path to file that contains the longest time Emacs"
-  (let* ((delta (personal-last-crash-delta "~/Library/Logs/DiagnosticReports"))
+  (let* ((delta (personal--last-crash-delta "~/Library/Logs/DiagnosticReports" "~/.doom.d/splash-last-crash.txt"))
          (delta-string (ts-human-format-duration delta)))
-    (if (personal-is-longest-no-crash-time delta "~/.doom.d/splash-longest-last-crash.txt")
+    (if (personal--is-longest-no-crash-time delta "~/.doom.d/splash-longest-last-crash.txt")
         (format "%s since last incident! (NEW RECORD!)" delta-string)
       (format "%s since last incident!" delta-string))))
 
@@ -231,7 +264,7 @@ Changing image of emacs splash (copied largely from [[https://github.com/tecosau
   :min-height minimum `frame-height' for image
   :padding `+doom-dashboard-banner-padding' (top . bottom) to apply
   :template non-default template file
-  :file file to use instead of template")
+  :file to use instead of template")
 
 (defvar fancy-splash-template-colours
   '(("$colour1" . keywords) ("$colour2" . type) ("$colour3" . base5) ("$colour4" . base8))
@@ -262,7 +295,8 @@ Changing image of emacs splash (copied largely from [[https://github.com/tecosau
     (dolist (substitution fancy-splash-template-colours)
       (goto-char (point-min))
       (while (re-search-forward (car substitution) nil t)
-        (replace-match (face-attribute 'foreground (cdr substitution)))
+        ;; (replace-match (face-attribute 'foreground (cdr substitution)))
+        (replace-match "#cccccc")
         ))
     (write-region nil nil
                   (fancy-splash-filename (symbol-name doom-theme) height) nil nil)))
@@ -306,9 +340,19 @@ Changing image of emacs splash (copied largely from [[https://github.com/tecosau
     (+doom-dashboard-reload)))
 
 (when (display-graphic-p)
-  (add-hook 'window-size-change-functions #'set-appropriate-splash)
-  (add-hook 'doom-load-theme-hook #'set-appropriate-splash))
+  ;(add-hook 'window-size-change-functions #'set-appropriate-splash)
+  ; TODO the window size change hook seems to crash?
+  (add-hook 'doom-load-theme-hook #'set-appropriate-splash)
+  )
 #+end_src
+
+Fix the random crashes hopefully caused from using the splash 😢
+#+begin_src emacs-lisp
+(defadvice! personal--load-persp-before-doom-dashboard ()
+  :before #'doom-dashboard-widget-shortmenu
+  (require 'persp-mode))
+#+end_src
+
 ** Useful Functions
 *** New Functions
 Toggle the transparency of emacs
@@ -433,6 +477,7 @@ Open up terminal in narrow vertical split
 (defun personal-sterm ()
   "Opens a terminal in a split on the left"
   (interactive)
+  (require 'vterm)
   (progn
     (split-window-right 45)
     (+vterm/here t)))
@@ -493,7 +538,7 @@ Some functions to modify =company-backends= on the fly.
 *** School
 ssh into cornell linux box
 #+BEGIN_SRC emacs-lisp
-(defun perosnal-connect-cornell ()
+(defun personal-connect-cornell ()
   (interactive)
   (dired "/ssh:pno3@ugclinux.cs.cornell.edu:/home/pno3"))
 #+END_SRC
@@ -658,7 +703,8 @@ _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beaut
 
 Make org-mode files use variable pitch fonts to look more like text documents
 #+BEGIN_SRC emacs-lisp
-(defun personal-set-org-mode-faces ()
+(defun personal--set-org-mode-faces ()
+  (interactive)
   (custom-theme-set-faces
    'user
    '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
@@ -669,8 +715,8 @@ Make org-mode files use variable pitch fonts to look more like text documents
  '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
  '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
 
-(add-hook 'org-mode-hook #'variable-pitch-mode)
-(add-hook 'org-mode-hook #'personal-set-org-mode-faces)
+(add-hook! org-mode #'variable-pitch-mode)
+(add-hook! org-mode #'personal--set-org-mode-faces)
 #+END_SRC
 
 Files can opt out by having this at the *end* of the file:
@@ -704,29 +750,36 @@ Some things shouldn't be variable pitch ever:
 *** Functionality
 Set up completion for org mode files
 Recommend words when typing in text mode files:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;; (add-hook! org-mode
 ;;   (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell))
-#+END_SRC
+#+end_src
 
 Add =proselint= to lint org-mode
-#+BEGIN_SRC elisp
+#+begin_src elisp
 (setq flycheck-proselint-executable "~/Library/Python/3.8/bin/proselint")
-#+END_SRC
+#+end_src
 
 Setup =org-download=, which makes the process of putting images into orgmode much easier
 Put downloaded images into an =images= directory and include timestamp. Use the command =pngpaste= to get the image
 from the clipboard.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (after! org-download
   (setq org-download-method 'directory)
   (setq-default org-download-image-dir "images")
   (setq org-download-timestamp "%Y%m%d-%H%M%S_")
   (setq org-download-screenshot-method "/usr/local/bin/pngpaste %s"))
-#+END_SRC
+#+end_src
+
+Advice =org-fancy-priorities-mode= which sometimes errors since =org-download= hasn't loaded yet
+#+begin_src emacs-lisp
+(defadvice! personal--load-org-download-with-fancy-priorities ()
+  :before #'org-fancy-priorities-mode
+  (require 'org-download))
+#+end_src
 
 Allow pasting of images with control over the width, and bind it to keybind
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun org-download-screenshot-with-size ()
   "Prompt user for a width to paste the image. Only lasts for this one function"
   (interactive)
@@ -738,7 +791,7 @@ Allow pasting of images with control over the width, and bind it to keybind
 
 (map! :mode 'org-mode :leader
       "v" #'org-download-screenshot-with-size)
-#+END_SRC
+#+end_src
 
 Make drag-and-drop of images work with dired (untested)
 #+BEGIN_SRC emacs-lisp
@@ -795,8 +848,6 @@ Make PDFs look sharper on MacOS
 #+END_SRC
 
 ** Company
-Configurations for Company.
-
 Configure completion settings;
 Make it faster for code buffers, but slow for org-mode when writing prose
 #+BEGIN_SRC emacs-lisp
@@ -815,6 +866,7 @@ Make it faster for code buffers, but slow for org-mode when writing prose
    company-minimum-prefix-length 2))
 #+END_SRC
 
+** Company Box
 Make the company-box frame not transparent
 #+BEGIN_SRC emacs-lisp
 (after! company-box
@@ -823,7 +875,7 @@ Make the company-box frame not transparent
 
 Fix an issue with =company-box= mode in Doom Emacs, where using perspectives will cause an error that will stop it
 from working until Emacs is restarted
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun personal-company-box-recreate-main-frame ()
   (interactive)
     (company-box--set-frame (company-box--make-frame)))
@@ -831,7 +883,8 @@ from working until Emacs is restarted
 (defun personal-company-box-kill-doc-frame ()
   (interactive)
   (delete-frame (frame-local-getq company-box-doc-frame)))
-#+END_SRC
+#+end_src
+
 ** Flycheck
 Set python path
 #+BEGIN_SRC emacs-lisp
@@ -938,31 +991,142 @@ Kill lsp-ui frame when it not showing documentation properly
 Turn off tabs when the frame has a lot of splits in it (change function =personal-tab-window-limit=)
 #+begin_src emacs-lisp
 (defun personal-manage-tabs-with-splits (num-splits)
-  "Hide tab bar when >= NUM-SPLITS are on the window."
+  "Hide tab bar when NUM-SPLITS or more (>=) windows are in the frame."
   (if (length> (window-list) (- num-splits 1))
-    (walk-windows (lambda (_) (centaur-tabs-local-mode 1)))
-    (walk-windows (lambda (_) (centaur-tabs-local-mode -1)))))
+    (walk-windows (lambda (w) (with-selected-window w (centaur-tabs-local-mode 1))))
+    (walk-windows (lambda (w) (with-selected-window w (centaur-tabs-local-mode -1))))))
 
 (defun personal-tab-window-limit ()
   "Function that is used in hook that calls `personal-manage-tabs-with-splits' with arg."
-  (personal-manage-tabs-with-splits 4))
+  (unless (frame-parent) ;; don't mess with tabs if its a child frame
+    (personal-manage-tabs-with-splits 3)))
 
 (after! centaur-tabs
   (add-hook! 'window-configuration-change-hook #'personal-tab-window-limit))
 #+end_src
 
+** Elfeed
+Set the org file that configures feed
+#+begin_src emacs-lisp
+(setq rmh-elfeed-org-files '("~/.doom.d/elfeed.org"))
+#+end_src
+
+** vterm
+Bind key to =vterm-other-window= which happens to open a terminal to the directory of the file it was
+invoked in (useful)
+#+begin_src emacs-lisp
+(defun personal-vterm-here ()
+  (interactive)
+  "Open vterm in the directory of cursor.
+Just calls `vterm-other-window', but also requires it to make it load beforehand."
+  (require 'vterm)
+  (vterm-other-window))
+
+(map! :leader :mode 'global
+      "oh" #'personal-vterm-here)
+#+end_src
+** vlc
+From [[https://ag91.github.io/blog/2021/01/25/vlc-via-emacs-how-to-open-a-youtube-link/][this page]]; setting up VLC so I can browse music in Emacs
+#+begin_src emacs-lisp
+(after! vlc
+  (defun vlc-add-uri (uri &optional noaudio novideo)
+    "Add URI to playlist and start playback.
+NOAUDIO and NOVIDEO are optional options.
+If NOAUDIO is non-nil, disable audio.
+If NOVIDEO is non-nil, disable video.
+When called interactively, with prefix arg, you can pick one."
+    (interactive (cons (let ((uri (read-string "Add file or url: ")))
+                         (if (s-starts-with-p "http" uri) uri
+                           (concat "file://" (expand-file-name uri))))
+                       (pcase current-prefix-arg
+                         ('nil (list nil nil))
+                         (_ (pcase (completing-read "Option: " '("noaudio" "novideo") nil t)
+                              ("noaudio" (list t nil))
+                              ("novideo" (list nil t)))))))
+    (vlc-add uri noaudio novideo))
+
+  (defun vlc-enqueue-uri (uri)
+    "Add URI to playlist."
+    (interactive (list (let ((uri (read-string "Add file or url: ")))
+                         (if (s-starts-with-p "http" uri) uri
+                           (concat "file://" (expand-file-name uri))))
+                       ))
+    (vlc-enqueue uri)))
+#+end_src
+
+Suggested from above link: add videos to queue if cursor is on it, and link in kill ring
+#+begin_src emacs-lisp
+(defun vlc-enqueue-uri-at-point ()
+    "Add URI to playlist."
+    (interactive)
+    (let ((uri (thing-at-point 'url)))
+      (when uri (vlc-enqueue uri))))
+
+(defun vlc-uris-in-clipboard ()
+    (--> (with-temp-buffer
+           (clipboard-yank)
+           (buffer-substring-no-properties (point-min) (point-max)))
+         (s-split "\n" it)
+         (--filter (s-starts-with-p "http" it) it)))
+
+(defun vlc-enqueue-uris (uris)
+    "Queue URIS to current VLC playlist."
+    (interactive)
+    (let ((uris (or uris (vlc-uris-in-clipboard))))
+      (-each uris 'vlc-enqueue-uri)))
+
+#+end_src
+
+Keybinds for music playing (Use =<leader>1v= as the global keybind)
+#+begin_src emacs-lisp
+(map! :leader :mode 'global
+      "1vs" #'vlc-start
+      "1vr" #'vlc-play
+      "1vR" #'vlc-pause
+      "1vn" #'vlc-next
+      "1vp" #'vlc-prev
+      "1va" #'vlc-enqueue-uri-at-point
+      "1ve" #'vlc-empty)
+#+end_src
+
+Function for opening up list
+#+begin_src emacs-lisp
+(defun personal-vlc-music-list ()
+  (interactive)
+  (let ((buf (find-file-noselect "~/Dropbox/agenda/music.org")))
+    (floatbuf-make-floatbuf-with-buffer buf)))
+
+(map! :leader :mode 'global
+      "fbv" #'personal-vlc-music-list)
+#+end_src
+
+Strip music org file of song urls
+#+begin_src emacs-lisp
+(defun personal-queue-all-into-vlc ()
+  "Use awk to put all files into vlc queue"
+  (interactive)
+  (require 'vlc)
+  (let*
+      ((music-file-loc (expand-file-name "~/Dropbox/agenda/music.org"))
+       (awk-script-loc (expand-file-name "~/.doom.d/music-list-parse-all.awk"))
+       (urls
+        (shell-command-to-string (format "%s %s" awk-script-loc music-file-loc))))
+    (mapc #'vlc-add-uri (split-string urls))))
+#+end_src
+
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
 #+BEGIN_SRC elisp
-(set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
+;; (set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
 
-;; (setq lsp-clients-clangd-args '("-j=3"
-;;                                 "--background-index"
-;;                                 "--clang-tidy"
-;;                                 "--completion-style=detailed"
-;;                                 "--header-insertion=never"))
-;; (after! lsp-clangd (set-lsp-priority! 'clangd 2))
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 #+END_SRC
 
 Map <Space>ff to =ff-find-other-file= for Cpp
@@ -980,6 +1144,15 @@ Add =cppcheck= as a linter to run after =irony= for Cpp
 Org source blocks should use up to date cpp
 #+begin_src emacs-lisp
 (defvar org-babel-default-header-args:cpp '((:flags . "-std=c++20")))
+#+end_src
+
+(default) Formatter options for the C family
+#+begin_src emacs-lisp
+(set-formatter! 'clang-format
+  '("clang-format"
+    "-style={BasedOnStyle: llvm, IndentWidth: 2, SortIncludes: true, ColumnLimit: 100}"
+    ("-assume-filename=%S" (or buffer-file-name mode-result "")))
+  :modes '(cpp-mode c-mode))
 #+end_src
 
 ** OR Tools
@@ -1063,6 +1236,22 @@ Map the commands for sending lines to REPL to something less painful
       "mf" #'python-shell-send-defun)
 #+END_SRC
 
+Stop the warning about native read line
+#+begin_src emacs-lisp
+(with-eval-after-load 'python
+  (defun python-shell-completion-native-try ()
+    "Return non-nil if can trigger native completion."
+    (let ((python-shell-completion-native-enable t)
+          (python-shell-completion-native-output-timeout
+           python-shell-completion-native-try-output-timeout))
+      (python-shell-completion-native-get-completions
+       (get-buffer-process (current-buffer))
+       nil "_"))))
+
+(setq python-shell-completion-native-enable nil)
+#+end_src
+
+
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
@@ -1099,33 +1288,30 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle doom-modeline hl-line)
+(after! (huecycle doom-modeline hl-line company-box)
   (huecycle-set-faces
- ;; rainbow stuff
+   ;; rainbow stuff
    ((background . hl-line)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.1 0.45)
     :random-color-luminance-range (0.1 0.25)
     :speed 0.5
     :persist t)
-   ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode))
+   ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state
+                                                   doom-modeline-buffer-major-mode
+                                                   line-number-current-line doom-modeline-lsp-success doom-modeline-panel doom-modeline-info))
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.8 1.0)
     :random-color-luminance-range (0.5 0.8))
-   ((foreground . (line-number-current-line ))
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.9 1.0)
-    :random-color-luminance-range (0.5 0.8)
-    :speed 0.6
-    :persist t)
+   :persist t
    ((foreground . region)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.9 1.0)
     :random-color-luminance-range (0.5 0.8))
    ((background . company-tooltip-selection)
     :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.2 0.4)
-    :random-color-luminance-range (0.2 0.4)))
+    :random-color-saturation-range (0.1 0.5)
+    :random-color-luminance-range (0.1 0.25)))
   (setq huecycle-buffers-to-huecycle-in
         (list
          #'current-buffer
@@ -1137,11 +1323,7 @@ Set some faces to change color when idle
 ** Scratch Space
 Space for random elisp
 #+BEGIN_SRC elisp
-
 (require 'tetris-sounds)
-
-(server-start)
-
 #+END_SRC
 
 * Orgmode footer args

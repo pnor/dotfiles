@@ -8,6 +8,15 @@ endif
 
 let s:t_Co = exists('&t_Co') && !empty(&t_Co) && &t_Co > 1 ? &t_Co : 2
 
+if has("termguicolors")
+  set termguicolors
+  if &t_8f == ''
+    " The first characters after the equals sign are literal escape characters.
+    set t_8f=[38;2;%lu;%lu;%lum
+    set t_8b=[48;2;%lu;%lu;%lum
+  endif
+endif
+
 let g:colors_name = "cornell"
 
 hi Cursor         guifg=#1f1f1f guibg=#f8f8f0 gui=NONE

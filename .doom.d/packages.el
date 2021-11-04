@@ -53,3 +53,4 @@
   :recipe (:local-repo "local_packages/tetris-sounds"))
 ;; (package! el-easydraw                 ;; Drawing in org mode
 ;;   :recipe (:host github :repo "misohena/el-easydraw"))
+(package! vlc)                          ;; Music controlled by Emacs

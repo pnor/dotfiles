@@ -94,10 +94,11 @@ endif
 " Display                                                                      "
 " ---------------------------------------------------------------------------- "
 " Enable true color
-if exists('+termguicolors')
+set termguicolors
+" Correct RGB escape codes for vim inside tmux
+if !has('nvim') && $TERM ==# 'xterm-256color'
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
 endif
 
 " Change cursor shape between insert and normal mode in iTerm2.app
@@ -107,7 +108,8 @@ if $TERM_PROGRAM =~ "iTerm"
 endif
 
 " Source color scheme
-colo industry " since cornell doens't wanna work anymore ):
+" colo torte " since cornell doens't wanna work anymore ):
+colo orbital
 
  " Enable italics
 let &t_ZH="\e[3m"
@@ -155,7 +157,7 @@ runtime statusline.vim
 " Key-Bindings / Commands                                                      "
 " ---------------------------------------------------------------------------- "
 " <Ctrl-l> redraws, removing search highlighting.
-nnoremap <silent> <C-l> :nohl<CR><C-l> 
+nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 " Source vimrc
 nnoremap <Leader>v :source ~/.vimrc<CR>
