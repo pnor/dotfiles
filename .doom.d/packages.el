@@ -10,7 +10,6 @@
 (package! rainbow-mode)                 ;; Preview color codes in-line
 
 ;; ===== functionality
-(package! company-tabnine)              ;; Completion + Deep Learning
 (package! epaint                        ;; paint drawing for emacs
   :recipe (:host github :repo "chuntaro/epaint" :files ("*")))
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
@@ -21,13 +20,11 @@
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
-(package! graphql-mode)                 ;; Syntax support for the graphql query language
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
-(package! company-sourcekit)            ;; Emacs meets Xcode
 (package! package-lint)                 ;; Static linter for Emacs Packages
-(package! lsp-pyright)                  ;; python LSP
-(package! clang-format)
-;; (package! clang-format-plus)            ;; Cpp formatting
+(package! clang-format)                 ;; C family formatting
+(package! tree-sitter)                  ;; Tree Sitter
+(package! tree-sitter-langs)
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
@@ -51,6 +48,6 @@
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
-;; (package! el-easydraw                 ;; Drawing in org mode
-;;   :recipe (:host github :repo "misohena/el-easydraw"))
 (package! vlc)                          ;; Music controlled by Emacs
+;; (package! random-theme                 ;; Randomize my color theme
+;;   :recipe (:local-repo "./local_packages/random-theme"))

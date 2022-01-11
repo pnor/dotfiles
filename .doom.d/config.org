@@ -28,7 +28,8 @@ Functions used in other places in the configs
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'starry)
+;; (setq doom-theme 'starry)
+(setq doom-theme 'starry-transparent)
 ;; (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
 (setq doom-font (font-spec :family "CozetteVector" :size 18))
 
@@ -46,16 +47,25 @@ Cursor color
 
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
-(set-frame-parameter (selected-frame) 'alpha '(70 70))
-(add-to-list 'default-frame-alist '(alpha 70 70))
+(defun personal-set-alpha-background-frame-params ()
+  (let ((bg-transparency 0.3))
+    (set-frame-parameter (selected-frame) 'alpha-background bg-transparency)
+    (add-to-list 'default-frame-alist `(alpha-background . ,bg-transparency))))
+
+(add-hook 'doom-load-theme-hook #'personal-set-alpha-background-frame-params)
 #+END_SRC
+
+And some functions to manipulate transparency on the frame
+#+begin_src emacs-lisp
+(defun personal-set-alpha-background-on-frame ()
+  (interactive)
+  (let ((alpha (read-number "Enter transparency (0.0-1.0): ")))
+    (set-frame-parameter (selected-frame) 'alpha-background alpha)))
+#+end_src
 
 +Make emacs start full screen+
 Emacs starts in a small frame, and goes full screen when reloading session
-(kinda works, crashes like 20-80 lmao)
 #+begin_src emacs-lisp
-;; (if (display-graphic-p)
-;;     (add-hook 'window-setup-hook #'toggle-frame-fullscreen))
 (if (display-graphic-p)
     (defadvice! personal-full-screen-on-reload-last ()
       :after #'doom/quickload-session
@@ -78,6 +88,36 @@ Modify the appearance of the mode-line
 #+BEGIN_SRC elisp
 (setq doom-modeline-major-mode-icon t)
 #+END_SRC
+
+Make some faces use variable pitch
+#+begin_src emacs-lisp
+(custom-theme-set-faces
+   'user
+   '(line-number ((t (:inherit fixed-pitch))))
+   '(line-number-current-line ((t (:inherit fixed-pitch))))
+   '(font-lock-comment-face ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-path ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-file ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-modified ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-host ((t (:inherit fixed-pitch))))
+   '(doom-modeline-project-dir ((t (:inherit fixed-pitch))))
+   '(doom-modeline-project-root-dir ((t (:inherit fixed-pitch))))
+   '(doom-modeline-project-parent-dir ((t (:inherit fixed-pitch))))
+   '(doom-modeline-buffer-major-mode ((t (:inherit fixed-pitch)))))
+#+end_src
+
+And change the font used for variable pitch fonts
+#+begin_src emacs-lisp
+(defun personal--set-variable-pitch-faces ()
+  (interactive)
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Helvetica" :height 200 :weight normal))))
+   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160))))))
+
+(personal--set-variable-pitch-faces)
+
+#+end_src
 
 *** Behavior
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
@@ -166,7 +206,7 @@ each parse."
 
 (defun personal--use-crash-log (log-file cache-file)
   (let ((last-crash-string
-         (shell-command-to-string (format "date -r %s -R" (concat dir-name "/" log-file)))))
+         (shell-command-to-string (format "date -r %s -R" log-file))))
     (write-region last-crash-string nil cache-file)
     (personal--compute-delta last-crash-string)))
 
@@ -703,20 +743,8 @@ _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beaut
 
 Make org-mode files use variable pitch fonts to look more like text documents
 #+BEGIN_SRC emacs-lisp
-(defun personal--set-org-mode-faces ()
-  (interactive)
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
-   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160))))))
-
-(custom-theme-set-faces
- 'user
- '(variable-pitch ((t (:family "Helvitica" :height 200 :weight normal))))
- '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160)))))
-
 (add-hook! org-mode #'variable-pitch-mode)
-(add-hook! org-mode #'personal--set-org-mode-faces)
+(add-hook! org-mode #'personal--set-variable-pitch-faces)
 #+END_SRC
 
 Files can opt out by having this at the *end* of the file:
@@ -726,9 +754,10 @@ Files can opt out by having this at the *end* of the file:
 ;; End:
 #+END_EXAMPLE
 
-Some things shouldn't be variable pitch ever:
+Some things shouldn't be variable pitch in org-mode ever:
 #+BEGIN_SRC emacs-lisp
-(custom-theme-set-faces
+(after! org
+  (custom-theme-set-faces
    'user
    '(org-block ((t (:inherit fixed-pitch))))
    '(org-block-begin-line ((t (:inherit fixed-pitch))))
@@ -741,10 +770,7 @@ Some things shouldn't be variable pitch ever:
    '(org-table ((t (:inherit fixed-pitch))))
    '(org-drawer ((t (:inherit fixed-pitch))))
    '(org-tag ((t (:inherit (fixed-pitch) :height 0.8))))
-   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
-   '(line-number ((t (:inherit fixed-pitch))))
-   '(line-number-current-line ((t (:inherit fixed-pitch))))
-   '(font-lock-comment-face ((t (:inherit fixed-pitch)))))
+   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
 #+END_SRC
 
 *** Functionality
@@ -870,7 +896,7 @@ Make it faster for code buffers, but slow for org-mode when writing prose
 Make the company-box frame not transparent
 #+BEGIN_SRC emacs-lisp
 (after! company-box
-  (push '(alpha . 100) company-box-frame-parameters))
+  (push '(alpha-background . 1.0) company-box-frame-parameters))
 #+END_SRC
 
 Fix an issue with =company-box= mode in Doom Emacs, where using perspectives will cause an error that will stop it
@@ -890,6 +916,25 @@ Set python path
 #+BEGIN_SRC emacs-lisp
 (setq flycheck-json-python-json-executable "/usr/local/bin/python3")
 #+END_SRC
+
+handle next checkers after =lsp=
+#+begin_src emacs-lisp
+(defvar-local personal-flycheck-local-cache nil)
+
+(defun personal-flycheck-checker-get (fn checker property)
+  (or (alist-get property (alist-get checker personal-flycheck-local-cache))
+      (funcall fn checker property)))
+
+(advice-add 'flycheck-checker-get :around 'personal-flycheck-checker-get)
+
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'sh-mode)
+              (setq personal-flycheck-local-cache '((lsp . ((next-checkers . (sh-posix-bash)))))))
+            (when (derived-mode-p 'c++-mode)
+              (setq personal-flycheck-local-cache '((lsp . ((next-checkers . (c/c++-cppcheck)))))))))
+
+#+end_src
 ** Evil-snipe mode
 Disable =evil-snipe= mode to use =evil-avy-goto-char-2-below=
 #+BEGIN_SRC emacs-lisp
@@ -930,12 +975,13 @@ buffer with "zx"
 #+END_SRC
 
 ** Floatbuf
-Add key mappings for floating buffers
+    Add key mappings for floating buffers
 #+BEGIN_SRC emacs-lisp
 (require 'floatbuf)
 
 (after! floatbuf
   (push '(alpha . 100) floatbuf-frame-params)
+  (push '(alpha-background . 0.65) floatbuf-frame-params)
   ;; with buffer
   (defun personal-floatbuf-with-buffer ()
     "Create floating buffer with the current buffer."
@@ -980,13 +1026,12 @@ Make =lsp-ui= frame not transparent
   (push '(alpha . 100) lsp-ui-doc-frame-parameters))
 #+END_SRC
 
-Kill lsp-ui frame when it not showing documentation properly
-#+BEGIN_SRC emacs-lisp
-;; TODO
-(defun personal-lsp-ui-kill-doc-frame ()
-  (interactive)
-  (delete-frame (frame-)))
-#+END_SRC
+Disable =lsp-ui-doc=
+#+begin_src emacs-lisp
+(after! lsp-ui
+  (setq lsp-ui-doc-enable nil))
+#+end_src
+
 ** Centaur Tabs
 Turn off tabs when the frame has a lot of splits in it (change function =personal-tab-window-limit=)
 #+begin_src emacs-lisp
@@ -1114,7 +1159,17 @@ Strip music org file of song urls
     (mapc #'vlc-add-uri (split-string urls))))
 #+end_src
 
+** Tree Sitter
+#+begin_src emacs-lisp
+(add-hook 'c-mode-common-hook #'tree-sitter-hl-mode)
+#+end_src
 
+#+begin_src emacs-lisp
+(add-hook 'vterm-mode-hook
+          (lambda ()
+            (set (make-local-variable 'buffer-face-mode-face) 'fixed-pitch)
+                 (buffer-face-mode t)))
+#+end_src
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -1135,12 +1190,6 @@ Map <Space>ff to =ff-find-other-file= for Cpp
       " ff" #'ff-find-other-file)
 #+END_SRC
 
-Add =cppcheck= as a linter to run after =irony= for Cpp
-#+BEGIN_SRC emacs-lisp
-(after! cpp-mode
-  (flycheck-add-next-checker 'irony 'c/c++-cppcheck))
-#+END_SRC
-
 Org source blocks should use up to date cpp
 #+begin_src emacs-lisp
 (defvar org-babel-default-header-args:cpp '((:flags . "-std=c++20")))
@@ -1154,6 +1203,12 @@ Org source blocks should use up to date cpp
     ("-assume-filename=%S" (or buffer-file-name mode-result "")))
   :modes '(cpp-mode c-mode))
 #+end_src
+
+*Note to self*
+Can set the =C++= version of projects using directory local variables for clang flychecker
+#+begin_quote
+Open the root directory of your project in Dired with C-x d, and then type M-x add-dir-local-variable RET c++-mode RET flycheck-gcc-language-standard RET "c++11". This will create a .dir-locals.el file in the root directory of your project. Emacs reads this file whenever you visit a file from this directory or any subdirectory, and sets variables according to the rules in this file. Specifically, Emacs will now set the language standard for Flycheck syntax checking to C++ 11 for all C++ files in your project.
+#+end_quote
 
 ** OR Tools
 Useful stuff for working with linear programs and the like.
@@ -1251,6 +1306,14 @@ Stop the warning about native read line
 (setq python-shell-completion-native-enable nil)
 #+end_src
 
+Set tab size and stuff
+#+begin_src emacs-lisp
+(add-hook 'python-mode-hook
+      (lambda ()
+        (setq indent-tabs-mode nil)
+        (setq tab-width 4)
+        (setq python-indent-offset 4)))
+#+end_src
 
 * Misc/Random
 ** Fun Stuff
@@ -1323,7 +1386,8 @@ Set some faces to change color when idle
 ** Scratch Space
 Space for random elisp
 #+BEGIN_SRC elisp
-(require 'tetris-sounds)
+;; (require 'tetris-sounds)
+
 #+END_SRC
 
 * Orgmode footer args
