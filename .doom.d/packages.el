@@ -49,5 +49,5 @@
 (package! tetris-sounds                 ;; Sounds for emacs tetris
   :recipe (:local-repo "local_packages/tetris-sounds"))
 (package! vlc)                          ;; Music controlled by Emacs
-;; (package! random-theme                 ;; Randomize my color theme
-;;   :recipe (:local-repo "./local_packages/random-theme"))
+(package! random-theme                  ;; Randomize my color theme
+  :recipe (:host github :repo "pnor/random-theme"))

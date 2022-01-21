@@ -1165,10 +1165,10 @@ Strip music org file of song urls
 #+end_src
 
 #+begin_src emacs-lisp
-(add-hook 'vterm-mode-hook
-          (lambda ()
-            (set (make-local-variable 'buffer-face-mode-face) 'fixed-pitch)
-                 (buffer-face-mode t)))
+;; (add-hook 'vterm-mode-hook
+;;           (lambda ()
+;;             (set (make-local-variable 'buffer-face-mode-face) 'fixed-pitch)
+;;                  (buffer-face-mode t)))
 #+end_src
 * Programming
 ** C Family
@@ -1388,7 +1388,16 @@ Space for random elisp
 #+BEGIN_SRC elisp
 ;; (require 'tetris-sounds)
 
+(require 'random-theme)
+
+(if (display-graphic-p)
+    (defadvice! personal-random-theme-on-reload-last ()
+      :after #'doom/quickload-session
+      (random-theme-set-theme)))
+
 #+END_SRC
+
+#+RESULTS:
 
 * Orgmode footer args
 #+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit, flycheck
