@@ -28,13 +28,16 @@ Functions used in other places in the configs
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-;; (setq doom-theme 'starry)
-(setq doom-theme 'starry-transparent)
+(setq doom-theme 'starry)
+;; (setq doom-theme 'starry-transparent)
 ;; (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
-(setq doom-font (font-spec :family "CozetteVector" :size 18))
+(setq doom-font (font-spec :family "CozetteVector" :size 30))
 
 ;; (setq doom-font (font-spec :family "Cascadia Code" :size 18))
 #+END_SRC
+
+#+RESULTS:
+: #<font-spec nil nil CozetteVector nil nil nil nil nil 22 nil nil nil nil>
 
 Cursor color
 #+begin_src emacs-lisp
@@ -48,7 +51,7 @@ Cursor color
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
 (defun personal-set-alpha-background-frame-params ()
-  (let ((bg-transparency 0.3))
+  (let ((bg-transparency 0.5))
     (set-frame-parameter (selected-frame) 'alpha-background bg-transparency)
     (add-to-list 'default-frame-alist `(alpha-background . ,bg-transparency))))
 
@@ -112,8 +115,8 @@ And change the font used for variable pitch fonts
   (interactive)
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Helvetica" :height 200 :weight normal))))
-   '(fixed-pitch ((t ( :family "MesloLGS Nerd Font" :height 160))))))
+   '(variable-pitch ((t (:family "Lucida Grande" :height 160 :weight normal))))
+   '(fixed-pitch ((t ( :family "Source Code Pro" :height 160))))))
 
 (personal--set-variable-pitch-faces)
 
@@ -147,8 +150,8 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
 #+END_SRC
 
 ** Splash Screen Edits
-Remove the options on the splash screen I don't use
-#+BEGIN_SRC emacs-lisp
+Remove splash screen I don't use
+#+begin_src emacs-lisp
 (defun personal-change-doom-dashboard-options ()
   "Change dashboard options for start screen"
   (setq +doom-dashboard-menu-sections
@@ -173,9 +176,9 @@ Remove the options on the splash screen I don't use
            :action doom/open-private-config))))
 
 (personal-change-doom-dashboard-options)
-#+END_SRC
+#+end_src
 
-Last crash info
+Last Crash Info
 #+begin_src emacs-lisp
 (defun personal--last-crash-delta (crash-log-dir emacs-crash-cache-file)
   "Computes time since last crash.
@@ -284,114 +287,6 @@ BEST-TIME-NAME is optional and specifies absolute path to file that contains the
 (add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
 #+end_src
 
-Changing image of emacs splash (copied largely from [[https://github.com/tecosaur/emacs-config/blob/master/config.org#splash-screen][here]]):
-#+begin_src emacs-lisp
-(defvar fancy-splash-image-template
-  (expand-file-name "splash-images/emacs-e-template.svg" doom-private-dir)
-  "Default template svg used for the splash image, with substitutions from ")
-
-(defvar fancy-splash-sizes
-  `((:height 300 :min-height 50 :padding (0 . 2))
-    (:height 250 :min-height 42 :padding (2 . 4))
-    (:height 200 :min-height 35 :padding (3 . 3))
-    (:height 150 :min-height 28 :padding (3 . 3))
-    (:height 100 :min-height 20 :padding (2 . 2))
-    (:height 75  :min-height 15 :padding (2 . 1))
-    (:height 50  :min-height 10 :padding (1 . 0))
-    (:height 1   :min-height 0  :padding (0 . 0)))
-  "list of plists with the following properties
-  :height the height of the image
-  :min-height minimum `frame-height' for image
-  :padding `+doom-dashboard-banner-padding' (top . bottom) to apply
-  :template non-default template file
-  :file to use instead of template")
-
-(defvar fancy-splash-template-colours
-  '(("$colour1" . keywords) ("$colour2" . type) ("$colour3" . base5) ("$colour4" . base8))
-  "list of colour-replacement alists of the form (\"$placeholder\" . 'theme-colour) which applied the template")
-
-(unless (file-exists-p (expand-file-name "theme-splashes" doom-cache-dir))
-  (make-directory (expand-file-name "theme-splashes" doom-cache-dir) t))
-
-(defun fancy-splash-filename (theme-name height)
-  (expand-file-name (concat (file-name-as-directory "theme-splashes")
-                            theme-name
-                            "-" (number-to-string height) ".svg")
-                    doom-cache-dir))
-
-(defun fancy-splash-clear-cache ()
-  "Delete all cached fancy splash images"
-  (interactive)
-  (delete-directory (expand-file-name "theme-splashes" doom-cache-dir) t)
-  (message "Cache cleared!"))
-
-(defun fancy-splash-generate-image (template height)
-  "Read TEMPLATE and create an image if HEIGHT with colour substitutions as
-   described by `fancy-splash-template-colours' for the current theme"
-  (with-temp-buffer
-    (insert-file-contents template)
-    (re-search-forward "$height" nil t)
-    (replace-match (number-to-string height) nil nil)
-    (dolist (substitution fancy-splash-template-colours)
-      (goto-char (point-min))
-      (while (re-search-forward (car substitution) nil t)
-        ;; (replace-match (face-attribute 'foreground (cdr substitution)))
-        (replace-match "#cccccc")
-        ))
-    (write-region nil nil
-                  (fancy-splash-filename (symbol-name doom-theme) height) nil nil)))
-
-(doom-color 'hl-line)
-
-(defun fancy-splash-generate-images ()
-  "Perform `fancy-splash-generate-image' in bulk"
-  (dolist (size fancy-splash-sizes)
-    (unless (plist-get size :file)
-      (fancy-splash-generate-image (or (plist-get size :template)
-                                       fancy-splash-image-template)
-                                   (plist-get size :height)))))
-
-(defun ensure-theme-splash-images-exist (&optional height)
-  (unless (file-exists-p (fancy-splash-filename
-                          (symbol-name doom-theme)
-                          (or height
-                              (plist-get (car fancy-splash-sizes) :height))))
-    (fancy-splash-generate-images)))
-
-(defun get-appropriate-splash ()
-  (let ((height (frame-height)))
-    (cl-some (lambda (size) (when (>= height (plist-get size :min-height)) size))
-             fancy-splash-sizes)))
-
-(setq fancy-splash-last-size nil)
-(setq fancy-splash-last-theme nil)
-(defun set-appropriate-splash (&rest _)
-  (let ((appropriate-image (get-appropriate-splash)))
-    (unless (and (equal appropriate-image fancy-splash-last-size)
-                 (equal doom-theme fancy-splash-last-theme)))
-    (unless (plist-get appropriate-image :file)
-      (ensure-theme-splash-images-exist (plist-get appropriate-image :height)))
-    (setq fancy-splash-image
-          (or (plist-get appropriate-image :file)
-              (fancy-splash-filename (symbol-name doom-theme) (plist-get appropriate-image :height))))
-    (setq +doom-dashboard-banner-padding (plist-get appropriate-image :padding))
-    (setq fancy-splash-last-size appropriate-image)
-    (setq fancy-splash-last-theme doom-theme)
-    (+doom-dashboard-reload)))
-
-(when (display-graphic-p)
-  ;(add-hook 'window-size-change-functions #'set-appropriate-splash)
-  ; TODO the window size change hook seems to crash?
-  (add-hook 'doom-load-theme-hook #'set-appropriate-splash)
-  )
-#+end_src
-
-Fix the random crashes hopefully caused from using the splash 😢
-#+begin_src emacs-lisp
-(defadvice! personal--load-persp-before-doom-dashboard ()
-  :before #'doom-dashboard-widget-shortmenu
-  (require 'persp-mode))
-#+end_src
 
 ** Useful Functions
 *** New Functions
@@ -411,7 +306,7 @@ Toggle the transparency of emacs
         (set-frame-parameter (selected-frame) 'alpha '(100 100))
         (put 'cfg-transparency 'state nil))
     (progn
-      (set-frame-parameter (selected-frame) 'alpha '(70 70))
+      (set-frame-parameter (selected-frame) 'alpha '(85 85))
       (put 'cfg-transparency 'state t))
     ))
 #+END_SRC
@@ -724,7 +619,7 @@ Recommend words when typing in text mode files:
 *** Look
 Set the org directory for org related files
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/org/agenda/")
+(setq org-directory "~/Dropbox/agenda")
 #+END_SRC
 
 Make org-mode documents look a little nicer by hiding markers and showing symbols
@@ -835,6 +730,11 @@ Make latex previews nice and big
 Encrypt the journal
 #+BEGIN_SRC elisp
 ;; ...
+#+END_SRC
+
+Set the dir
+#+BEGIN_SRC elisp
+(setq org-journal-dir "~/Dropbox/agenda/journal")
 #+END_SRC
 
 ** Ivy

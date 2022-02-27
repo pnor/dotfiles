@@ -3,4 +3,4 @@
 " or
 " ~/.simplevimrc
 
-source ~/.pluginvimrc
+source ~/.simplevimrc
