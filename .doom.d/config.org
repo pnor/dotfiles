@@ -28,10 +28,12 @@ Functions used in other places in the configs
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'starry)
+;; (setq doom-theme 'starry)
+(setq doom-theme 'ewal-doom-vibrant)
+
 ;; (setq doom-theme 'starry-transparent)
 ;; (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
-(setq doom-font (font-spec :family "CozetteVector" :size 30))
+(setq doom-font (font-spec :family "CozetteVector" :size 26))
 
 ;; (setq doom-font (font-spec :family "Cascadia Code" :size 18))
 #+END_SRC
@@ -115,8 +117,8 @@ And change the font used for variable pitch fonts
   (interactive)
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Lucida Grande" :height 160 :weight normal))))
-   '(fixed-pitch ((t ( :family "Source Code Pro" :height 160))))))
+   '(variable-pitch ((t (:family "Lucida Grande" :height 140 :weight normal))))
+   '(fixed-pitch ((t ( :family "Source Code Pro" :height 140))))))
 
 (personal--set-variable-pitch-faces)
 
@@ -1070,6 +1072,13 @@ Strip music org file of song urls
 ;;             (set (make-local-variable 'buffer-face-mode-face) 'fixed-pitch)
 ;;                  (buffer-face-mode t)))
 #+end_src
+** Blamer
+Enable Blamer
+#+begin_src emacs-lisp
+(after! blamer
+  (global-blamer-mode 1))
+#+end_src
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -1290,14 +1299,16 @@ Space for random elisp
 
 (require 'random-theme)
 
-(if (display-graphic-p)
-    (defadvice! personal-random-theme-on-reload-last ()
-      :after #'doom/quickload-session
-      (random-theme-set-theme)))
+;; (if (display-graphic-p)
+;;     (defadvice! personal-random-theme-on-reload-last ()
+;;       :after #'doom/quickload-session
+;;       (random-theme-set-theme)))
 
+(defun personal-refresh-ewal-emacs-theme ()
+  "Refreshes the ewal-doom-one theme based on current background"
+  (interactive)
+  (load-theme 'ewal-doom-one))
 #+END_SRC
-
-#+RESULTS:
 
 * Orgmode footer args
 #+localWords: MacOS, PDFs, ampl, Config, Configs, sourcekit, flycheck

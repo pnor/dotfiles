@@ -17,11 +17,13 @@
 (package! floatbuf                      ;; Floating buffers
   :recipe (:host github :repo "pnor/floatbuf"))
 (package! realgud-lldb)                 ;; lldb support for debugger
+(package! blamer)                       ;; Show git blame on line
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
 (package! package-lint)                 ;; Static linter for Emacs Packages
+(package! docker)                       ;; Docker
 (package! clang-format)                 ;; C family formatting
 (package! tree-sitter)                  ;; Tree Sitter
 (package! tree-sitter-langs)
@@ -46,8 +48,10 @@
 (package! huecycle)                     ;; Colorize fonts
 (package! play-sound-osx                ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
-(package! tetris-sounds                 ;; Sounds for emacs tetris
-  :recipe (:local-repo "local_packages/tetris-sounds"))
 (package! vlc)                          ;; Music controlled by Emacs
-(package! random-theme                  ;; Randomize my color theme
-  :recipe (:host github :repo "pnor/random-theme"))
+(package! random-theme                 ;; Randomize my color theme
+ :recipe (:host github :repo "pnor/random-theme"))
+
+
+(package! ewal :ignore IS-MAC)
+(package! ewal-doom-themes :ignore IS-MAC)
