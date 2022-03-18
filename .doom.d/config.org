@@ -25,21 +25,49 @@ Functions used in other places in the configs
     xwidget-buf))
 #+END_SRC
 ** Font, Themes, and the General Look and Behavior
+*** Fonts
+Keeping all the font information in one place
+
+Setting the main font
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family "CozetteVector" :size 26))
+#+end_src
+
+Make some faces use variable pitch
+#+begin_src emacs-lisp
+(custom-theme-set-faces
+   'user
+   '(line-number ((t (:inherit fixed-pitch))))
+   '(line-number-current-line ((t (:inherit fixed-pitch))))
+   ;; '(font-lock-comment-face ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-path ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-file ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-modified ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-buffer-host ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-project-dir ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-project-root-dir ((t (:inherit fixed-pitch))))
+   ;; '(doom-modeline-project-parent-dir ((t (:inherit fixed-pitch))))
+   '(doom-modeline-buffer-major-mode ((t (:inherit fixed-pitch)))))
+#+end_src
+
+And change the font used for variable pitch fonts
+#+begin_src emacs-lisp
+(defun personal--set-variable-pitch-faces ()
+  (interactive)
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Lucida Grande" :weight normal))))
+   '(fixed-pitch ((t ( :family "Source Code Pro" ))))))
+
+(add-hook! org-mode #'variable-pitch-mode)
+(add-hook! org-mode #'personal--set-variable-pitch-faces)
+#+end_src
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-;; (setq doom-theme 'starry)
-(setq doom-theme 'ewal-doom-vibrant)
-
 ;; (setq doom-theme 'starry-transparent)
-;; (setq doom-font (font-spec :family "MesloLGS Nerd Font" :size 16))
-(setq doom-font (font-spec :family "CozetteVector" :size 26))
-
-;; (setq doom-font (font-spec :family "Cascadia Code" :size 18))
+(setq doom-theme 'ewal-doom-vibrant)
 #+END_SRC
-
-#+RESULTS:
-: #<font-spec nil nil CozetteVector nil nil nil nil nil 22 nil nil nil nil>
 
 Cursor color
 #+begin_src emacs-lisp
@@ -93,36 +121,6 @@ Modify the appearance of the mode-line
 #+BEGIN_SRC elisp
 (setq doom-modeline-major-mode-icon t)
 #+END_SRC
-
-Make some faces use variable pitch
-#+begin_src emacs-lisp
-(custom-theme-set-faces
-   'user
-   '(line-number ((t (:inherit fixed-pitch))))
-   '(line-number-current-line ((t (:inherit fixed-pitch))))
-   '(font-lock-comment-face ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-path ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-file ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-modified ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-host ((t (:inherit fixed-pitch))))
-   '(doom-modeline-project-dir ((t (:inherit fixed-pitch))))
-   '(doom-modeline-project-root-dir ((t (:inherit fixed-pitch))))
-   '(doom-modeline-project-parent-dir ((t (:inherit fixed-pitch))))
-   '(doom-modeline-buffer-major-mode ((t (:inherit fixed-pitch)))))
-#+end_src
-
-And change the font used for variable pitch fonts
-#+begin_src emacs-lisp
-(defun personal--set-variable-pitch-faces ()
-  (interactive)
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "Lucida Grande" :height 140 :weight normal))))
-   '(fixed-pitch ((t ( :family "Source Code Pro" :height 140))))))
-
-(personal--set-variable-pitch-faces)
-
-#+end_src
 
 *** Behavior
 Add a fill column to prevent long lines (116 is the width of the vertical monitor)
@@ -639,10 +637,7 @@ Make org-mode documents look a little nicer by hiding markers and showing symbol
 _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
 
 Make org-mode files use variable pitch fonts to look more like text documents
-#+BEGIN_SRC emacs-lisp
-(add-hook! org-mode #'variable-pitch-mode)
-(add-hook! org-mode #'personal--set-variable-pitch-faces)
-#+END_SRC
+([[*Fonts][See this]])
 
 Files can opt out by having this at the *end* of the file:
 #+BEGIN_EXAMPLE org
@@ -652,22 +647,23 @@ Files can opt out by having this at the *end* of the file:
 #+END_EXAMPLE
 
 Some things shouldn't be variable pitch in org-mode ever:
+TODO does this do anything?
 #+BEGIN_SRC emacs-lisp
-(after! org
-  (custom-theme-set-faces
-   'user
-   '(org-block ((t (:inherit fixed-pitch))))
-   '(org-block-begin-line ((t (:inherit fixed-pitch))))
-   '(org-code ((t (:inherit (fixed-pitch)))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
-   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-property-value ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-table ((t (:inherit fixed-pitch))))
-   '(org-drawer ((t (:inherit fixed-pitch))))
-   '(org-tag ((t (:inherit (fixed-pitch) :height 0.8))))
-   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
+;; (after! org
+;;   (custom-theme-set-faces
+;;    'user
+;;    '(org-block ((t (:inherit fixed-pitch))))
+;;    '(org-block-begin-line ((t (:inherit fixed-pitch))))
+;;    '(org-code ((t (:inherit (fixed-pitch)))))
+;;    '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+;;    '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+;;    '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+;;    '(org-property-value ((t (:inherit fixed-pitch))) t)
+;;    '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+;;    '(org-table ((t (:inherit fixed-pitch))))
+;;    '(org-drawer ((t (:inherit fixed-pitch))))
+;;    '(org-tag ((t (:inherit (fixed-pitch) :height 0.8))))
+;;    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
 #+END_SRC
 
 *** Functionality
@@ -1079,6 +1075,40 @@ Enable Blamer
   (global-blamer-mode 1))
 #+end_src
 
+** Demap
+A function to start demap in a sane way (as the hook messes it up)
+#+begin_src emacs-lisp
+(defun personal-start-demap-hook ()
+  (interactive)
+  (require 'demap)
+  (require 'dash)
+  (add-hook! 'window-configuration-change-hook #'personal-minimap-for-one-window))
+#+end_src
+
+Turn on the minimap when there is only 1 active window
+#+begin_src emacs-lisp
+(defun personal-manage-minimap-with-splits (num-splits)
+  "Hide/show demap minimap when NUM-SPLITS or more (>=) windows are in the frame."
+  (let ((window-list-without-minimap
+         (-filter
+          (lambda (n) (not (string= n demap-minimap-default-name)))
+          (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list)))))
+    (if (length> window-list-without-minimap (- num-splits 1))
+        (demap-close)
+      (demap-open))))
+
+(defun personal-minimap-for-one-window ()
+  "Function that is used in hook that calls `personal-manage-minimap-with-splits'."
+  (unless (frame-parent) ;; don't mess with minimap in child frames
+    (personal-manage-minimap-with-splits 2)))
+
+
+#+end_src
+
+#+begin_src emacs-lisp
+(map! :after demap :leader :mode 'global
+  "tm" #'demap-toggle)
+#+end_src
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]

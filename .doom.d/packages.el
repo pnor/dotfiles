@@ -24,6 +24,7 @@
 (package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
 (package! package-lint)                 ;; Static linter for Emacs Packages
 (package! docker)                       ;; Docker
+(package! dockerfile-mode)              ;; Docker Syntax
 (package! clang-format)                 ;; C family formatting
 (package! tree-sitter)                  ;; Tree Sitter
 (package! tree-sitter-langs)
@@ -55,3 +56,5 @@
 
 (package! ewal :ignore IS-MAC)
 (package! ewal-doom-themes :ignore IS-MAC)
+
+(package! demap)
