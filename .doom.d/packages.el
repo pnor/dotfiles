@@ -18,6 +18,7 @@
   :recipe (:host github :repo "pnor/floatbuf"))
 (package! realgud-lldb)                 ;; lldb support for debugger
 (package! blamer)                       ;; Show git blame on line
+(package! demap)                        ;; Code Minimap
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
@@ -53,8 +54,6 @@
 (package! random-theme                 ;; Randomize my color theme
  :recipe (:host github :repo "pnor/random-theme"))
 
-
+;; ===== Conditional
 (package! ewal :ignore IS-MAC)
 (package! ewal-doom-themes :ignore IS-MAC)
-
-(package! demap)

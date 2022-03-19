@@ -1076,38 +1076,86 @@ Enable Blamer
 #+end_src
 
 ** Demap
-A function to start demap in a sane way (as the hook messes it up)
+List of buffers and modes to not show the minimap in
+#+begin_src emacs-lisp
+(defvar personal-minimap-exclude-buffer-names '("*doom*")
+  "List of buffer names that should not show the minibuffer if any are on the current frame")
+(defvar personal-minimap-exclude-modes '(pdf-view-mode vter-mode)
+  "List of modes that should not show the minibuffer if any are on the current frame")
+
+#+end_src
+
+A function to start and stop the demap hook
 #+begin_src emacs-lisp
 (defun personal-start-demap-hook ()
+  "Start the hook that shows a minimap if there's only 1 buffer"
   (interactive)
   (require 'demap)
   (require 'dash)
-  (add-hook! 'window-configuration-change-hook #'personal-minimap-for-one-window))
+  (add-hook! 'window-configuration-change-hook #'personal-minimap-for-one-window)
+  (setq personal-demap-hook-active t))
+
+(defun personal-stop-demap-hook ()
+  "Stop the hook that shows a minimap if there's only 1 buffer"
+  (interactive)
+  (remove-hook! 'window-configuration-change-hook #'personal-minimap-for-one-window)
+  (setq personal-demap-hook-active nil))
+
+(defun personal-toggle-demap-hook ()
+  "Toggle the hook that shows a minimap if there's only 1 buffer"
+  (interactive)
+  (if personal-demap-hook-active
+      (personal-stop-demap-hook)
+    (personal-start-demap-hook)))
 #+end_src
 
 Turn on the minimap when there is only 1 active window
 #+begin_src emacs-lisp
+(defun personal-should-show-minimap ()
+  (cl-flet ((has-excluded-name (w)
+         ;; don't show if it has an excluded name
+         (member (buffer-name (window-buffer w)) personal-minimap-exclude-buffer-names))
+        (has-excluded-mode (w)
+         ;; don't show if one of these modes is included
+         (member (with-current-buffer (window-buffer w) major-mode) personal-minimap-exclude-modes)))
+    (not (-any? (lambda (w) (or (has-excluded-name w) (has-excluded-mode w))) (window-list nil 1 nil)))))
+
+(cl-flet ((has-excluded-name (w)
+         ;; don't show if it has an excluded name
+         (member (buffer-name (window-buffer w)) personal-minimap-exclude-buffer-names))
+        (has-excluded-mode (w)
+         ;; don't show if one of these modes is included
+         (member (with-current-buffer (window-buffer w) major-mode) personal-minimap-exclude-modes)))
+    (-any? (lambda (w) (has-excluded-mode w)) (window-list)))
+
 (defun personal-manage-minimap-with-splits (num-splits)
-  "Hide/show demap minimap when NUM-SPLITS or more (>=) windows are in the frame."
+  "hide/show demap minimap when num-splits or more (>=) windows are in the frame."
   (let ((window-list-without-minimap
          (-filter
           (lambda (n) (not (string= n demap-minimap-default-name)))
-          (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list)))))
-    (if (length> window-list-without-minimap (- num-splits 1))
-        (demap-close)
-      (demap-open))))
+          (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list nil 1 nil)))))
+    (if (personal-should-show-minimap)
+        (if (length> window-list-without-minimap (- num-splits 1))
+            (demap-close)
+          (demap-open))
+      (demap-close))))
 
 (defun personal-minimap-for-one-window ()
-  "Function that is used in hook that calls `personal-manage-minimap-with-splits'."
+  "function that is used in hook that calls `personal-manage-minimap-with-splits'."
   (unless (frame-parent) ;; don't mess with minimap in child frames
     (personal-manage-minimap-with-splits 2)))
-
-
 #+end_src
 
+Keybinding for toggling demap minimap
 #+begin_src emacs-lisp
 (map! :after demap :leader :mode 'global
-  "tm" #'demap-toggle)
+  "tm" #'demap-toggle
+  "tM" #'personal-toggle-demap-hook)
+#+end_src
+
+Autostart the hook
+#+begin_src emacs-lisp
+(personal-start-demap-hook)
 #+end_src
 * Programming
 ** C Family
