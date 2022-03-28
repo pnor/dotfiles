@@ -873,13 +873,23 @@ buffer with "zx"
 #+END_SRC
 
 ** Floatbuf
+Set floatbuf frame parameters
+#+begin_src emacs-lisp
+(after! floatbuf
+  (push '(alpha . 100) floatbuf-frame-params)
+  (push '(alpha-background . 0.65) floatbuf-frame-params)
+  (if (not IS-MAC)
+      (push '(parent-frame . nil) floatbuf-frame-params)))
+#+end_src
+
+#+RESULTS:
+: ((parent-frame) (alpha-background . 0.65) (alpha . 100) (parent-frame) (alpha-background . 0.65) (alpha . 100) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (buffer-predicate . doom-buffer-frame-predicate))
+
     Add key mappings for floating buffers
 #+BEGIN_SRC emacs-lisp
 (require 'floatbuf)
 
 (after! floatbuf
-  (push '(alpha . 100) floatbuf-frame-params)
-  (push '(alpha-background . 0.65) floatbuf-frame-params)
   ;; with buffer
   (defun personal-floatbuf-with-buffer ()
     "Create floating buffer with the current buffer."
@@ -1080,7 +1090,7 @@ List of buffers and modes to not show the minimap in
 #+begin_src emacs-lisp
 (defvar personal-minimap-exclude-buffer-names '("*doom*")
   "List of buffer names that should not show the minibuffer if any are on the current frame")
-(defvar personal-minimap-exclude-modes '(pdf-view-mode vter-mode)
+(defvar personal-minimap-exclude-modes '(pdf-view-mode vterm-mode dired-mode)
   "List of modes that should not show the minibuffer if any are on the current frame")
 
 #+end_src
@@ -1112,6 +1122,7 @@ A function to start and stop the demap hook
 Turn on the minimap when there is only 1 active window
 #+begin_src emacs-lisp
 (defun personal-should-show-minimap ()
+  "`nil' if the window doesn't contain something that shouldn't have a minimap."
   (cl-flet ((has-excluded-name (w)
          ;; don't show if it has an excluded name
          (member (buffer-name (window-buffer w)) personal-minimap-exclude-buffer-names))
@@ -1120,25 +1131,15 @@ Turn on the minimap when there is only 1 active window
          (member (with-current-buffer (window-buffer w) major-mode) personal-minimap-exclude-modes)))
     (not (-any? (lambda (w) (or (has-excluded-name w) (has-excluded-mode w))) (window-list nil 1 nil)))))
 
-(cl-flet ((has-excluded-name (w)
-         ;; don't show if it has an excluded name
-         (member (buffer-name (window-buffer w)) personal-minimap-exclude-buffer-names))
-        (has-excluded-mode (w)
-         ;; don't show if one of these modes is included
-         (member (with-current-buffer (window-buffer w) major-mode) personal-minimap-exclude-modes)))
-    (-any? (lambda (w) (has-excluded-mode w)) (window-list)))
-
 (defun personal-manage-minimap-with-splits (num-splits)
   "hide/show demap minimap when num-splits or more (>=) windows are in the frame."
   (let ((window-list-without-minimap
          (-filter
           (lambda (n) (not (string= n demap-minimap-default-name)))
           (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list nil 1 nil)))))
-    (if (personal-should-show-minimap)
-        (if (length> window-list-without-minimap (- num-splits 1))
-            (demap-close)
-          (demap-open))
-      (demap-close))))
+    (if (and (personal-should-show-minimap) (not (length> window-list-without-minimap (- num-splits 1))))
+        (progn (demap-open))
+      (progn (demap-close)))))
 
 (defun personal-minimap-for-one-window ()
   "function that is used in hook that calls `personal-manage-minimap-with-splits'."
