@@ -11,16 +11,29 @@ if [[ -v INSIDE_EMACS ]]; then
         source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
     fi
 fi
-# ## - zsh apple touchbar
-# if ! [[ -v INSIDE_EMACS ]]; then
-#     source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
-# fi
-## - zsh autosuggestions
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-## - zsh syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-## - zsh autopair
-source ~/.zsh-autopair/autopair.zsh
+
+if [[ $(uname) == "Darwin" ]]; then
+  ## - zsh apple touchbar
+  if ! [[ -v INSIDE_EMACS ]]; then
+      source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
+  fi
+  ## - zsh autosuggestions
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ## - zsh syntax highlighting
+  source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  ## - zsh autopair
+  source ~/.zsh-autopair/autopair.zsh
+
+else
+
+  ## - zsh autosuggestions
+  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ## - zsh syntax highlighting
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  ## - zsh autopair
+  source ~/.zsh-autopair/autopair.zsh
+fi
+
 autopair-init
 ## - Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -82,12 +95,13 @@ alias la="ls -a"
 alias sl="ls"
 
 ## Arch Linux
-alias fix_wifi="sudo iw wlp3s0 set txpower fixed 10"
-alias wifi_info="sudo iw wlp3s0 info"
-alias open="xdg-open"
-
-## Arch Pcaman
-alias spacs="sudo pacman -S"
+if [[ $(uname) == "Linux" ]]; then
+   alias fix_wifi="sudo iw wlp3s0 set txpower fixed 10"
+   alias wifi_info="sudo iw wlp3s0 info"
+   alias open="xdg-open"
+   ## Arch Pcaman
+   alias spacs="sudo pacman -S"
+fi
 
 ## Vim
 alias v="vim -u ~/.simplevimrc"
