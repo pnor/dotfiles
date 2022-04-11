@@ -46,7 +46,9 @@ Keeping all the font information in one place
 
 Setting the main font
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "CozetteVector" :size 30))
+(if IS-MAC
+    (setq doom-font (font-spec :family "CozetteVector" :size 18))
+  (setq doom-font (font-spec :family "CozetteVector" :size 30)))
 #+end_src
 
 Make some faces use variable pitch
@@ -81,8 +83,9 @@ And change the font used for variable pitch fonts
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-;; (setq doom-theme 'starry-transparent)
-(setq doom-theme 'ewal-doom-vibrant)
+(if IS-MAC
+    (setq doom-theme 'starry-transparent)
+  (setq doom-theme 'ewal-doom-vibrant))
 #+END_SRC
 
 Cursor color
