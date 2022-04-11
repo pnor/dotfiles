@@ -6,6 +6,22 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 #+END_SRC
 
+* Preamble
+Functions used throughout the config
+
+Only run the forms based on which OS
+#+begin_src emacs-lisp
+(defmacro when-macos (&rest forms)
+  "Only run FORMS if OS is MacOS."
+  (if IS-MAC
+      `(mapc #'eval ',forms)))
+
+(defmacro when-linux (&rest forms)
+  "Only run FORMS if OS is Linux."
+  (if IS-LINUX
+      `(mapc #'eval ',forms)))
+#+end_src
+
 * General
 ** Private Information
 Load some personal information
@@ -30,7 +46,7 @@ Keeping all the font information in one place
 
 Setting the main font
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "CozetteVector" :size 26))
+(setq doom-font (font-spec :family "CozetteVector" :size 30))
 #+end_src
 
 Make some faces use variable pitch
@@ -149,6 +165,10 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
 
 #+END_SRC
 
+Enable pixel scrolling precision
+#+BEGIN_SRC emacs-lisp
+(pixel-scroll-precision-mode 1)
+#+END_SRC
 ** Splash Screen Edits
 Remove splash screen I don't use
 #+begin_src emacs-lisp
@@ -761,8 +781,8 @@ Interactive functions to make toggling fuzzy search and strict search easier
 
 Show icons in ivy buffer
 #+BEGIN_SRC emacs-lisp
-(all-the-icons-ivy-rich-mode 1)
-(ivy-rich-mode)
+;; (all-the-icons-ivy-rich-mode 1)
+;; (ivy-rich-mode)
 #+END_SRC
 
 ** Working with PDFs
@@ -954,8 +974,14 @@ Turn off tabs when the frame has a lot of splits in it (change function =persona
   (unless (frame-parent) ;; don't mess with tabs if its a child frame
     (personal-manage-tabs-with-splits 3)))
 
-(after! centaur-tabs
-  (add-hook! 'window-configuration-change-hook #'personal-tab-window-limit))
+(if (display-graphic-p)
+    (after! centaur-tabs
+      (add-hook! 'window-configuration-change-hook #'personal-tab-window-limit)))
+
+;; Dont show tabs if in terminal mode (doesn't look good)
+(unless (display-graphic-p)
+  (centaur-tabs-mode -1))
+
 #+end_src
 
 ** Elfeed
@@ -1090,10 +1116,12 @@ List of buffers and modes to not show the minimap in
 #+begin_src emacs-lisp
 (defvar personal-minimap-exclude-buffer-names '("*doom*")
   "List of buffer names that should not show the minibuffer if any are on the current frame")
-(defvar personal-minimap-exclude-modes '(pdf-view-mode vterm-mode dired-mode)
+(defvar personal-minimap-exclude-modes '(pdf-view-mode vterm-mode dired-mode image-mode magit-mode)
   "List of modes that should not show the minibuffer if any are on the current frame")
-
 #+end_src
+
+#+RESULTS:
+: personal-minimap-exclude-modes
 
 A function to start and stop the demap hook
 #+begin_src emacs-lisp
@@ -1129,7 +1157,11 @@ Turn on the minimap when there is only 1 active window
         (has-excluded-mode (w)
          ;; don't show if one of these modes is included
          (member (with-current-buffer (window-buffer w) major-mode) personal-minimap-exclude-modes)))
-    (not (-any? (lambda (w) (or (has-excluded-name w) (has-excluded-mode w))) (window-list nil 1 nil)))))
+    (and
+     (display-graphic-p)
+     (not (-any? (lambda (w) (or (has-excluded-name w) (has-excluded-mode w))) (window-list nil 1 nil))))))
+
+(frame-list)
 
 (defun personal-manage-minimap-with-splits (num-splits)
   "hide/show demap minimap when num-splits or more (>=) windows are in the frame."

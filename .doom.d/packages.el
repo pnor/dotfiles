@@ -5,7 +5,6 @@
 (package! solaire-mode :disable t)
 
 ;; ===== appearence
-(package! all-the-icons-ivy-rich)       ;; Add icons to ivy
 (package! focus)                        ;; Dim text when typing
 (package! rainbow-mode)                 ;; Preview color codes in-line
 
@@ -46,9 +45,9 @@
   (:host github :repo "alphapapa/ts.el"))
 
 ;; ===== misc / fun
-(package! zone-rainbow)                 ;; Another zone program
-(package! huecycle)                     ;; Colorize fonts
-(package! play-sound-osx                ;; Sound support in emacs
+(package! zone-rainbow)                         ;; Another zone program
+(package! huecycle)                             ;; Colorize fonts
+(package! play-sound-osx :ignore IS-LINUX       ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
 (package! vlc)                          ;; Music controlled by Emacs
 (package! random-theme                 ;; Randomize my color theme
