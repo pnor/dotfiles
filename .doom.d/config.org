@@ -74,7 +74,7 @@ And change the font used for variable pitch fonts
   (interactive)
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Lucida Grande" :weight normal))))
+   '(variable-pitch ((t (:family "Helvitica" :weight normal))))
    '(fixed-pitch ((t ( :family "Source Code Pro" ))))))
 
 (add-hook! org-mode #'variable-pitch-mode)
