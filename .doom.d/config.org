@@ -46,7 +46,9 @@ Keeping all the font information in one place
 
 Setting the main font
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "CozetteVector" :size 30))
+(if IS-MAC
+    (setq doom-font (font-spec :family "CozetteVector" :size 18))
+  (setq doom-font (font-spec :family "CozetteVector" :size 30)))
 #+end_src
 
 Make some faces use variable pitch
@@ -68,12 +70,14 @@ Make some faces use variable pitch
 
 And change the font used for variable pitch fonts
 #+begin_src emacs-lisp
+(setq personal-fixed-pitch-font (if IS-MAC "MesloLGS Nerd Font" "Source Code Pro"))
+
 (defun personal--set-variable-pitch-faces ()
   (interactive)
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Lucida Grande" :weight normal))))
-   '(fixed-pitch ((t ( :family "Source Code Pro" ))))))
+   '(variable-pitch ((t (:family "Helvetica" :weight normal))))
+   `(fixed-pitch ((t ( :family ,personal-fixed-pitch-font))))))
 
 (add-hook! org-mode #'variable-pitch-mode)
 (add-hook! org-mode #'personal--set-variable-pitch-faces)
@@ -81,8 +85,9 @@ And change the font used for variable pitch fonts
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-;; (setq doom-theme 'starry-transparent)
-(setq doom-theme 'ewal-doom-vibrant)
+(if IS-MAC
+    (setq doom-theme 'starry-transparent)
+  (setq doom-theme 'ewal-doom-vibrant))
 #+END_SRC
 
 Cursor color
@@ -113,12 +118,13 @@ And some functions to manipulate transparency on the frame
 #+end_src
 
 +Make emacs start full screen+
-Emacs starts in a small frame, and goes full screen when reloading session
++Emacs starts in a small frame, and goes full screen when reloading session+
+Window managers kind of make this problematic
 #+begin_src emacs-lisp
-(if (display-graphic-p)
-    (defadvice! personal-full-screen-on-reload-last ()
-      :after #'doom/quickload-session
-      (toggle-frame-fullscreen)))
+;; (if (display-graphic-p)
+;;     (defadvice! personal-full-screen-on-reload-last ()
+;;       :after #'doom/quickload-session
+;;       (toggle-frame-fullscreen)))
 (setq initial-frame-alist '((top . 100) (left . 400) (width . 100) (height . 40)))
 
 #+end_src

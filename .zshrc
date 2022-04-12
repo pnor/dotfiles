@@ -1,8 +1,4 @@
-
-#
 # ===== Shell Behaviour =========================================================
-#
-
 
 # --- Shell Changes
 
@@ -15,16 +11,29 @@ if [[ -v INSIDE_EMACS ]]; then
         source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
     fi
 fi
-# ## - zsh apple touchbar
-# if ! [[ -v INSIDE_EMACS ]]; then
-#     source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
-# fi
-## - zsh autosuggestions
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-## - zsh syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-## - zsh autopair
-source ~/.zsh-autopair/autopair.zsh
+
+if [[ $(uname) == "Darwin" ]]; then
+  ## - zsh apple touchbar
+  if ! [[ -v INSIDE_EMACS ]]; then
+      source ~/.zsh/zsh-apple-touchbar/zsh-apple-touchbar.zsh
+  fi
+  ## - zsh autosuggestions
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ## - zsh syntax highlighting
+  source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  ## - zsh autopair
+  source ~/.zsh-autopair/autopair.zsh
+
+else
+
+  ## - zsh autosuggestions
+  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ## - zsh syntax highlighting
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  ## - zsh autopair
+  source ~/.zsh-autopair/autopair.zsh
+fi
+
 autopair-init
 ## - Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -60,11 +69,7 @@ export EDITOR="vim"
 export BAT_THEME="cornell"
 # export PYTHONPATH="/usr/local/lib/python3.9/site-packages" # add homebrew python
 
-
-#
 # ===== Commands, Alias, Keybinds ===============================================
-#
-
 
 # --- Keybinds
 bindkey \^U backward-kill-line
@@ -88,25 +93,24 @@ shrinkgif() {
 alias ll="ls -l"
 alias la="ls -a"
 alias sl="ls"
-alias rm="rm -i"
 
 ## Arch Linux
-alias fix_wifi="sudo iw wlan0 set txpower fixed 10"
-alias wifi_info="sudo iw wlan0 info"
-wifi_fixeroo() {
-    nmcli con delete "$1"
-    nmcli dev wifi connect "$1"
-}
-alias iphone_tether="sudo ~/.local/share/scripts/iphone_tether.sh"
-alias iphone_untether="sudo pacman -R usbmuxd libimobiledevice"
-alias open="xdg-open"
-alias nvmstart="source /usr/share/nvm/init-nvm.sh"
-
-## Arch Pcaman
-alias spacs="sudo pacman -S"
+if [[ $(uname) == "Linux" ]]; then
+   alias fix_wifi="sudo iw wlp3s0 set txpower fixed 10"
+   alias wifi_info="sudo iw wlp3s0 info"
+   alias open="xdg-open"
+   ## Arch Pcaman
+   alias spacs="sudo pacman -S"
+   # Node: nvm
+   alias nvmstart="source /usr/share/nvm/init-nvm.sh"
+fi
+## Mac OS
+if [[ $(uname) == "Darwin" ]]; then
+    alias qutebrowser="/Applications/qutebrowser.app/Contents/MacOS/qutebrowser"
+fi
 
 ## Vim
-alias v="vim"
+alias v="vim -u ~/.simplevimrc"
 alias iv="vim"
 alias vi="vim"
 alias vis="vim -S Session.vim"
@@ -175,41 +179,32 @@ alias harmony='$HOME/bin_scripts/harmony-1.1/harmony'
 # export PATH="$HOME/.vimpkg/bin$PATH"
 # # Emacs
 export PATH="$HOME/.emacs.d/bin:$PATH"
-# 
-# ## - Programming Langs
-# Haskell
-export PATH="$HOME/.local/bin:$PATH"
 
-# # Rust
-# # export PATH="$HOME/.cargo/bin:$PATH"
-# # export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
-# # node
-# export PATH="/usr/local/opt/node@8/bin:$PATH"
-# # Python
-# # ~ user path
-# export PATH="$HOME/Library/Python/3.8/bin:$PATH"
-# # go
-# export PATH="/usr/local/go/bin:$PATH"
-# # LaTex
-# export PATH="/usr/texbin:/usr/texbin:$PATH"
-# path+=('/Library/TeX/texbin/')
-# 
-# # Scala
-# export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
-# # Swift
-# export PATH="$HOME/bin_scripts/SourceKittenDaemon/dist/bin/sourcekittendaemon:$PATH"
+# MacOS
+if [[ $(uname) == "Darwin" ]]; then
+    ## - Programming Langs
+    # Rust
+    export PATH="$HOME/.cargo/bin:$PATH"
+    export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
+    # node
+    export PATH="/usr/local/opt/node@8/bin:$PATH"
+    # Python
+    # ~ user path
+    export PATH="$HOME/Library/Python/3.8/bin:$PATH"
+    # go
+    export PATH="/usr/local/go/bin:$PATH"
+    # LaTex
+    export PATH="/usr/texbin:/usr/texbin:$PATH"
+    path+=('/Library/TeX/texbin/')
 
-## - Personal
-# Custom bins/scripts
-# export PATH="$HOME/bin_scripts/bin:$PATH"
-# Rofi stuff
-export PATH="$HOME/.local/share/scripts/rofi/bin:$PATH"
+    # Scala
+    export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+    # Swift
+    export PATH="$HOME/bin_scripts/SourceKittenDaemon/dist/bin/sourcekittendaemon:$PATH"
+
+    # - Personal
+    # Custom bins/scripts
+    export PATH="$HOME/bin_scripts/bin:$PATH"
+fi
 
 export MAKEFLAGS="-j8"
-[ -f "/home/phil/.ghcup/env" ] && source "/home/phil/.ghcup/env" # ghcup-env
-
-
-#
-# ===== Appearence (Bells and Whistles) ======================================
-#
-
