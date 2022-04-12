@@ -99,6 +99,8 @@ if [[ $(uname) == "Linux" ]]; then
    alias fix_wifi="sudo iw wlp3s0 set txpower fixed 10"
    alias wifi_info="sudo iw wlp3s0 info"
    alias open="xdg-open"
+   alias tether="sudo pacman -S libimobiledevice"
+   alias untether="sudo pacman -R libimobiledevice usbmuxd"
    ## Arch Pcaman
    alias spacs="sudo pacman -S"
    # Node: nvm
