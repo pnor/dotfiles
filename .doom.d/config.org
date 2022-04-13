@@ -70,13 +70,14 @@ Make some faces use variable pitch
 
 And change the font used for variable pitch fonts
 #+begin_src emacs-lisp
+(setq personal-variable-pitch-font (if IS-MAC "Helvetica" "HelveticaNeue-Regular"))
 (setq personal-fixed-pitch-font (if IS-MAC "MesloLGS Nerd Font" "Source Code Pro"))
 
 (defun personal--set-variable-pitch-faces ()
   (interactive)
   (custom-theme-set-faces
    'user
-   '(variable-pitch ((t (:family "Helvetica" :weight normal))))
+   `(variable-pitch ((t (:family ,personal-variable-pitch-font :weight normal))))
    `(fixed-pitch ((t ( :family ,personal-fixed-pitch-font))))))
 
 (add-hook! org-mode #'variable-pitch-mode)
@@ -1115,6 +1116,10 @@ Enable Blamer
 #+begin_src emacs-lisp
 (after! blamer
   (global-blamer-mode 1))
+
+;; Make blamer load
+(after! magit
+       (require 'blamer))
 #+end_src
 
 ** Demap
