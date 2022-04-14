@@ -54,8 +54,11 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 # --- Setting up Executables
 
 ## - autojump
-# [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
-[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+if [[ $(uname) == "Darwin" ]]; then
+  [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
+else
+  [[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+fi
 
 autoload -U compinit && compinit -u
 
