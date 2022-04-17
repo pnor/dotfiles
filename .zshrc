@@ -90,6 +90,7 @@ shrinkgif() {
 
 # --- Alias
 ## General
+alias l="ls"
 alias ll="ls -l"
 alias la="ls -a"
 alias sl="ls"
