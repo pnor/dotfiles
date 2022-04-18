@@ -174,8 +174,12 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
 
 Enable pixel scrolling precision
 #+BEGIN_SRC emacs-lisp
-(pixel-scroll-precision-mode 1)
+(if (not(string= emacs-version  "28.1"))
+    (pixel-scroll-precision-mode 1))
 #+END_SRC
+
+#+RESULTS:
+
 ** Splash Screen Edits
 Remove splash screen I don't use
 #+begin_src emacs-lisp
@@ -1419,12 +1423,15 @@ Space for random elisp
 #+BEGIN_SRC elisp
 ;; (require 'tetris-sounds)
 
-(require 'random-theme)
+;; (require 'random-theme)
+(if IS-MAC
+    (load "~/.doom.d/local_packages/random-theme/random-theme.el"))
+;; mad hacky but too lazy to look into this
 
-;; (if (display-graphic-p)
-;;     (defadvice! personal-random-theme-on-reload-last ()
-;;       :after #'doom/quickload-session
-;;       (random-theme-set-theme)))
+(if (and (display-graphic-p) IS-MAC)
+    (defadvice! personal-random-theme-on-reload-last ()
+      :after #'doom/quickload-session
+      (random-theme-set-theme)))
 
 (defun personal-refresh-ewal-emacs-theme ()
   "Refreshes the ewal-doom-one theme based on current background"
