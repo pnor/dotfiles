@@ -152,7 +152,7 @@ alias venv='source venv/bin/activate' # activate venv
 alias initvenv='virtualenv -p python3 venv' # create venv with no site packages
 alias python3='/usr/local/bin/python3'
 # alias pip3='/usr/local/bin/pip3'
-alias pip3_8='/Users/philliporeggio/Library/Python/3.8/bin/pip'
+alias pip3_8="$HOME/Library/Python/3.8/bin/pip"
 
 ## Web Browsers
 alias chrome='open -a "Google Chrome 2"'
@@ -217,8 +217,16 @@ if [[ $(uname) == "Darwin" ]]; then
     export PATH="$HOME/bin_scripts/bin:$PATH"
 fi
 
-export MAKEFLAGS="-j8"
+if [[ $(uname) == "Linux" ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
+    export PATH="$HOME/.cabal/bin:$PATH"
+
+    export MAKEFLAGS="-j8"
+    [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+fi
+
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
