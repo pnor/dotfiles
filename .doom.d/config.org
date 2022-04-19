@@ -1131,7 +1131,7 @@ List of buffers and modes to not show the minimap in
 #+begin_src emacs-lisp
 (defvar personal-minimap-exclude-buffer-names '("*doom*")
   "List of buffer names that should not show the minibuffer if any are on the current frame")
-(defvar personal-minimap-exclude-modes '(pdf-view-mode vterm-mode dired-mode image-mode magit-mode)
+(defvar personal-minimap-exclude-modes '(pdf-view-mode vterm-mode dired-mode image-mode magit-mode tetris-mode)
   "List of modes that should not show the minibuffer if any are on the current frame")
 #+end_src
 
