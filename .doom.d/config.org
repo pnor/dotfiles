@@ -648,6 +648,12 @@ Recommend words when typing in text mode files:
 
 ** Org Mode
 *** Look
+Use org modern mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook #'org-modern-mode)
+(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+#+END_SRC
+
 Set the org directory for org related files
 #+BEGIN_SRC emacs-lisp
 (setq org-directory "~/Dropbox/agenda")
@@ -655,14 +661,14 @@ Set the org directory for org related files
 
 Make org-mode documents look a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-emphasis-markers t)
-(setq org-pretty-entities t)
+;; (setq org-hide-emphasis-markers t)
+;; (setq org-pretty-entities t)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq
-    org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
-)
+;; (setq
+;;     org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
+;; )
 #+END_SRC
 
 _Snippets to prettify Org mode based on this:_ [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][Beautifying Org Mode in Emacs]]:
@@ -676,26 +682,6 @@ Files can opt out by having this at the *end* of the file:
 ;; eval: (variable-pitch-mode 0)
 ;; End:
 #+END_EXAMPLE
-
-Some things shouldn't be variable pitch in org-mode ever:
-TODO does this do anything?
-#+BEGIN_SRC emacs-lisp
-;; (after! org
-;;   (custom-theme-set-faces
-;;    'user
-;;    '(org-block ((t (:inherit fixed-pitch))))
-;;    '(org-block-begin-line ((t (:inherit fixed-pitch))))
-;;    '(org-code ((t (:inherit (fixed-pitch)))))
-;;    '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-;;    '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
-;;    '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-;;    '(org-property-value ((t (:inherit fixed-pitch))) t)
-;;    '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-;;    '(org-table ((t (:inherit fixed-pitch))))
-;;    '(org-drawer ((t (:inherit fixed-pitch))))
-;;    '(org-tag ((t (:inherit (fixed-pitch) :height 0.8))))
-;;    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
-#+END_SRC
 
 *** Functionality
 Set up completion for org mode files

@@ -18,6 +18,7 @@
 (package! realgud-lldb)                 ;; lldb support for debugger
 (package! blamer)                       ;; Show git blame on line
 (package! demap)                        ;; Code Minimap
+(package! org-modern)                   ;; Org mode modern look
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
@@ -56,3 +57,4 @@
 ;; ===== Conditional
 (package! ewal :ignore IS-MAC)
 (package! ewal-doom-themes :ignore IS-MAC)
+
