@@ -662,7 +662,7 @@ Set the org directory for org related files
 Make org-mode documents look a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-hide-emphasis-markers t)
-;; (setq org-pretty-entities t)
+(setq org-pretty-entities t)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
