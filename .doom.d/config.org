@@ -57,32 +57,34 @@ Make some faces use variable pitch
    'user
    '(line-number ((t (:inherit fixed-pitch))))
    '(line-number-current-line ((t (:inherit fixed-pitch))))
-   ;; '(font-lock-comment-face ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-path ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-file ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-modified ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-buffer-host ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-project-dir ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-project-root-dir ((t (:inherit fixed-pitch))))
-   ;; '(doom-modeline-project-parent-dir ((t (:inherit fixed-pitch))))
    '(doom-modeline-buffer-major-mode ((t (:inherit fixed-pitch)))))
 #+end_src
 
-And change the font used for variable pitch fonts
+And change the font used for variable pitch fonts in org mode
 #+begin_src emacs-lisp
 (setq personal-variable-pitch-font (if IS-MAC "Helvetica" "HelveticaNeue-Regular"))
 (setq personal-fixed-pitch-font (if IS-MAC "MesloLGS Nerd Font" "Source Code Pro"))
 
-(defun personal--set-variable-pitch-faces ()
-  (interactive)
-  (custom-theme-set-faces
-   'user
-   `(variable-pitch ((t (:family ,personal-variable-pitch-font :weight normal))))
-   `(fixed-pitch ((t ( :family ,personal-fixed-pitch-font))))))
-
+(set-face-attribute 'variable-pitch nil :family personal-variable-pitch-font)
 (add-hook! org-mode #'variable-pitch-mode)
-(add-hook! org-mode #'personal--set-variable-pitch-faces)
+
+(after! org-modern
+  (set-face-attribute 'org-modern-symbol nil :family personal-fixed-pitch-font))
+
 #+end_src
+
+#+RESULTS:
+
+Make fixed pitch not be a constant size, for Demap and such so certain fonts (comments in
+particular) don't appear super large compared to everything else
+#+begin_src emacs-lisp
+(defun personal-make-fixed-pitch-shrink ()
+  (set-face-attribute 'fixed-pitch nil :height 'unspecified))
+
+(personal-make-fixed-pitch-shrink)
+(add-hook! org-mode #'personal-make-fixed-pitch-shrink)
+#+end_src
+
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
@@ -662,7 +664,7 @@ Set the org directory for org related files
 
 Make org-mode documents look a little nicer by hiding markers and showing symbols
 #+BEGIN_SRC emacs-lisp
-;; (setq org-hide-emphasis-markers t)
+(setq org-hide-emphasis-markers t)
 (setq org-pretty-entities t)
 #+END_SRC
 
