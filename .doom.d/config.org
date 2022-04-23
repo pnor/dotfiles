@@ -210,7 +210,7 @@ Remove splash screen I don't use
 (personal-change-doom-dashboard-options)
 #+end_src
 
-Last Crash Info
+Last Crash Info (for MacOS)
 #+begin_src emacs-lisp
 (defun personal--last-crash-delta (crash-log-dir emacs-crash-cache-file)
   "Computes time since last crash.
@@ -316,9 +316,9 @@ BEST-TIME-NAME is optional and specifies absolute path to file that contains the
      (doom-dashboard-phrase)
      "\n")))
 
-(add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
+(if IS-MAC
+    (add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options))
 #+end_src
-
 
 ** Useful Functions
 *** New Functions
