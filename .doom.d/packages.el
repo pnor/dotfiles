@@ -57,4 +57,3 @@
 ;; ===== Conditional
 (package! ewal :ignore IS-MAC)
 (package! ewal-doom-themes :ignore IS-MAC)
-
