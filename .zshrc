@@ -1,6 +1,9 @@
-# ===== Shell Behaviour =========================================================
+# ===== Early Init and Instant Prmopt ==============================================================
+# Things that should happen before the call to powerline10k instant prompt (or immediately after)
 
-# --- Shell Changes
+if command -v direnv &> /dev/null; then
+  emulate zsh -c "$(direnv export zsh)"
+fi
 
 ## - powerline10k instant prompt
 if [[ -v INSIDE_EMACS ]]; then
@@ -11,6 +14,15 @@ if [[ -v INSIDE_EMACS ]]; then
         source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
     fi
 fi
+
+
+if command -v direnv &> /dev/null; then
+  emulate zsh -c "$(direnv hook zsh)"
+fi
+
+# ===== Shell Behaviour =========================================================
+
+# --- Shell Changes
 
 if [[ $(uname) == "Darwin" ]]; then
   ## - zsh apple touchbar
@@ -62,8 +74,6 @@ fi
 
 autoload -U compinit && compinit -u
 
-## - direnv
-eval "$(direnv hook zsh)"
 ## - opam config
 # test -r $HOME/.opam/opam-init/init.zsh && . $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
@@ -217,9 +227,13 @@ if [[ $(uname) == "Darwin" ]]; then
     export PATH="$HOME/bin_scripts/bin:$PATH"
 fi
 
+# Linux path
 if [[ $(uname) == "Linux" ]]; then
+    # Haskell
     export PATH="$HOME/.local/bin:$PATH"
     export PATH="$HOME/.cabal/bin:$PATH"
+    # go
+    export PATH="$HOME/go/bin:$PATH"
 
     export MAKEFLAGS="-j8"
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
