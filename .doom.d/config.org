@@ -70,7 +70,6 @@ And change the font used for variable pitch fonts in org mode
 
 (after! org-modern
   (set-face-attribute 'org-modern-symbol nil :family personal-fixed-pitch-font))
-
 #+end_src
 
 #+RESULTS:
@@ -79,10 +78,13 @@ Make fixed pitch not be a constant size, for Demap and such so certain fonts (co
 particular) don't appear super large compared to everything else
 #+begin_src emacs-lisp
 (defun personal-make-fixed-pitch-shrink ()
+  (interactive)
   (set-face-attribute 'fixed-pitch nil :height 'unspecified))
 
 (personal-make-fixed-pitch-shrink)
 (add-hook! org-mode #'personal-make-fixed-pitch-shrink)
+(add-hook! doom-load-theme-hook #'personal-make-fixed-pitch-shrink)
+
 #+end_src
 
 *** Look
