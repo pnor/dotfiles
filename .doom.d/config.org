@@ -176,8 +176,9 @@ Have evil-mode treat emacs /symbols/ as words instead of by character
 
 Enable pixel scrolling precision
 #+BEGIN_SRC emacs-lisp
-(if (not(string= emacs-version  "28.1"))
-    (pixel-scroll-precision-mode 1))
+(when (string= emacs-version  "29.0.50")
+  (pixel-scroll-precision-mode 1)
+  (setq pixel-scroll-precision-use-momentum t))
 #+END_SRC
 
 #+RESULTS:
@@ -211,7 +212,7 @@ Remove splash screen I don't use
 (personal-change-doom-dashboard-options)
 #+end_src
 
-Last Crash Info
+Last Crash Info (for MacOS)
 #+begin_src emacs-lisp
 (defun personal--last-crash-delta (crash-log-dir emacs-crash-cache-file)
   "Computes time since last crash.
@@ -317,9 +318,9 @@ BEST-TIME-NAME is optional and specifies absolute path to file that contains the
      (doom-dashboard-phrase)
      "\n")))
 
-(add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options)
+(if IS-MAC
+    (add-hook 'doom-load-theme-hook #'personal-change-doom-dashboard-options))
 #+end_src
-
 
 ** Useful Functions
 *** New Functions

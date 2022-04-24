@@ -100,8 +100,8 @@ alias sl="ls"
 
 ## Arch Linux
 if [[ $(uname) == "Linux" ]]; then
-   alias fix_wifi="sudo iw wlp3s0 set txpower fixed 10"
-   alias wifi_info="sudo iw wlp3s0 info"
+   alias fix_wifi="sudo iw wlan0 set txpower fixed 10"
+   alias wifi_info="sudo iw wlan0 info"
    alias open="xdg-open"
    alias tether="sudo pacman -S libimobiledevice"
    alias untether="sudo pacman -R libimobiledevice usbmuxd"
