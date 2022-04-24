@@ -28,13 +28,14 @@ install_miniplug() {
         -o $install_location/miniplug.zsh
     echo "finished installing ${GREEN}miniplug${NC}!"
     echo "placed file in ${CYAN}$install_location${NC}!"
-
+    echo "to use, source it with ${CYAN}source \"$HOME/.zsh/miniplug.zsh\"${NC}"
 }
 
 install_p10k() {
     echo "starting to install ${GREEN}powerline10k${NC}"
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
     echo "finished installing ${GREEN}powerline10k${NC}!"
+    echo "to use, source it with ${CYAN}source ~/powerlevel10k/powerlevel10k.zsh-theme${NC}"
 }
 
 
