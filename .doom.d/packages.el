@@ -29,6 +29,7 @@
 (package! clang-format)                 ;; C family formatting
 (package! tree-sitter)                  ;; Tree Sitter
 (package! tree-sitter-langs)
+(package! nhexl-mode)                   ;; Better hexl mode
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL

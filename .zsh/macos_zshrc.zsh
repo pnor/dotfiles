@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 # zshrc for MacOS 🍎
-#
+
 # ===== Early Init and Instant Prmopt ==============================================================
 # Things that should happen before the call to powerline10k instant prompt (or immediately after)
 
