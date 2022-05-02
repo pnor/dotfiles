@@ -1428,7 +1428,8 @@ Space for random elisp
 (defun personal-refresh-ewal-emacs-theme ()
   "Refreshes the ewal-doom-one theme based on current background"
   (interactive)
-  (load-theme 'ewal-doom-one))
+  (load-theme 'ewal-doom-one)
+  (personal-make-fixed-pitch-shrink))
 #+END_SRC
 
 * Orgmode footer args
