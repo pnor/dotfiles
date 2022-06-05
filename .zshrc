@@ -5,5 +5,5 @@ fi
 
 # MacOS
 if [[ $(uname) == "Darwin" ]]; then
-  source $HOME/.zsh/archlinux_zshrc.zsh
+  source $HOME/.zsh/macos_zshrc.zsh
 fi
