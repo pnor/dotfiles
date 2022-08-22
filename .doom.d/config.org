@@ -1384,15 +1384,20 @@ Set some faces to change color when idle
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.1 0.45)
     :random-color-luminance-range (0.1 0.25)
-    :speed 0.5
+    :speed 0.3
     :persist t)
-   ((foreground . (doom-modeline-evil-normal-state doom-modeline-evil-insert-state
-                                                   doom-modeline-buffer-major-mode
-                                                   line-number-current-line doom-modeline-lsp-success doom-modeline-panel doom-modeline-info))
+   ((foreground . (doom-modeline-evil-normal-state
+                   doom-modeline-evil-insert-state
+                   doom-modeline-buffer-major-mode
+                   line-number-current-line
+                   doom-modeline-lsp-success
+                   doom-modeline-panel
+                   doom-modeline-info
+                   lsp-face-highlight-textual))
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.8 1.0)
-    :random-color-luminance-range (0.5 0.8))
-   :persist t
+    :random-color-luminance-range (0.5 0.8)
+    :speed 0.5)
    ((foreground . region)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.9 1.0)

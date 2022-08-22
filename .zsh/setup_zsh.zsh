@@ -47,7 +47,7 @@ case "$1" in
     "miniplug")
         install_miniplug
         ;;
-    "install_p10k")
+    "p10k")
         install_p10k
         ;;
     *)
