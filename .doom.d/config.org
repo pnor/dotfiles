@@ -10,6 +10,7 @@
 Functions used throughout the config
 
 Only run the forms based on which OS
+
 #+begin_src emacs-lisp
 (defmacro when-macos (&rest forms)
   "Only run FORMS if OS is MacOS."
@@ -20,6 +21,16 @@ Only run the forms based on which OS
   "Only run FORMS if OS is Linux."
   (if IS-LINUX
       `(mapc #'eval ',forms)))
+#+end_src
+
+Stuff that needs to run early
+(fixed!)
+#+begin_src emacs-lisp
+;; Currently a hack, since the master branch of emacs doesn't load these rn
+;; seems to be fixed now
+;; (load "~/.emacs.d/modules/config/default/config.el")
+;; (load "~/.emacs.d/modules/config/default/+evil-bindings.el")
+;; (load "~/.emacs.d/modules/config/default/+evil.el")
 #+end_src
 
 * General
@@ -48,7 +59,7 @@ Setting the main font
 #+begin_src emacs-lisp
 (if IS-MAC
     (setq doom-font (font-spec :family "CozetteVector" :size 18))
-  (setq doom-font (font-spec :family "CozetteVector" :size 30)))
+  (setq doom-font (font-spec :family "CozetteVector" :size 32)))
 #+end_src
 
 Make some faces use variable pitch
@@ -83,6 +94,7 @@ particular) don't appear super large compared to everything else
 
 (personal-make-fixed-pitch-shrink)
 (add-hook! org-mode #'personal-make-fixed-pitch-shrink)
+(add-hook! prog-mode #'personal-make-fixed-pitch-shrink)
 (add-hook! doom-load-theme-hook #'personal-make-fixed-pitch-shrink)
 
 #+end_src
@@ -93,6 +105,16 @@ Set the color theme and font
 (if IS-MAC
     (setq doom-theme 'starry-transparent)
   (setq doom-theme 'ewal-doom-vibrant))
+
+
+;; Make comments brighter if using ewal
+
+
+(when IS-LINUX
+  (defun personal-make-ewal-comment-brighter ()
+    (interactive)
+    (set-face-attribute 'font-lock-comment-face nil :foreground (ewal-load-color 'green -0)))
+  (add-hook! doom-load-theme-hook #'personal-make-ewal-comment-brighter))
 #+END_SRC
 
 Cursor color
@@ -107,7 +129,7 @@ Cursor color
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
 (defun personal-set-alpha-background-frame-params ()
-  (let ((bg-transparency 0.5))
+  (let ((bg-transparency 0.7))
     (set-frame-parameter (selected-frame) 'alpha-background bg-transparency)
     (add-to-list 'default-frame-alist `(alpha-background . ,bg-transparency))))
 
@@ -1167,8 +1189,6 @@ Turn on the minimap when there is only 1 active window
      (display-graphic-p)
      (not (-any? (lambda (w) (or (has-excluded-name w) (has-excluded-mode w))) (window-list nil 1 nil))))))
 
-(frame-list)
-
 (defun personal-manage-minimap-with-splits (num-splits)
   "hide/show demap minimap when num-splits or more (>=) windows are in the frame."
   (let ((window-list-without-minimap
@@ -1195,6 +1215,50 @@ Keybinding for toggling demap minimap
 Autostart the hook
 #+begin_src emacs-lisp
 (personal-start-demap-hook)
+#+end_src
+** Leetcode
+Randomize the language I solve questions in
+#+begin_src emacs-lisp
+(after! leetcode
+  (setq personal-leetcode-random-languages
+        '("c"
+          "c++"
+          "java"
+          "rust"
+          "python3"
+          "c#"
+          "typescript"
+          "swift"
+          "go"
+          "scala"
+          "elixir"
+          "scala"))
+
+  (defun personal-choose-random-leetcode-language ()
+    (interactive)
+    (let ((language (nth (random (length personal-leetcode-random-languages)) personal-leetcode-random-languages)))
+      (setq leetcode-prefer-language language)))
+
+  (defun personal-set-leetcode-language ()
+    (interactive)
+    (setq leetcode-prefer-language (read-from-minibuffer "language? ")))
+
+  (defadvice! personal-leetcode-randomize-language ()
+    :after #'leetcode
+    (personal-choose-random-leetcode-language)))
+
+
+#+end_src
+
+** GCMH
+#+begin_src emacs-lisp
+(gcmh-mode 1)
+#+end_src
+** VLF
+Load VLF mode when not much is happening
+#+begin_src emacs-lisp
+(use-package! vlf-setup
+  :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
 #+end_src
 * Programming
 ** C Family
@@ -1377,15 +1441,9 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle doom-modeline hl-line company-box)
+(after! (huecycle doom-modeline hl-line company-box ewal)
   (huecycle-set-faces
    ;; rainbow stuff
-   ((background . hl-line)
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.1 0.45)
-    :random-color-luminance-range (0.1 0.25)
-    :speed 0.3
-    :persist t)
    ((foreground . (doom-modeline-evil-normal-state
                    doom-modeline-evil-insert-state
                    doom-modeline-buffer-major-mode
@@ -1393,7 +1451,7 @@ Set some faces to change color when idle
                    doom-modeline-lsp-success
                    doom-modeline-panel
                    doom-modeline-info
-                   lsp-face-highlight-textual))
+                   ))
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.8 1.0)
     :random-color-luminance-range (0.5 0.8)
@@ -1405,7 +1463,14 @@ Set some faces to change color when idle
    ((background . company-tooltip-selection)
     :random-color-hue-range (0.0 1.0)
     :random-color-saturation-range (0.1 0.5)
-    :random-color-luminance-range (0.1 0.25)))
+    :random-color-luminance-range (0.1 0.25))
+   ;; Non Rainbow stuff
+   ;; ((background . hl-line)
+   ;;  :color-list (,(ewal-load-color 'white -11) ,(ewal-load-color 'white -0))
+   ;;  :next-color-func huecycle-get-next-list-color
+   ;;  :speed 0.3
+   ;;  :persist t)
+   )
   (setq huecycle-buffers-to-huecycle-in
         (list
          #'current-buffer
@@ -1435,6 +1500,9 @@ Space for random elisp
   (interactive)
   (load-theme 'ewal-doom-one)
   (personal-make-fixed-pitch-shrink))
+
+(message ".emacs.d dir not on master... should change that soon")
+
 #+END_SRC
 
 * Orgmode footer args
