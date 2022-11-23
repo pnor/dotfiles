@@ -58,7 +58,7 @@ Keeping all the font information in one place
 Setting the main font
 #+begin_src emacs-lisp
 (if IS-MAC
-    (setq doom-font (font-spec :family "CozetteVector" :size 18))
+    (setq doom-font (font-spec :family "CozetteVector" :size 20))
   (setq doom-font (font-spec :family "CozetteVector" :size 32)))
 #+end_src
 
