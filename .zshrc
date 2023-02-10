@@ -7,3 +7,4 @@ fi
 if [[ $(uname) == "Darwin" ]]; then
   source $HOME/.zsh/macos_zshrc.zsh
 fi
+
