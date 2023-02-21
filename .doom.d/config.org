@@ -651,6 +651,14 @@ Map "s" to the sneak motion
 (evil-ex-define-cmd "STerm" #'personal-sterm)
 #+END_SRC
 
+** Memory Usage
+Let Emacs use more memory for reading and garbage collection
+#+begin_src elisp
+;; 100 mb
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
+#+end_src
+
 ** Fixing Things
 A place for hacks and functions to fix fires
 
