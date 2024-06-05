@@ -7,6 +7,15 @@
 #+END_SRC
 
 * Preamble
+Super early things
+(Good for fixing/changing and bugfixes)
+#+begin_src emacs-lisp
+;; redefine this as eieio uses it but master depecrates it
+(defun cl--generic-struct-tag (name &rest _)
+  ;; Use exactly the same code as for `typeof'.
+  `(if ,name (type-of ,name) 'null))
+#+end_src
+
 Functions used throughout the config
 
 Only run the forms based on which OS
@@ -22,63 +31,13 @@ Only run the forms based on which OS
   (if IS-LINUX
       `(mapc #'eval ',forms)))
 #+end_src
-
-Stuff that needs to run early
-(fixed!)
-#+begin_src emacs-lisp
-;; Currently a hack, since the master branch of emacs doesn't load these rn
-;; seems to be fixed now
-;; (load "~/.emacs.d/modules/config/default/config.el")
-;; (load "~/.emacs.d/modules/config/default/+evil-bindings.el")
-;; (load "~/.emacs.d/modules/config/default/+evil.el")
-
-;; https://github.com/emacs-mirror/emacs/commit/80cf13a3d27d8a967feafeec32fd130529635592
-;; Which changes early expansion from warning to error, since it breaks lsp
-(defun internal-macroexpand-for-load (form full-p)
-  ;; Called from the eager-macroexpansion in readevalloop.
-  (let ((symbols-with-pos-enabled t)
-        (print-symbols-bare t))
-    (cond
-     ;; Don't repeat the same warning for every top-level element.
-     ((eq 'skip (car macroexp--pending-eager-loads)) form)
-     ;; If we detect a cycle, skip macro-expansion for now, and output a warning
-     ;; with a trimmed backtrace.
-     ((and load-file-name (member load-file-name macroexp--pending-eager-loads))
-      (let* ((bt (delq nil
-                       (mapcar #'macroexp--trim-backtrace-frame
-                               (macroexp--backtrace))))
-             (elem `(load ,(file-name-nondirectory load-file-name)))
-             (tail (member elem (cdr (member elem bt)))))
-        (if tail (setcdr tail (list '…)))
-        (if (eq (car-safe (car bt)) 'macroexpand-all) (setq bt (cdr bt)))
-        (if macroexp--debug-eager
-            (debug 'eager-macroexp-cycle)
-          (message "Eager macro-expansion skipped due to cycle:\n  %s"
-                 (mapconcat #'prin1-to-string (nreverse bt) " => ")))
-        (push 'skip macroexp--pending-eager-loads)
-        form))
-     (t
-      (condition-case err
-          (let ((macroexp--pending-eager-loads
-                 (cons load-file-name macroexp--pending-eager-loads)))
-            (if full-p
-                (macroexpand--all-toplevel form)
-              (macroexpand form)))
-        (error
-         ;; Hopefully this shouldn't happen thanks to the cycle detection,
-         ;; but in case it does happen, let's catch the error and give the
-         ;; code a chance to macro-expand later.
-         (message "Eager macro-expansion failure: %S" err)
-         form))))))
-#+end_src
-
 * General
 ** Private Information
 Load some personal information
 #+BEGIN_SRC emacs-lisp
-(load! "Secret.el")
+(if (file-exists-p "~/.doom.d/Secret.el")
+    (load! "Secret.el"))
 #+END_SRC
-
 ** Library Functions
 Functions used in other places in the configs
 #+BEGIN_SRC emacs-lisp
@@ -96,9 +55,11 @@ Keeping all the font information in one place
 
 Setting the main font
 #+begin_src emacs-lisp
-(if IS-MAC
-    (setq doom-font (font-spec :family "CozetteVector" :size 20))
-  (setq doom-font (font-spec :family "CozetteVector" :size 28)))
+(when-macos
+ (setq doom-font (font-spec :family "CozetteVector" :size 20)))
+
+(when-linux
+ (setq doom-font (font-spec :family "CozetteVector" :size 28)))
 #+end_src
 
 Make some faces use variable pitch
@@ -112,18 +73,26 @@ Make some faces use variable pitch
 
 And change the font used for variable pitch fonts in org mode
 #+begin_src emacs-lisp
-(setq personal-variable-pitch-font (if IS-MAC "Helvetica" "HelveticaNeue-Regular"))
-;; (setq personal-variable-pitch-font (if IS-MAC "Helvetica" "Iosevka"))
-(setq personal-fixed-pitch-font (if IS-MAC "MesloLGS Nerd Font" "Iosevka"))
+(when-macos
+ (setq personal-variable-pitch-font "Helvetica")
+ (setq personal-fixed-pitch-font "MesloLGS Nerd Font"))
+
+(when-linux
+ (setq personal-variable-pitch-font "Roboto")
+ (setq personal-fixed-pitch-font "CozetteVector"))
 
 (set-face-attribute 'variable-pitch nil :family personal-variable-pitch-font)
-(add-hook! org-mode #'variable-pitch-mode)
 
-(after! org-modern
+(defun personal-fixup-fonts-org-mode ()
+  (interactive)
+  (set-face-attribute 'variable-pitch nil :family personal-variable-pitch-font)
   (set-face-attribute 'org-modern-symbol nil :family personal-fixed-pitch-font)
   (set-face-attribute 'org-block nil :family personal-fixed-pitch-font)
-  (set-face-attribute 'org-table nil :family personal-fixed-pitch-font)
-  (setq org-modern-table t))
+  (set-face-attribute 'org-table nil :family personal-fixed-pitch-font))
+
+(after! org-modern
+  (setq org-modern-table t)
+  (personal-fixup-fonts-org-mode))
 #+end_src
 
 
@@ -135,27 +104,29 @@ particular) don't appear super large compared to everything else
   (set-face-attribute 'fixed-pitch nil :height 'unspecified))
 
 (personal-make-fixed-pitch-shrink)
-(add-hook! org-mode #'personal-make-fixed-pitch-shrink)
 (add-hook! prog-mode #'personal-make-fixed-pitch-shrink)
 (add-hook! doom-load-theme-hook #'personal-make-fixed-pitch-shrink)
-
 #+end_src
 
 *** Look
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
-(if IS-MAC
-    (setq doom-theme 'starry-transparent)
-  (setq doom-theme 'ewal-doom-vibrant))
+(when-macos
+(setq doom-theme 'starry-transparent))
+
+(when-linux
+(setq doom-theme 'ewal-doom-vibrant))
 
 ;; Make comments brighter if using ewal
 (setq ewal-doom-vibrant-brighter-comments t)
 (setq ewal-doom-vibrant-comment-bg nil)
 
-(when IS-LINUX
-  (defun personal-make-ewal-comment-brighter ()
-    (interactive)
-    (set-face-attribute 'font-lock-comment-face nil :foreground (ewal-load-color 'green -0))))
+(when-linux
+ (defun personal-make-ewal-comment-brighter ()
+   (interactive)
+   (set-face-attribute 'font-lock-comment-face nil :foreground (ewal-load-color 'green -0))
+   (set-face-attribute 'org-block-begin-line nil :foreground (ewal-load-color 'green -0))
+   (set-face-attribute 'org-block-end-line nil :foreground (ewal-load-color 'green -0))))
 #+END_SRC
 
 Cursor color
@@ -185,22 +156,16 @@ And some functions to manipulate transparency on the frame
     (set-frame-parameter (selected-frame) 'alpha-background alpha)))
 #+end_src
 
-+Make emacs start full screen+
-+Emacs starts in a small frame, and goes full screen when reloading session+
-Window managers kind of make this problematic
+Control size of emacs on startup (mainly for macos since I use WM on linux)
 #+begin_src emacs-lisp
-;; (if (display-graphic-p)
-;;     (defadvice! personal-full-screen-on-reload-last ()
-;;       :after #'doom/quickload-session
-;;       (toggle-frame-fullscreen)))
-(setq initial-frame-alist '((top . 100) (left . 400) (width . 100) (height . 40)))
-
-#+end_src
+(when-macos
+ (setq initial-frame-alist '((top . 100) (left . 400) (width . 100) (height . 40))))
+#+END_SRC
 
 Show global display fill column
-#+BEGIN_SRC emacs-lisp
+,#+BEGIN_SRC emacs-lisp
 (global-display-fill-column-indicator-mode t)
-#+END_SRC
+,#+BEGIN_SRC emacs-lisp
 
 Show Line numbers
 #+BEGIN_SRC emacs-lisp
@@ -221,7 +186,6 @@ Add a fill column to prevent long lines (116 is the width of the vertical monito
 and automatically break long lines in source code buffers and org mode files
 #+BEGIN_SRC emacs-lisp
 (add-hook! prog-mode (auto-fill-mode t))
-(add-hook! org-mode (auto-fill-mode t))
 #+END_SRC
 
 Show a message when doing garbage collection
@@ -245,7 +209,10 @@ Enable pixel scrolling precision
 (setq pixel-scroll-precision-use-momentum t)
 #+END_SRC
 
-#+RESULTS:
+Let search look at invisible content (useful in org mode)
+#+begin_src emacs-lisp
+(setq search-invisible t)
+#+end_src
 
 ** Splash Screen Edits
 Function for making random wave art for the banner
@@ -253,6 +220,11 @@ Function for making random wave art for the banner
 
 (setq personal-wave-param-low 1)
 (setq personal-wave-param-high 100)
+
+(defun personal-frac-function (x)
+  (if (>= x 0)
+      (- x (floor x))
+    (* -1 (- (* -1 x) (floor (* -1 x))))))
 
 (defun personal-wave-function-1 (x y a b c d)
   (let* ((highest-magnitude (+ 1 1))
@@ -265,6 +237,34 @@ Function for making random wave art for the banner
          (wave-result (sin (* x y (/ a c 1.0) (/ b d 1.0))))
          (normalized (/ (+ wave-result highest-magnitude) (* 2 highest-magnitude))))
     normalized))
+
+(defun personal-wave-function-3 (x y a b c d)
+  (let* ((highest-magnitude 1)
+         (wave-result (sin (* x y (* (/ a 1) c 1.0) (/ b d 1.0))))
+         (normalized (/ (+ wave-result highest-magnitude) (* 2 highest-magnitude))))
+    normalized))
+
+(defun personal-wave-function-4 (x y a b c d)
+  (let* ((highest-magnitude 1)
+         (wave-result (cos (* (log (* (- (* 2 pi) x) c )) (log (* (- (* 2 pi) y) b)) a d 0.01)))
+         (normalized (/ (+ wave-result highest-magnitude) (* 2 highest-magnitude))))
+    normalized))
+
+(defun personal-wave-function-5 (x y a b c d)
+  (let* ((highest-magnitude 1)
+         (base-number (personal-frac-function
+                       (+
+                        (* (* 0.8 b) (sin (* a y)))
+                        (* (* 0.8 d) (sin (* c x))))))
+         (wave-result (* 2 (- base-number 0.5)))
+         (normalized (/ (+ wave-result highest-magnitude) (* 2 highest-magnitude))))
+    normalized))
+
+(personal-wave-function-3 1 1 1 1 1 1)
+
+(defun personal-choose-wave-func (wave-funcs)
+  "Choose random function from WAVE-FUNCS"
+  (nth (random (length wave-funcs)) wave-funcs))
 
 (defun personal-intensity-to-character (intensity)
   "Maps INTENSITY to a character from .,-~:;=!*#$@"
@@ -304,7 +304,9 @@ Function for making random wave art for the banner
 
 (defun personal-make-ascii-wave-art (height width)
   (let ((output-lines (mapcar (lambda (c) (make-string width c)) (make-list height ?.)))
-        (wave-func (if (= 1 (random 5)) #'personal-wave-function-2 #'personal-wave-function-1))
+        (wave-func (personal-choose-wave-func
+                    '(personal-wave-function-1 personal-wave-function-2 personal-wave-function-3
+                      personal-wave-function-4 personal-wave-function-5)))
         (a (+ (random (- personal-wave-param-high personal-wave-param-low)) personal-wave-param-low))
         (b (+ (random (- personal-wave-param-high personal-wave-param-low)) personal-wave-param-low))
         (c (+ (random (- personal-wave-param-high personal-wave-param-low)) personal-wave-param-low))
@@ -346,13 +348,14 @@ Custom Banner text
 
 Remove splash screen menu options I don't use
 #+begin_src emacs-lisp
+
 (defun personal-change-doom-dashboard-options ()
   "Change dashboard options for start screen"
-  (require 'all-the-icons)
-  (after! all-the-icons
+  (require 'nerd-icons)
+  (after! nerd-icons
     (setq +doom-dashboard-menu-sections
           '(("Resume" :icon
-             (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+             (nerd-icons-octicon "nf-oct-history" :face 'doom-dashboard-menu-title)
              :when
              (cond
               ((featurep! :ui workspaces)
@@ -366,12 +369,10 @@ Remove splash screen menu options I don't use
               (doom-dashboard-menu-title bold))
              :action doom/quickload-session)
             ("Config" :icon
-             (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+             (nerd-icons-octicon "nf-oct-tools" :face 'doom-dashboard-menu-title)
              :when
              (file-directory-p doom-private-dir)
-             :action doom/open-private-config)))
-    )
-  )
+             :action doom/open-private-config)))))
 
 (personal-change-doom-dashboard-options)
 #+end_src
@@ -760,7 +761,6 @@ Recommend words when typing in text mode files:
 *** Look
 Use org modern mode
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 #+END_SRC
 
@@ -794,13 +794,6 @@ Files can opt out by having this at the *end* of the file:
 #+END_EXAMPLE
 
 *** Functionality
-Set up completion for org mode files
-Recommend words when typing in text mode files:
-#+begin_src emacs-lisp
-;; (add-hook! org-mode
-;;   (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell))
-#+end_src
-
 Add =proselint= to lint org-mode
 #+begin_src elisp
 (setq flycheck-proselint-executable "~/Library/Python/3.8/bin/proselint")
@@ -851,6 +844,19 @@ Make latex previews nice and big
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 3.0)))
 #+END_SRC
 
+*** Hooks
+Apply all org mode hook in one place
+#+begin_src emacs-lisp
+(defun personal-org-mode-hook-func ()
+  (variable-pitch-mode)
+  (personal-make-fixed-pitch-shrink)
+  (auto-fill-mode t)
+  (set-company-backend! 'org-mode 'company-dabbrev 'company-ispell)
+  (org-modern-mode)
+  (personal-fixup-fonts-org-mode))
+
+(add-hook! org-mode #'personal-org-mode-hook-func)
+#+end_src
 ** Org Journal
 Encrypt the journal (?)
 #+BEGIN_SRC elisp
@@ -908,7 +914,7 @@ Make it faster for code buffers, but slow for org-mode when writing prose
   "Change company configs for writing code"
   (interactive)
   (setq
-   company-idle-delay 0.1
+   company-idle-delay 0.01
    company-minimum-prefix-length 2))
 #+END_SRC
 
@@ -1027,10 +1033,77 @@ Make =lsp-ui= frame not transparent
   (push '(alpha . 100) lsp-ui-doc-frame-parameters))
 #+END_SRC
 
+Show more of the lsp ui
+#+begin_src emacs-lisp
+(setq lsp-headerline-breadcrumb-enable t)
+
+#+end_src
+
 Disable =lsp-ui-doc=
 #+begin_src emacs-lisp
 (after! lsp-ui
   (setq lsp-ui-doc-enable nil))
+#+end_src
+
+*** Emacs lsp booster
+Something that makes lsp faster by wrapping it in an executable
+
+https://github.com/blahgeek/emacs-lsp-booster
+
+Use emacs-lsp-booster if its on path
+#+begin_src emacs-lisp
+(when (executable-find "emacs-lsp-booster")
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result)))
+
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command))
+#+end_src
+
+*** Lsp Bridge
+Even faster completion?
+#+begin_src emacs-lisp
+;; (add-to-list 'load-path "~/src/lsp-bridge/")
+;;
+;; (use-package! lsp-bridge
+;;   :config
+;;   (setq lsp-bridge-enable-log nil)
+;;   (global-lsp-bridge-mode))
+;;
+;; ;; disable completion after lsp-bridge starts up in a buffer
+;; (setq company-global-modes nil)
+;;
+;; (defun personal-disable-completions-for-lsp-bridge ()
+;;   (company-mode nil)
+;;   (setq lsp-completion-enable nil))
+;;
+;; (add-hook! 'lsp-bridge-mode-hook #'personal-disable-completions-for-lsp-bridge)
+
 #+end_src
 
 ** Centaur Tabs
@@ -1320,6 +1393,14 @@ Load VLF mode when not much is happening
 (use-package! vlf-setup
   :defer-incrementally vlf-tune vlf-base vlf-write vlf-search vlf-occur vlf-follow vlf-ediff vlf)
 #+end_src
+** Olivetti
+Code in the middle
+#+begin_src emacs-lisp
+(after! auto-olivetti
+  (setq auto-olivetti-enabled-modes '(text-mode org-mode prog-mode))
+  (auto-olivetti-mode t))
+#+end_src
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -1330,6 +1411,7 @@ Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org
                                 "--background-index"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
+                                "--pch-storage=memory"
                                 "--header-insertion=never"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
 #+END_SRC
@@ -1507,42 +1589,45 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle doom-modeline hl-line company-box ewal)
+(after! (huecycle doom-modeline hl-line company-box ewal lsp-mode)
   (huecycle-set-faces
-   ;; rainbow stuff
-   ((foreground . (doom-modeline-evil-normal-state
-                   doom-modeline-evil-insert-state
-                   doom-modeline-buffer-major-mode
-                   line-number-current-line
-                   doom-modeline-lsp-success
-                   doom-modeline-panel
-                   doom-modeline-info
-                   ))
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.8 1.0)
-    :random-color-luminance-range (0.5 0.8)
-    :speed 0.5)
-   ((foreground . region)
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.9 1.0)
-    :random-color-luminance-range (0.5 0.8))
-   ((background . company-tooltip-selection)
-    :random-color-hue-range (0.0 1.0)
-    :random-color-saturation-range (0.1 0.5)
-    :random-color-luminance-range (0.1 0.25))
-   ;; Non Rainbow stuff
-   ;; ((background . hl-line)
-   ;;  :color-list (,(ewal-load-color 'white -11) ,(ewal-load-color 'white -0))
-   ;;  :next-color-func huecycle-get-next-list-color
-   ;;  :speed 0.3
-   ;;  :persist t)
-   )
-  (setq huecycle-buffers-to-huecycle-in
+ ;; rainbow stuff
+ ((foreground . (doom-modeline-evil-normal-state
+                 doom-modeline-evil-insert-state
+                 doom-modeline-buffer-major-mode
+                 line-number-current-line
+                 doom-modeline-lsp-success
+                 doom-modeline-panel
+                 doom-modeline-info lsp-face-highlight-write
+                 lsp-face-highlight-read
+                 ))
+  :random-color-hue-range (0.0 1.0)
+  :random-color-saturation-range (0.8 1.0)
+  :random-color-luminance-range (0.5 0.8)
+  :speed 0.5)
+ ;; highlight rainbow
+ ((foreground . region)
+  :random-color-hue-range (0.0 1.0)
+  :random-color-saturation-range (0.9 1.0)
+  :random-color-luminance-range (0.5 0.8))
+ ;; company popup rainbow
+ ((background . (company-tooltip-selection hl-line))
+  :random-color-hue-range (0.0 1.0)
+  :random-color-saturation-range (0.1 0.5)
+  :random-color-luminance-range (0.1 0.25))
+ ;; Non Rainbow stuff
+ ;; ((background . hl-line)
+ ;;  :color-list (,(ewal-load-color 'white -11) ,(ewal-load-color 'white -0))
+ ;;  :next-color-func huecycle-get-next-list-color
+ ;;  :speed 0.3
+ ;;  :persist t)
+ )
+ (setq huecycle-buffers-to-huecycle-in
         (list
          #'current-buffer
          (lambda ()
            (company-box--get-buffer))))
-  (huecycle-when-idle 1.0))
+ (huecycle-when-idle 1.0))
 #+END_SRC
 
 ** Scratch Space
@@ -1557,18 +1642,18 @@ Space for random elisp
     (defadvice! personal-random-theme-on-reload-last ()
       :after #'doom/quickload-session
       (random-theme-set-theme)))
-;; (after! +doom-dashboard-mode
-;;   (print "is running...?")
-;;   (if IS-MAC (random-theme-set-theme)))
 
 (defun personal-refresh-ewal-emacs-theme ()
   "Refreshes the ewal-doom-one theme based on current background"
   (interactive)
   (load-theme 'ewal-doom-one)
-  (personal-make-fixed-pitch-shrink))
+  (setq ewal-doom-vibrant-brighter-comments t)
+  (setq ewal-doom-vibrant-comment-bg nil)
+  (personal-make-fixed-pitch-shrink)
+  (personal-make-ewal-comment-brighter)
+  (personal-fixup-fonts-org-mode))
 
 (message ".emacs.d dir not on master... should change that soon")
-
 #+END_SRC
 
 * Orgmode footer args
