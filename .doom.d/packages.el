@@ -11,8 +11,6 @@
 ;; ===== functionality
 (package! blamer)                       ;; Show git blame on line
 (package! demap)                        ;; Code Minimap
-(package! epaint                        ;; paint drawing for emacs
-  :recipe (:host github :repo "chuntaro/epaint" :files ("*")))
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
 (package! floatbuf                      ;; Floating buffers
   :recipe (:host github :repo "pnor/floatbuf"))
@@ -25,12 +23,11 @@
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
-(package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
+;;(package! lsp-sourcekit)                ;; LSP suppport for sourcekit (swift)
 (package! package-lint)                 ;; Static linter for Emacs Packages
 (package! docker)                       ;; Docker
 (package! dockerfile-mode)              ;; Docker Syntax
 (package! clang-format)                 ;; C family formatting
-(package! nhexl-mode)                   ;; Better hexl mode
 
 ;; ===== OR tools
 (package! ampl-mode :recipe             ;; Syntax support for AMPL
@@ -39,9 +36,9 @@
 ;; ===== json
 (package! json-navigator)               ;; Navigate json with tree structure
 
-; ===== org
-(package! ord-d20 :recipe               ;; keybinds for table top games
-  (:host github :repo "spwhitton/org-d20"))
+                                        ; ===== org
+;; (package! ord-d20 :recipe               ;; keybinds for table top games
+;;   (:host github :repo "spwhitton/org-d20"))
 
 ;; ===== library
 (package! ts.el :recipe                 ;; Time stamps for the last crash calculation
@@ -52,11 +49,9 @@
 (package! huecycle)                             ;; Colorize fonts
 (package! play-sound-osx :ignore IS-LINUX       ;; Sound support in emacs
   :recipe (:host github :repo "leoliu/play-sound-osx"))
-(package! vlc)                                  ;; Music controlled by Emacs
+;; (package! vlc)                                  ;; Music controlled by Emacs
 (package! random-theme                          ;; Randomize my color theme
- :recipe (:host github :repo "pnor/random-theme"))
-(package! power-mode                            ;; POWER
-  :recipe (:host github :repo "elizagamedev/power-mode.el"))
+  :recipe (:host github :repo "pnor/random-theme"))
 (package! leetcode)                             ;; Leetcode but in place where I can bear to do it
 
 ;; ===== Conditional
@@ -64,3 +59,20 @@
 (package! ewal-doom-themes :ignore IS-MAC)
 
 
+(package! emacs-copilot :recipe                 ;; LLM stuff
+  (:host github :repo "jart/emacs-copilot"))
+
+;; trying lsp-bridge, but no error inline sucks ):
+;; (when (package! lsp-bridge
+;;         :recipe (:host github
+;;                  :repo "manateelazycat/lsp-bridge"
+;;                  :branch "master"
+;;                  :files ("*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+;;                  ;; do not perform byte compilation or native compilation for lsp-bridge
+;;                  :build (:not compile)))
+;;   (package! markdown-mode)
+;;   (package! yasnippet))
+
+(package! olivetti)
+(package! auto-olivetti
+  :recipe (:host sourcehut :repo "ashton314/auto-olivetti"))
