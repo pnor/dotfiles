@@ -753,8 +753,7 @@ Mode for human readable text
 Recommend words when typing in text mode files:
 #+BEGIN_SRC emacs-lisp
 (add-hook! text-mode
-  (set-company-backend! 'text-mode 'company-dabbrev 'company-ispell)
-)
+  (set-company-backend! 'text-mode 'company-dabbrev 'company-ispell))
 #+END_SRC
 
 ** Org Mode
@@ -1386,7 +1385,12 @@ Randomize the language I solve questions in
 ** GCMH
 #+begin_src emacs-lisp
 (gcmh-mode 1)
+(setq gcmh-verbose t)
 #+end_src
+
+#+RESULTS:
+: t
+
 ** VLF
 Load VLF mode when not much is happening
 #+begin_src emacs-lisp
@@ -1396,6 +1400,9 @@ Load VLF mode when not much is happening
 ** Olivetti
 Code in the middle
 #+begin_src emacs-lisp
+(add-hook! prog-mode
+           (require 'auto-olivetti))
+
 (after! auto-olivetti
   (setq auto-olivetti-enabled-modes '(text-mode org-mode prog-mode))
   (auto-olivetti-mode t))
@@ -1553,6 +1560,17 @@ Set tab size and stuff
         (setq python-indent-offset 4)))
 #+end_src
 
+Set abbrev mode
+#+begin_src emacs-lisp
+(defun personal-turn-on-abbrev-mode ()
+  """Turn on abbrev mode. """
+  (abbrev-mode))
+
+(add-hook! python-mode
+  #'personal-turn-on-abbrev-mode)
+#+end_src
+
+
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
@@ -1589,45 +1607,86 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(after! (huecycle doom-modeline hl-line company-box ewal lsp-mode)
+(setq personal--hl-line-bg-light-arg (ewal-load-color 'white -14))
+(setq personal--hl-line-bg-dark-arg (ewal-load-color 'black +1))
+
+;; Less packages, to do huecycle at startup
+(after! (huecycle doom-modeline hl-line company-box ewal)
   (huecycle-set-faces
- ;; rainbow stuff
- ((foreground . (doom-modeline-evil-normal-state
-                 doom-modeline-evil-insert-state
-                 doom-modeline-buffer-major-mode
-                 line-number-current-line
-                 doom-modeline-lsp-success
-                 doom-modeline-panel
-                 doom-modeline-info lsp-face-highlight-write
-                 lsp-face-highlight-read
-                 ))
-  :random-color-hue-range (0.0 1.0)
-  :random-color-saturation-range (0.8 1.0)
-  :random-color-luminance-range (0.5 0.8)
-  :speed 0.5)
- ;; highlight rainbow
- ((foreground . region)
-  :random-color-hue-range (0.0 1.0)
-  :random-color-saturation-range (0.9 1.0)
-  :random-color-luminance-range (0.5 0.8))
- ;; company popup rainbow
- ((background . (company-tooltip-selection hl-line))
-  :random-color-hue-range (0.0 1.0)
-  :random-color-saturation-range (0.1 0.5)
-  :random-color-luminance-range (0.1 0.25))
- ;; Non Rainbow stuff
- ;; ((background . hl-line)
- ;;  :color-list (,(ewal-load-color 'white -11) ,(ewal-load-color 'white -0))
- ;;  :next-color-func huecycle-get-next-list-color
- ;;  :speed 0.3
- ;;  :persist t)
- )
- (setq huecycle-buffers-to-huecycle-in
+   ;; rainbow stuff
+   ((foreground . (doom-modeline-evil-normal-state
+                   doom-modeline-evil-insert-state
+                   doom-modeline-buffer-major-mode
+                   line-number-current-line
+                   doom-modeline-panel
+                   doom-modeline-info
+                   ))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8)
+    :speed 0.5)
+
+   ;; highlight rainbow
+   ((foreground . region)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
+    :random-color-luminance-range (0.5 0.8))
+
+   ;; Non Rainbow stuff
+   ((background . hl-line)
+    :color-list (personal--hl-line-bg-light-arg personal--hl-line-bg-dark-arg personal--hl-line-bg-dark-arg)
+    :next-color-func huecycle-get-next-list-color
+    :speed 1.5
+    :persist t))
+
+  (setq huecycle-buffers-to-huecycle-in
         (list
          #'current-buffer
          (lambda ()
            (company-box--get-buffer))))
- (huecycle-when-idle 1.0))
+
+  (huecycle-when-idle 1.0))
+
+;; More packages, all faces to huecycle with
+(after! (huecycle doom-modeline hl-line company-box ewal lsp-mode)
+  (huecycle-set-faces
+   ;; rainbow stuff
+   ((foreground . (doom-modeline-evil-normal-state
+                   doom-modeline-evil-insert-state
+                   doom-modeline-buffer-major-mode
+                   line-number-current-line
+                   doom-modeline-lsp-success
+                   doom-modeline-panel
+                   doom-modeline-info
+                   lsp-face-highlight-write
+                   lsp-face-highlight-read
+                   ))
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.8 1.0)
+    :random-color-luminance-range (0.5 0.8)
+    :speed 0.5)
+
+   ;; highlight rainbow
+   ((foreground . region)
+    :random-color-hue-range (0.0 1.0)
+    :random-color-saturation-range (0.9 1.0)
+    :random-color-luminance-range (0.5 0.8))
+
+   ;; Non Rainbow stuff; hl-line glow
+   ((background . hl-line)
+    :color-list (personal--hl-line-bg-light-arg personal--hl-line-bg-dark-arg personal--hl-line-bg-dark-arg)
+    :next-color-func huecycle-get-next-list-color
+    :speed 1.5
+    :persist t)
+)
+
+  ;; Add the demap minimap
+  (setq huecycle-buffers-to-huecycle-in
+        (list
+         #'current-buffer
+         (lambda ()
+           (company-box--get-buffer)))))
+
 #+END_SRC
 
 ** Scratch Space
