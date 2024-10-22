@@ -898,31 +898,25 @@ Make PDFs look sharper on MacOS
   (setq pdf-view-use-scaling t pdf-view-use-imagemagick nil))
 #+END_SRC
 
-** Company
-Configure completion settings;
-Make it faster for code buffers, but slow for org-mode when writing prose
+** Corfu
+Make the corfu frame not transparent
 #+BEGIN_SRC emacs-lisp
-(defun personal-set-company-for-prose ()
-  "Change company configs for writing prose"
-  (interactive)
-  (setq
-   company-idle-delay 0.3
-   company-minimum-prefix-length 4))
-
-(defun personal-set-company-for-code ()
-  "Change company configs for writing code"
-  (interactive)
-  (setq
-   company-idle-delay 0.01
-   company-minimum-prefix-length 2))
+(after! corfu
+  (push '(alpha-background . 0.8) corfu--frame-parameters))
 #+END_SRC
 
-** Company Box
-Make the company-box frame not transparent
-#+BEGIN_SRC emacs-lisp
-(after! company-box
-  (push '(alpha-background . 1.0) company-box-frame-parameters))
-#+END_SRC
+Corfu tab and go
+#+begin_src emacs-lisp
+(after! corfu
+  (setq corfu-cycle t) ;; Enable cycling for `corfu-next/previous'
+  (setq corfu-preselect 'prompt) ;; Always preselect the prompt
+  ;; Tab for complete
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous)))
+#+end_src
 
 ** Flycheck
 Set python path
@@ -1245,6 +1239,11 @@ Strip music org file of song urls
 ** Tree Sitter
 #+begin_src emacs-lisp
 (add-hook 'c-mode-common-hook #'tree-sitter-hl-mode)
+#+end_src
+
+Set maximation colors for tree sitter
+#+begin_src emacs-lisp
+
 #+end_src
 
 ** Blamer
@@ -1611,7 +1610,7 @@ Set some faces to change color when idle
 (setq personal--hl-line-bg-dark-arg (ewal-load-color 'black +1))
 
 ;; Less packages, to do huecycle at startup
-(after! (huecycle doom-modeline hl-line company-box ewal)
+(after! (huecycle doom-modeline hl-line ewal)
   (huecycle-set-faces
    ;; rainbow stuff
    ((foreground . (doom-modeline-evil-normal-state
@@ -1638,17 +1637,17 @@ Set some faces to change color when idle
     :next-color-func huecycle-get-next-list-color
     :speed 1.5
     :persist t))
-
-  (setq huecycle-buffers-to-huecycle-in
-        (list
-         #'current-buffer
-         (lambda ()
-           (company-box--get-buffer))))
-
   (huecycle-when-idle 1.0))
 
+;;  (setq huecycle-buffers-to-huecycle-in
+;;        (list
+;;         #'current-buffer
+;;         (lambda ()
+;;           (company-box--get-buffer))))
+;;  (huecycle-when-idle 1.0))
+
 ;; More packages, all faces to huecycle with
-(after! (huecycle doom-modeline hl-line company-box ewal lsp-mode)
+(after! (huecycle doom-modeline hl-line ewal lsp-mode)
   (huecycle-set-faces
    ;; rainbow stuff
    ((foreground . (doom-modeline-evil-normal-state
@@ -1677,15 +1676,14 @@ Set some faces to change color when idle
     :color-list (personal--hl-line-bg-light-arg personal--hl-line-bg-dark-arg personal--hl-line-bg-dark-arg)
     :next-color-func huecycle-get-next-list-color
     :speed 1.5
-    :persist t)
-)
+    :persist t)))
 
   ;; Add the demap minimap
-  (setq huecycle-buffers-to-huecycle-in
-        (list
-         #'current-buffer
-         (lambda ()
-           (company-box--get-buffer)))))
+  ;; (setq huecycle-buffers-to-huecycle-in
+  ;;       (list
+  ;;        #'current-buffer
+  ;;        (lambda ()
+  ;;          (company-box--get-buffer)))))
 
 #+END_SRC
 
