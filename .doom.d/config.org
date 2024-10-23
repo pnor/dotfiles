@@ -902,7 +902,7 @@ Make PDFs look sharper on MacOS
 Make the corfu frame not transparent
 #+BEGIN_SRC emacs-lisp
 (after! corfu
-  (push '(alpha-background . 0.8) corfu--frame-parameters))
+  (push '(alpha-background . 0.95) corfu--frame-parameters))
 #+END_SRC
 
 Corfu tab and go
@@ -911,11 +911,9 @@ Corfu tab and go
   (setq corfu-cycle t) ;; Enable cycling for `corfu-next/previous'
   (setq corfu-preselect 'prompt) ;; Always preselect the prompt
   ;; Tab for complete
-  (:map corfu-map
-        ("TAB" . corfu-next)
-        ([tab] . corfu-next)
-        ("S-TAB" . corfu-previous)
-        ([backtab] . corfu-previous)))
+  (map! :map corfu-map
+        "TAB" #'corfu-next
+        "S-TAB" #'corfu-previous))
 #+end_src
 
 ** Flycheck
