@@ -109,6 +109,12 @@ particular) don't appear super large compared to everything else
 #+end_src
 
 *** Look
+Set ewal color location json
+#+begin_src emacs-lisp
+(after! ewal
+  (setq ewal-json-file "~/.cache/wallust/colors.json"))
+#+end_src
+
 Set the color theme and font
 #+BEGIN_SRC emacs-lisp
 (when-macos
@@ -653,6 +659,21 @@ nothing yet
 
 ** Keybindings and Custom Commands
 *** Keybindings
+jk -> Escape
+#+begin_src emacs-lisp
+(require 'corfu)
+(require 'key-chord)
+
+(defun personal-jk-escape ()
+  (interactive)
+  (corfu-quit)
+  (evil-normal-state))
+
+(key-chord-mode 1)
+(key-chord-define evil-insert-state-map  "jk" #'personal-jk-escape)
+
+#+end_src
+
 Make moving around splits as easy as pressing space.
 #+BEGIN_SRC emacs-lisp
 (map! :leader :mode 'global
@@ -902,7 +923,7 @@ Make PDFs look sharper on MacOS
 Make the corfu frame not transparent
 #+BEGIN_SRC emacs-lisp
 (after! corfu
-  (push '(alpha-background . 0.9) corfu--frame-parameters))
+  (push '(alpha-background . 0.95) corfu--frame-parameters))
 #+END_SRC
 
 Corfu tab and go
@@ -914,6 +935,31 @@ Corfu tab and go
   (map! :map corfu-map
         "TAB" #'corfu-next
         "S-TAB" #'corfu-previous))
+#+end_src
+
+The delay
+#+begin_src emacs-lisp
+(after! corfu
+  (setq corfu-auto-delay 0.016))
+#+end_src
+
+Modified completion to lessen load
+#+begin_src emacs-lisp
+;; (after! (corfu orderless)
+;;   (defun orderless-fast-dispatch (word index total)
+;;     (and (= index 0) (= total 1) (length< word 4)
+;;          (cons 'orderless-literal-prefix word)))
+;;
+;;   (orderless-define-completion-style orderless-fast
+;;     (orderless-style-dispatchers '(orderless-fast-dispatch))
+;;     (orderless-matching-styles '(orderless-literal orderless-regexp)))
+;;
+;;   (defun personal-orderless-fast-lambda ()
+;;     (setq-local completion-styles '(orderless-fast basic)
+;;                 completion-category-overrides nil
+;;                 completion-category-defaults nil))
+;;
+;;   (add-hook 'corfu-mode-hook #'personal-orderless-fast-lambda))
 #+end_src
 
 ** Flycheck
@@ -1098,6 +1144,8 @@ Even faster completion?
 #+end_src
 
 ** Centaur Tabs
+*Disabled* because it is kind of intrusive with hooks, and it doesn't work when I run daemon anyway
+
 Turn off tabs when the frame has a lot of splits in it (change function =personal-tab-window-limit=)
 #+begin_src emacs-lisp
 (defun personal-manage-tabs-with-splits (num-splits)
@@ -1116,8 +1164,9 @@ Turn off tabs when the frame has a lot of splits in it (change function =persona
       (add-hook! 'window-configuration-change-hook #'personal-tab-window-limit)))
 
 ;; Dont show tabs if in terminal mode (doesn't look good)
-(unless (display-graphic-p)
-  (centaur-tabs-mode -1))
+(after! centaur-tabs
+  (unless (display-graphic-p)
+    (centaur-tabs-mode -1)))
 
 ;; Don't use centaur tabs if started as a daemon
 (after! centaur-tabs
@@ -1142,8 +1191,52 @@ Just calls `vterm-other-window', but also requires it to make it load beforehand
   (require 'vterm)
   (vterm-other-window))
 
+;; (map! :leader :mode 'global
+;;       "oh" #'personal-vterm-here)
+#+end_src
+** eshell
+a more integrated, emacsy shell
+#+begin_src emacs-lisp
+(after! eshell
+  (add-hook! eshell-mode
+    (add-hook 'completion-at-point-functions
+              (cape-capf-super #'cape-history #'cape-file #'cape-dabbrev #'cape-keyword) 0 t))
+
+  (defun personal-eshell-short-completion ()
+    (setq-local corfu-auto-prefix 1))
+  (add-hook! eshell-mode #'personal-eshell-short-completion)
+  )
+#+end_src
+
+load all alias
+#+begin_src emacs-lisp
+(defun eshell-load-zsh-aliases ()
+  (interactive)
+  "Read zsh aliases and add them to the list of eshell aliases."
+  ;; Bash needs to be run - temporarily - interactively
+  ;; in order to get the list of aliases.
+  (with-temp-buffer
+    (call-process "zsh" nil '(t nil) nil "-ci" "alias")
+    (goto-char (point-min))
+    (while (re-search-forward "\\(.+\\)='\\(.+\\)'$" nil t)
+      (let
+          ((name (match-string 1))
+           (val (match-string 2)))
+        (unless (string= name "z")
+          (eshell/alias name val))))))
+
+  ;; We only want Bash aliases to be loaded when Eshell loads its own aliases,
+  ;; rather than every time `eshell-mode' is enabled.
+  (add-hook 'eshell-alias-load-hook #'eshell-load-zsh-aliases)
+  (add-hook! 'eshell-mode-hook #'eshell-load-zsh-aliases)
+#+end_src
+
+keybinds
+#+begin_src emacs-lisp
+
 (map! :leader :mode 'global
-      "oh" #'personal-vterm-here)
+      "ot" #'+eshell/toggle
+      "oT" #'eshell)
 #+end_src
 ** vlc
 From [[https://ag91.github.io/blog/2021/01/25/vlc-via-emacs-how-to-open-a-youtube-link/][this page]]; setting up VLC so I can browse music in Emacs
@@ -1405,6 +1498,102 @@ Code in the middle
   (auto-olivetti-mode t))
 #+end_src
 
+** LLM Mode
+Using LLM for misc stuff
+
+Model name:
+#+begin_src emacs-lisp
+(setq personal-llm-model-name "qwen2.5-0.5b-low-cpu")
+#+end_src
+Set the model
+#+begin_src emacs-lisp
+(after! (ellama llm)
+  (setopt ellama-provider
+          (make-llm-ollama
+           :chat-model personal-llm-model-name
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("num_ctx" . 32768))))
+  (setopt ellama-summarization-provider
+          (make-llm-ollama
+           :chat-model personal-llm-model-name
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("num_ctx" . 32768))))
+  (setopt ellama-coding-provider
+          (make-llm-ollama
+           :chat-model personal-llm-model-name
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("num_ctx" . 32768)))))
+#+end_src
+
+Summarize code when idle
+
+The prompt:
+#+begin_src emacs-lisp
+(setq personal-summary-prompt-template "<INSTRUCTIONS>
+Write a one-line summary of the code function, INPUT with the
+following rules:
+- The summary MUST be one line long.
+- The summary MUST be as short as possible
+- The summary MUST be shorter than 70 characters.
+- The summary MUST be under 35 words.
+- Just say the summary, do not preface it with anything
+</INSTRUCTIONS>
+<INPUT>
+%s
+</INPUT>")
+#+end_src
+
+Code Summary Code
+#+begin_src emacs-lisp
+(setq personal--llm-response-acc "")
+
+(after! (llm ellama)
+  (defun personal--summarize--block (text)
+  " Summarize a block of code and display result in echo area."
+  (setq personal--llm-response-acc "❓")
+  (let ((prompt personal-summary-prompt-template))
+    (llm-chat-streaming
+     (or ellama-summarization-provider ellama-provider)
+     (llm-make-chat-prompt
+      (format prompt text)
+      :temperature 0.5
+      :max-tokens 30)
+     (lambda (partial)
+       (setq personal--llm-response-acc (concat personal--llm-response-acc partial))
+       ;; (display-message-or-buffer personal--llm-response-acc)
+       (display-message-or-buffer partial)
+       )
+     (lambda (full-text) (display-message-or-buffer
+                          (format "❓ %s" full-text)))
+     (lambda (error-msg what) (display-message-or-buffer
+                               (format "⚠ %s : %s" error-msg what))))))
+
+  ;; TODO bounds of things at point ? => use *defun*
+  ;; a non doom solution
+  (defun personal--get-block-to-summarize ()
+    (if (region-active-p)
+        (buffer-substring-no-properties (region-beginning) (region-end))
+      (let ((point-min-max (+evil:defun-txtobj)))
+        (pcase point-min-max
+          (`(,min-point ,max-point ,_)
+           (buffer-substring-no-properties min-point max-point))))))
+
+  (defun personal--casual-summary ()
+    (interactive)
+    (if (derived-mode-p 'prog-mode)
+        (personal--summarize--block (personal--get-block-to-summarize))))
+
+  ;; (setq personal-summary-timer (run-with-idle-timer 7 t #'personal--casual-summary))
+  )
+#+end_src
+
+** Proced Mode
+Set proced to auto update and be like top
+#+begin_src emacs-lisp
+(setq proced-auto-update-flag t)
+(setq proced-auto-update-interval 2)
+#+end_src
+
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -1567,6 +1756,56 @@ Set abbrev mode
   #'personal-turn-on-abbrev-mode)
 #+end_src
 
+* Functions for me
+** Browsing the World Wide Web
+Look it up online
+#+begin_src emacs-lisp
+(defun personal-lookup-online ()
+  " Search something online."
+  (interactive)
+  (let ((question (completing-read "❓ Look up online: " nil)))
+    (+lookup/online question "DuckDuckGo")))
+
+(defun personal-lookup-online-eww ()
+  " Search something with EWW."
+  (interactive)
+  (let* ((question (completing-read "❓ Look up with EWW: " nil))
+         (question-hexified (url-hexify-string question))
+         (search-url (format "https://html.duckduckgo.com/html/?q=%s" question-hexified)))
+    (eww-browse-url search-url)))
+
+(defun personal-ask-chatgpt ()
+  " Ask a question using ChatGPT."
+  (interactive)
+  (let* ((question (completing-read "🤖 Look up with ChatGPT: " nil))
+         (question-hexified (url-hexify-string question))
+         (search-url (format "https://chat.openai.com/?q=%s" question-hexified)))
+    (browse-url search-url)))
+#+end_src
+
+Look up a cpp term using cppman
+#+begin_src emacs-lisp
+(defun personal-lookup-cppman ()
+  " Search a term on cppref using cppman."
+  (interactive)
+  (let* ((term (completing-read "❓ C++ : " nil))
+         (command (concat "cppman " term)))
+    (shell-command command)))
+#+end_src
+
+Keybinds
+#+begin_src emacs-lisp
+(map! :leader :mode 'global
+      "zz" #'personal-lookup-online-eww
+      "zZ" #'personal-lookup-online
+      "zc" #'personal-ask-chatgpt)
+#+end_src
+
+Mode specific keybinds
+#+begin_src emacs-lisp
+(map! :leader :map c++-mode-map
+      "zd" #'personal-lookup-cppman)
+#+end_src
 
 * Misc/Random
 ** Fun Stuff
