@@ -1,0 +1,23 @@
+#backend = "full"
+#backend = "kmeans"
+backend = "fastresize"
+#backend = "thumb"
+#backend = "wal"
+#color_space = "lch" # idc about this one..
+
+# classic look
+#palette = "softdark16"
+palette = "ansidark"
+#palette = "harddark16"
+color_space = "lchmixed"
+
+#saturate = 80
+
+check_contrast = true
+
+[templates]
+ewal = { src = 'colors.json', dst = '~/.cache/wallust/colors.json' }
+qutebrowser = { src = 'qutebrowser.yml', dst = '~/.cache/wallust/qutebrowser.yml' }
+alacritty = { src = 'colors-alacritty.toml', dst = '~/.cache/wallust/colors-alacritty.toml' }
+sway = { src = 'sway-config', dst = '~/.cache/wallust/config' }
+waybar = { src = 'style.css', dst = '~/.cache/wallust/style.css' }

@@ -58,8 +58,8 @@ Setting the main font
 (when-macos
  (setq doom-font (font-spec :family "CozetteVector" :size 20)))
 
-(when-linux
- (setq doom-font (font-spec :family "CozetteVector" :size 28)))
+ (when-linux
+  (setq doom-font (font-spec :family "CozetteCrossedSevenVector" :size 18)))
 #+end_src
 
 Make some faces use variable pitch
@@ -78,8 +78,9 @@ And change the font used for variable pitch fonts in org mode
  (setq personal-fixed-pitch-font "MesloLGS Nerd Font"))
 
 (when-linux
- (setq personal-variable-pitch-font "Roboto")
- (setq personal-fixed-pitch-font "CozetteVector"))
+ (setq personal-variable-pitch-font "Roboto Mono")
+;; (setq personal-fixed-pitch-font "CozetteCrossedSevenVector"))
+ (setq personal-fixed-pitch-font "CozetteCrossedSevenVector"))
 
 (set-face-attribute 'variable-pitch nil :family personal-variable-pitch-font)
 
@@ -91,7 +92,7 @@ And change the font used for variable pitch fonts in org mode
   (set-face-attribute 'org-table nil :family personal-fixed-pitch-font))
 
 (after! org-modern
-  (setq org-modern-table t)
+  (setq org-modern-table nil)
   (personal-fixup-fonts-org-mode))
 #+end_src
 
@@ -773,8 +774,15 @@ Mode for human readable text
 
 Recommend words when typing in text mode files:
 #+BEGIN_SRC emacs-lisp
-(add-hook! text-mode
-  (set-company-backend! 'text-mode 'company-dabbrev 'company-ispell))
+(defun personal-setup-completion-for-text-mode ()
+  (interactive)
+  (setq-local
+   completion-at-point-functions (list (cape-capf-super
+                                        #'cape-dict
+                                        #'cape-dabbrev
+                                        #'cape-emoji) #'cape-file)))
+
+(add-hook! text-mode #'personal-setup-completion-for-text-mode)
 #+END_SRC
 
 ** Org Mode
@@ -943,23 +951,40 @@ The delay
   (setq corfu-auto-delay 0.016))
 #+end_src
 
+Completion in progamming modes
+#+begin_src emacs-lisp
+(after! lsp-mode
+  (defun personal-coding-completion ()
+    "Setup completion when coding with ‘corfu’ and ‘cape’."
+    (setq-local
+     completion-at-point-functions (list (cape-capf-super
+                                          #'lsp-completion-at-point
+                                          #'yasnippet-capf) #'cape-dabbrev #'cape-file)))
+
+    ;; When opening a file after lsp is running ...
+    (add-hook 'lsp-after-open-hook #'personal-coding-completion)
+    ;; Opening a file for the first time
+    (add-hook 'lsp-after-initialize-hook #'personal-coding-completion)
+    )
+#+end_src
+
 Modified completion to lessen load
 #+begin_src emacs-lisp
-;; (after! (corfu orderless)
-;;   (defun orderless-fast-dispatch (word index total)
-;;     (and (= index 0) (= total 1) (length< word 4)
-;;          (cons 'orderless-literal-prefix word)))
-;;
-;;   (orderless-define-completion-style orderless-fast
-;;     (orderless-style-dispatchers '(orderless-fast-dispatch))
-;;     (orderless-matching-styles '(orderless-literal orderless-regexp)))
-;;
-;;   (defun personal-orderless-fast-lambda ()
-;;     (setq-local completion-styles '(orderless-fast basic)
-;;                 completion-category-overrides nil
-;;                 completion-category-defaults nil))
-;;
-;;   (add-hook 'corfu-mode-hook #'personal-orderless-fast-lambda))
+(after! (corfu orderless-)
+  (defun orderless-fast-dispatch (word index total)
+    (and (= index 0) (= total 1) (length< word 4)
+         (cons 'orderless-literal-prefix word)))
+
+  (orderless-define-completion-style orderless-fast
+    (orderless-style-dispatchers '(orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp)))
+
+  (defun personal-orderless-fast-lambda ()
+    (setq-local completion-styles '(orderless-fast basic)
+                completion-category-overrides nil
+                completion-category-defaults nil))
+
+  (add-hook 'corfu-mode-hook #'personal-orderless-fast-lambda))
 #+end_src
 
 ** Flycheck
@@ -1198,14 +1223,29 @@ Just calls `vterm-other-window', but also requires it to make it load beforehand
 a more integrated, emacsy shell
 #+begin_src emacs-lisp
 (after! eshell
-  (add-hook! eshell-mode
-    (add-hook 'completion-at-point-functions
-              (cape-capf-super #'cape-history #'cape-file #'cape-dabbrev #'cape-keyword) 0 t))
+  (defun corfu:send-shell ()
+    "Send completion candidates when inside comint/shell."
+    (cond
+     ((and (derived-mode-p 'eshell-mode) (fboundp 'eshell-send-input))
+      (eshell-send-input))
+     ((and (derived-mode-p 'comint-mode)  (fboundp 'comint-send-input))
+      (comint-send-input))))
 
-  (defun personal-eshell-short-completion ()
-    (setq-local corfu-auto-prefix 1))
-  (add-hook! eshell-mode #'personal-eshell-short-completion)
-  )
+  (defun eshell:setup-completion ()
+    "Setup completion for EShell with ‘corfu’ and ‘cape’."
+    (setq-local
+     corfu-auto t
+     corfu-quit-at-boundary t
+     corfu-quit-no-match t
+     corfu-auto-prefix 1
+     completion-at-point-functions (list (cape-capf-buster (cape-capf-super
+                                                            #'pcomplete-completions-at-point
+                                                            #'cape-dabbrev
+                                                            #'cape-file
+                                                            #'cape-history)) #'cape-file))
+    (advice-add #'corfu-insert :after #'corfu:send-shell))
+
+  (add-hook! eshell-mode #'eshell:setup-completion))
 #+end_src
 
 load all alias
@@ -1231,13 +1271,38 @@ load all alias
   (add-hook! 'eshell-mode-hook #'eshell-load-zsh-aliases)
 #+end_src
 
+make eshell do what doom vterm does for project roots
+#+begin_src emacs-lisp
+(defun personal-eshell-toggle ()
+  " Open up eshell as popup at project-root"
+  (interactive)
+  (let* ((project-root (or (doom-project-root) default-directory))
+         (default-directory
+          project-root))
+    (setenv "PROOT" project-root)
+    (+eshell/toggle project-root)))
+
+(defun personal-eshell-here ()
+  " Open up eshell as full frame at project-root"
+  (interactive)
+  (let* ((project-root (or (doom-project-root) default-directory))
+         (default-directory
+          project-root))
+    (setenv "PROOT" project-root)
+    (+eshell/here project-root)))
+#+end_src
+
 keybinds
 #+begin_src emacs-lisp
-
 (map! :leader :mode 'global
-      "ot" #'+eshell/toggle
-      "oT" #'eshell)
+      "ot" #'personal-eshell-toggle
+      "oT" #'personal-eshell-here
+      ;; vterm when you need a true terminal
+      "ov" #'+vterm/toggle
+      "oV" #'+vterm/here
+      )
 #+end_src
+
 ** vlc
 From [[https://ag91.github.io/blog/2021/01/25/vlc-via-emacs-how-to-open-a-youtube-link/][this page]]; setting up VLC so I can browse music in Emacs
 #+begin_src emacs-lisp
@@ -1416,14 +1481,14 @@ Turn on the minimap when there is only 1 active window
 
 Keybinding for toggling demap minimap
 #+begin_src emacs-lisp
-(map! :after demap :leader :mode 'global
-  "tm" #'demap-toggle
-  "tM" #'personal-toggle-demap-hook)
+;; (map! :after demap :leader :mode 'global
+;;   "tm" #'demap-toggle
+;;   "tM" #'personal-toggle-demap-hook)
 #+end_src
 
 Autostart the hook
 #+begin_src emacs-lisp
-(personal-start-demap-hook)
+;; (personal-start-demap-hook)
 #+end_src
 ** Leetcode
 Randomize the language I solve questions in
@@ -1496,95 +1561,6 @@ Code in the middle
 (after! auto-olivetti
   (setq auto-olivetti-enabled-modes '(text-mode org-mode prog-mode))
   (auto-olivetti-mode t))
-#+end_src
-
-** LLM Mode
-Using LLM for misc stuff
-
-Model name:
-#+begin_src emacs-lisp
-(setq personal-llm-model-name "qwen2.5-0.5b-low-cpu")
-#+end_src
-Set the model
-#+begin_src emacs-lisp
-(after! (ellama llm)
-  (setopt ellama-provider
-          (make-llm-ollama
-           :chat-model personal-llm-model-name
-           :embedding-model "nomic-embed-text"
-           :default-chat-non-standard-params '(("num_ctx" . 32768))))
-  (setopt ellama-summarization-provider
-          (make-llm-ollama
-           :chat-model personal-llm-model-name
-           :embedding-model "nomic-embed-text"
-           :default-chat-non-standard-params '(("num_ctx" . 32768))))
-  (setopt ellama-coding-provider
-          (make-llm-ollama
-           :chat-model personal-llm-model-name
-           :embedding-model "nomic-embed-text"
-           :default-chat-non-standard-params '(("num_ctx" . 32768)))))
-#+end_src
-
-Summarize code when idle
-
-The prompt:
-#+begin_src emacs-lisp
-(setq personal-summary-prompt-template "<INSTRUCTIONS>
-Write a one-line summary of the code function, INPUT with the
-following rules:
-- The summary MUST be one line long.
-- The summary MUST be as short as possible
-- The summary MUST be shorter than 70 characters.
-- The summary MUST be under 35 words.
-- Just say the summary, do not preface it with anything
-</INSTRUCTIONS>
-<INPUT>
-%s
-</INPUT>")
-#+end_src
-
-Code Summary Code
-#+begin_src emacs-lisp
-(setq personal--llm-response-acc "")
-
-(after! (llm ellama)
-  (defun personal--summarize--block (text)
-  " Summarize a block of code and display result in echo area."
-  (setq personal--llm-response-acc "❓")
-  (let ((prompt personal-summary-prompt-template))
-    (llm-chat-streaming
-     (or ellama-summarization-provider ellama-provider)
-     (llm-make-chat-prompt
-      (format prompt text)
-      :temperature 0.5
-      :max-tokens 30)
-     (lambda (partial)
-       (setq personal--llm-response-acc (concat personal--llm-response-acc partial))
-       ;; (display-message-or-buffer personal--llm-response-acc)
-       (display-message-or-buffer partial)
-       )
-     (lambda (full-text) (display-message-or-buffer
-                          (format "❓ %s" full-text)))
-     (lambda (error-msg what) (display-message-or-buffer
-                               (format "⚠ %s : %s" error-msg what))))))
-
-  ;; TODO bounds of things at point ? => use *defun*
-  ;; a non doom solution
-  (defun personal--get-block-to-summarize ()
-    (if (region-active-p)
-        (buffer-substring-no-properties (region-beginning) (region-end))
-      (let ((point-min-max (+evil:defun-txtobj)))
-        (pcase point-min-max
-          (`(,min-point ,max-point ,_)
-           (buffer-substring-no-properties min-point max-point))))))
-
-  (defun personal--casual-summary ()
-    (interactive)
-    (if (derived-mode-p 'prog-mode)
-        (personal--summarize--block (personal--get-block-to-summarize))))
-
-  ;; (setq personal-summary-timer (run-with-idle-timer 7 t #'personal--casual-summary))
-  )
 #+end_src
 
 ** Proced Mode
@@ -1843,8 +1819,8 @@ Set some faces to change color when idle
 #+BEGIN_SRC elisp
 (require 'huecycle)
 
-(setq personal--hl-line-bg-light-arg (ewal-load-color 'white -14))
-(setq personal--hl-line-bg-dark-arg (ewal-load-color 'black +1))
+(setq personal--hl-line-bg-light-arg (ewal-load-color 'white -19.5))
+(setq personal--hl-line-bg-dark-arg (ewal-load-color 'black -17.5))
 
 ;; Less packages, to do huecycle at startup
 (after! (huecycle doom-modeline hl-line ewal)
@@ -1924,6 +1900,9 @@ Set some faces to change color when idle
 
 #+END_SRC
 
+#+RESULTS:
+| #s(huecycle--interp-datum ((foreground doom-modeline-evil-normal-state doom-modeline-evil-insert-state doom-modeline-buffer-major-mode line-number-current-line doom-modeline-lsp-success doom-modeline-panel doom-modeline-info lsp-face-highlight-write lsp-face-highlight-read)) nil nil nil 0.0 huecycle-interpolate-linear huecycle-get-random-hsl-color nil (0.0 1.0) (0.8 1.0) (0.5 0.8) 0 nil 0.5 nil) | #s(huecycle--interp-datum ((foreground region)) nil nil nil 0.0 huecycle-interpolate-linear huecycle-get-random-hsl-color nil (0.0 1.0) (0.9 1.0) (0.5 0.8) 0 nil 1.0 nil) | #s(huecycle--interp-datum ((background hl-line)) nil nil nil 0.0 huecycle-interpolate-linear huecycle-get-next-list-color (#s(huecycle--color 0.08333333333333363 0.024390243902439025 0.16078431372549018) #s(huecycle--color 0.07407407407407411 0.045685279187817236 0.3862745098039216) #s(huecycle--color 0.07407407407407411 0.045685279187817236 0.3862745098039216)) (0.0 1.0) (0.5 1.0) (0.2 0.3) 0 nil 1.5 t) |
+
 ** Scratch Space
 Space for random elisp
 #+BEGIN_SRC elisp
@@ -1946,8 +1925,6 @@ Space for random elisp
   (personal-make-fixed-pitch-shrink)
   (personal-make-ewal-comment-brighter)
   (personal-fixup-fonts-org-mode))
-
-(message ".emacs.d dir not on master... should change that soon")
 #+END_SRC
 
 * Orgmode footer args

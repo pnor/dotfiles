@@ -7,8 +7,12 @@
 ;; ===== appearence
 (package! focus)                        ;; Dim text when typing
 (package! rainbow-mode)                 ;; Preview color codes in-line
+(package! olivetti)
+(package! auto-olivetti
+  :recipe (:host sourcehut :repo "ashton314/auto-olivetti"))
 
 ;; ===== functionality
+(package! key-chord)                    ;; jk -> <Escape>
 (package! blamer)                       ;; Show git blame on line
 (package! demap)                        ;; Code Minimap
 (package! evil-quickscope)              ;; Target highlighting for f/t jumps
@@ -20,6 +24,8 @@
 (package! realgud-lldb)                 ;; lldb support for debugger
 (package! vlf :recipe (:host github :repo "m00natic/vlfi" :files ("*.el"))
   :pin "cc02f2533782d6b9b628cec7e2dcf25b2d05a27c") ;; Open huge viles incrementally
+(package! dired-rsync)                  ;; Rsync
+(package! esh-autosuggest)              ;; Eshell bonuses
 
 ;; ===== language support
 (package! flycheck-swiftlint)           ;; Swiftlint
@@ -36,7 +42,7 @@
 ;; ===== json
 (package! json-navigator)               ;; Navigate json with tree structure
 
-                                        ; ===== org
+;; ===== org
 ;; (package! ord-d20 :recipe               ;; keybinds for table top games
 ;;   (:host github :repo "spwhitton/org-d20"))
 
@@ -57,22 +63,3 @@
 ;; ===== Conditional
 (package! ewal :ignore IS-MAC)
 (package! ewal-doom-themes :ignore IS-MAC)
-
-
-(package! emacs-copilot :recipe                 ;; LLM stuff
-  (:host github :repo "jart/emacs-copilot"))
-
-;; trying lsp-bridge, but no error inline sucks ):
-;; (when (package! lsp-bridge
-;;         :recipe (:host github
-;;                  :repo "manateelazycat/lsp-bridge"
-;;                  :branch "master"
-;;                  :files ("*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
-;;                  ;; do not perform byte compilation or native compilation for lsp-bridge
-;;                  :build (:not compile)))
-;;   (package! markdown-mode)
-;;   (package! yasnippet))
-
-(package! olivetti)
-(package! auto-olivetti
-  :recipe (:host sourcehut :repo "ashton314/auto-olivetti"))

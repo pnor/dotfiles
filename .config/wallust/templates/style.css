@@ -1,0 +1,153 @@
+* {
+  font-size: 18px;
+  min-height: 0;
+  padding: 0.1rem;
+  font-family: 'CozetteCrossedSevenVector', 'Weather Icons';
+}
+
+window#waybar {
+  background: rgba({{ background | rgb }}, 0.65);
+  color: rgb({{ foreground | rgb }});
+}
+
+tooltip {
+  background: rgba({{ background | rgb }}, 0.6);
+}
+tooltip label {
+  color: rgb({{ foreground | rgb }});
+}
+
+#workspaces {
+  background: transparent;
+  color: rgb({{ color7 | rgb }});
+}
+
+#workspaces button {
+  padding: 0 5px;
+  background: transparent;
+  color: rgb({{ color5 | rgb }});
+  border-bottom: 3px solid transparent;
+}
+
+#workspaces button.focused {
+  background: rgba({{ color5 | rgb }}, 0.2);
+}
+
+#mode,
+#clock,
+#battery {
+  padding: 0 10px;
+}
+
+#mode {
+  background: rgb({{ background | rgb }});
+  border-bottom: 3px solid rgb({{ color2 | rgb }});
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+  margin: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  color: rgb({{ foreground | rgb }});
+}
+
+#custom-icon {
+  color: rgb({{ color3 | rgb }});
+  background-color: rgba({{ color3 | rgb }}, 0.2);
+  background: rgba({{ color3 | rgb }}, 0.2);
+}
+
+.modules-left > widget:first-child > #workspaces {
+  margin-left: 0;
+}
+
+.modules-right > widget:last-child > #workspaces {
+  margin-right: 0;
+}
+
+#battery icon {
+  color: rgb({{ color6 | rgb }});
+}
+
+#battery.charging,
+#battery.plugged {
+  color: rgb({{ foreground | rgb }});
+  background-color: rgba({{ color2 | rgb }}, 0.4);;
+}
+
+@keyframes blink {
+  to {
+    background-color: rgb({{ color4 | rgb }});
+    color: rgb({{ color4 | rgb }});
+  }
+}
+
+#battery.warning:not(.charging) {
+  background-color: rgb({{ color6 | rgb }});
+  color: rgb({{ foreground | rgb }});
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#battery.critical:not(.charging) {
+  background-color: rgb({{ color6 | rgb }});
+  color: rgb({{ foreground | rgb }});
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+label:focus {
+  background-color: rgb({{ foreground | rgb }});
+}
+
+#network.disconnected {
+  background-color: rgb({{ color6 | darken(0.3) | rgb }});
+}
+
+#temperature.critical {
+  background-color: rgb({{ color6 | rgb }});
+}
+
+#idle_inhibitor.activated {
+  background-color: #ecf0f1;
+  color: #2d3436;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: rgb({{ color7 | rgb }});;
+}
+
+#custom-os_button {
+  font-size: 32px;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+#custom-os_button:hover {
+  background: rgba({{ color4 | rgb }}, 0.9);;
+  color: rgba({{ color4 | rgb }}, 0.2);
+}
