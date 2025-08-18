@@ -1,0 +1,125 @@
+// Base theme
+// @theme "/usr/share/rofi/themes/Adapta-Nokto.rasi"
+@theme "/home/phil/.cache/wallust/colors-rofi-dark.rasi"
+
+configuration {
+  font: "CozetteCrossedSevenVector 14";
+  matching: "fuzzy";
+  display-drun: "";
+  drun-display-format: "{name}";
+  sidebar-mode: false;
+}
+
+* {
+  no-color: #ffffff00;
+
+  bg: @background-transp;
+  background: @no-color;
+  fg: @foreground;
+  text-color: @fg;
+  button: @button;
+  accent: @accent;
+  item: @item;
+
+  drun-icon-theme: "Chicago95";
+}
+
+window {
+  background-color: @bg;
+  border-color: @no-color;
+  width: 40%;
+  padding: 16px;
+}
+
+prompt {
+  spacing: 0;
+  text-color: @fg;
+  enabled: false;
+}
+
+entry {
+  placeholder-color:              @fg;
+  expand:                         true;
+  padding:                        0.15% 0% 0% 0%;
+}
+
+inputbar {
+  children: [ prompt, entry ];
+  expand:                         false;
+}
+
+#button {
+    text-color: @fg;
+}
+
+#button.selected {
+    background-color: @no-color;
+    text-color: @fg;
+}
+
+// the top type bar
+mainbox {
+  children:                       [ inputbar, listview ];
+  spacing:                       1%;
+  padding:                        2% 1% 2% 1%;
+}
+
+
+element-icon {
+  size:                           64px;
+  horizontal-align:  0.5;
+}
+
+element-text {
+  expand:                         true;
+  horizontal-align:               0.5;
+  vertical-align:                 0.5;
+  margin:                         0.5% 0.5% -0.5% 0.5%;
+}
+
+element {
+  border: 0;
+  orientation:                    vertical;
+  padding:                        2% 0% 2% 0%;
+}
+
+element-text {
+    background-color: @no-color;
+    text-color:       inherit;
+}
+element.normal.normal {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.normal.urgent {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.normal.active {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.selected.normal {
+    background-color: @selected;
+    text-color:       @selected-text;
+}
+element.selected.urgent {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.selected.active {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.alternate.normal {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.alternate.urgent {
+    background-color: @no-color;
+    text-color:       @fg;
+}
+element.alternate.active {
+    background-color: @no-color;
+    text-color:       @fg;
+}

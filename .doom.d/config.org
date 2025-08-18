@@ -197,7 +197,7 @@ and automatically break long lines in source code buffers and org mode files
 
 Show a message when doing garbage collection
 #+BEGIN_SRC emacs-lisp
-(setq garbage-collection-messages t)
+;; (setq garbage-collection-messages t)
 #+END_SRC
 
 Have evil-mode treat emacs /symbols/ as words instead of by character
@@ -1786,7 +1786,8 @@ Mode specific keybinds
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
- 
+
+
  Zone mode screen saver after a good amount of idle time
  #+BEGIN_SRC emacs-lisp
  (require 'zone)

@@ -98,7 +98,7 @@ tooltip label {
 }
 
 #battery.warning:not(.charging) {
-  background-color: rgb({{ color6 | rgb }});
+  background-color: rgb({{ color6 | darken(0.5) | rgb }});
   color: rgb({{ foreground | rgb }});
   animation-name: blink;
   animation-duration: 0.5s;

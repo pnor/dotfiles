@@ -1,0 +1,49 @@
+configuration {
+  sort:			true;
+  sorting-method:	"normal";
+  disable-history:	false;
+  scroll-method:	0;
+  window-thumbnail:	true;
+}
+
+// @theme "ooo.rasi"
+
+
+@import "ooo.rasi"
+
+mainbox { children: [ inputbar, listview ]; }
+
+window {
+  transparency:		"real";
+  width:		600px;
+  height:		500px;
+}
+
+inputbar {
+  children:		[ prompt ];
+  expand:		false;
+  padding:		10px 10px 10px 10px;
+}
+
+prompt { 
+  enabled: true; 
+  padding:		10px;
+}
+
+listview {
+  columns:		2;
+  cycle:		true;
+  dynamic:		true;
+  layout:		vertical;
+  scrollbar:		false;
+}
+
+element {
+  orientation:		vertical;
+  margin:		3px 5px 3px 5px;
+}
+
+element-text {
+  expand:		true;
+  margin:		10px 15px 10px 15px;
+}

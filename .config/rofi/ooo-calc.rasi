@@ -1,0 +1,14 @@
+@theme "~/.config/rofi/ooo.rasi"
+
+listview {
+  columns:                        1;
+  lines:                          8;
+  cycle:                          false;
+  dynamic:                        true;
+  layout:                         vertical;
+}
+
+window {
+  width: 30%;
+  padding: 16px;
+}
