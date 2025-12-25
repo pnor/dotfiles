@@ -58,9 +58,13 @@ Setting the main font
 (when-macos
  (setq doom-font (font-spec :family "CozetteVector" :size 20)))
 
- (when-linux
-  (setq doom-font (font-spec :family "CozetteCrossedSevenVector" :size 18)))
+(when-linux
+ (setq doom-font (font-spec :family "CozetteCrossedSevenVector" :size 18)))
+;; (when-linux
+;;  (setq doom-font (font-spec :family "More Perfect DOS VGA" :size 16)))
 #+end_src
+"CozetteCrossedSevenVector"
+"More Perfect DOS VGA"
 
 Make some faces use variable pitch
 #+begin_src emacs-lisp
@@ -148,7 +152,7 @@ Cursor color
 Make the emacs frame transparent because I like my laptop background 🙃
 #+BEGIN_SRC emacs-lisp
 (defun personal-set-alpha-background-frame-params ()
-  (let ((bg-transparency 0.7))
+  (let ((bg-transparency 0.75))
     (set-frame-parameter (selected-frame) 'alpha-background bg-transparency)
     (add-to-list 'default-frame-alist `(alpha-background . ,bg-transparency))))
 
@@ -169,10 +173,11 @@ Control size of emacs on startup (mainly for macos since I use WM on linux)
  (setq initial-frame-alist '((top . 100) (left . 400) (width . 100) (height . 40))))
 #+END_SRC
 
-Show global display fill column
-,#+BEGIN_SRC emacs-lisp
-(global-display-fill-column-indicator-mode t)
-,#+BEGIN_SRC emacs-lisp
+Set cursor color
+#+begin_src emacs-lisp
+;; TODO
+;; (evil-set-cursor-color (ewal-get-color cyan))
+#+end_src
 
 Show Line numbers
 #+BEGIN_SRC emacs-lisp
@@ -672,7 +677,11 @@ jk -> Escape
 
 (key-chord-mode 1)
 (key-chord-define evil-insert-state-map  "jk" #'personal-jk-escape)
+#+end_src
 
+Using Doom Evil
+#+begin_src emacs-lisp
+(setq-default evil-escape-key-sequence "jk")
 #+end_src
 
 Make moving around splits as easy as pressing space.
@@ -687,6 +696,19 @@ Make moving around splits as easy as pressing space.
   "L" #'+evil/window-move-right
   "K" #'+evil/window-move-up
   "J" #'+evil/window-move-down
+  )
+#+END_SRC
+
+Use dirvish over find-file
+#+BEGIN_SRC emacs-lisp
+(defun personal-dirvish-find-file (filename &optional wildcards)
+  (interactive
+   (find-file-read-args "🔍 Open: "
+                        (confirm-nonexistent-file-or-buffer)))
+  (dirvish-dwim filename))
+
+(map! :leader :mode 'global
+ "." #'personal-dirvish-find-file
   )
 #+END_SRC
 
@@ -955,6 +977,7 @@ Completion in progamming modes
 #+begin_src emacs-lisp
 (after! lsp-mode
   (defun personal-coding-completion ()
+    (interactive)
     "Setup completion when coding with ‘corfu’ and ‘cape’."
     (setq-local
      completion-at-point-functions (list (cape-capf-super
@@ -965,7 +988,10 @@ Completion in progamming modes
     (add-hook 'lsp-after-open-hook #'personal-coding-completion)
     ;; Opening a file for the first time
     (add-hook 'lsp-after-initialize-hook #'personal-coding-completion)
+    ;; ...
+(add-hook 'prog-mode-hook 'personal-coding-completion)
     )
+
 #+end_src
 
 Modified completion to lessen load
@@ -985,6 +1011,71 @@ Modified completion to lessen load
                 completion-category-defaults nil))
 
   (add-hook 'corfu-mode-hook #'personal-orderless-fast-lambda))
+#+end_src
+
+Redefine the =lsp-completion-mode= to NOT add =lsp-completion-at-point= to =completion-at-point-functions=
+on entering the mode to use the cape settings
+#+begin_src  emacs-lisp
+(define-minor-mode lsp-completion-mode
+  "Toggle LSP completion support."
+  :group 'lsp-completion
+  :global nil
+  :lighter ""
+  (let ((completion-started-fn (lambda (&rest _)
+                                 (setq-local lsp-inhibit-lsp-hooks t)))
+        (after-completion-fn (lambda (result)
+                               (when (stringp result)
+                                 (lsp-completion--clear-cache))
+                               (setq-local lsp-inhibit-lsp-hooks nil))))
+    (cond
+     (lsp-completion-mode
+      (make-local-variable 'completion-at-point-functions)
+      ;; Ensure that `lsp-completion-at-point' the first CAPF to be tried,
+      ;; unless user has put it elsewhere in the list by their own
+      ;; NOTE remove this
+      ;; (add-to-list 'completion-at-point-functions #'lsp-completion-at-point)
+      (make-local-variable 'completion-category-defaults)
+      (setf (alist-get 'lsp-capf completion-category-defaults) '((styles . (lsp-passthrough))))
+      (make-local-variable 'completion-styles-alist)
+      (setf (alist-get 'lsp-passthrough completion-styles-alist)
+            '(lsp-completion-passthrough-try-completion
+              lsp-completion-passthrough-all-completions
+              "Passthrough completion."))
+
+      (cond
+       ((equal lsp-completion-provider :none))
+       ((and (not (equal lsp-completion-provider :none))
+             (fboundp 'company-mode))
+        (setq-local company-abort-on-unique-match nil)
+        (company-mode 1)
+        (setq-local company-backends (cl-adjoin 'company-capf company-backends :test #'equal)))
+       (t
+        (lsp--warn "Unable to autoconfigure company-mode.")))
+
+      (when (bound-and-true-p company-mode)
+        (add-hook 'company-completion-started-hook
+                  completion-started-fn
+                  nil
+                  t)
+        (add-hook 'company-after-completion-hook
+                  after-completion-fn
+                  nil
+                  t))
+      (add-hook 'lsp-unconfigure-hook #'lsp-completion--disable nil t))
+     (t
+      (remove-hook 'completion-at-point-functions #'lsp-completion-at-point t)
+      (setq-local completion-category-defaults
+                  (cl-remove 'lsp-capf completion-category-defaults :key #'cl-first))
+      (setq-local completion-styles-alist
+                  (cl-remove 'lsp-passthrough completion-styles-alist :key #'cl-first))
+      (remove-hook 'lsp-unconfigure-hook #'lsp-completion--disable t)
+      (when (featurep 'company)
+        (remove-hook 'company-completion-started-hook
+                     completion-started-fn
+                     t)
+        (remove-hook 'company-after-completion-hook
+                     after-completion-fn
+                     t))))))
 #+end_src
 
 ** Flycheck
@@ -1112,6 +1203,10 @@ Something that makes lsp faster by wrapping it in an executable
 
 https://github.com/blahgeek/emacs-lsp-booster
 
+Note that if there is an issue with the ~emacs-lsp-booster~, then it will manifest as an issue running
+the lsp server!!
+If you have issues in the future, try commenting this out and see how it runs
+
 Use emacs-lsp-booster if its on path
 #+begin_src emacs-lisp
 (when (executable-find "emacs-lsp-booster")
@@ -1219,7 +1314,9 @@ Just calls `vterm-other-window', but also requires it to make it load beforehand
 ;; (map! :leader :mode 'global
 ;;       "oh" #'personal-vterm-here)
 #+end_src
-** eshell
+** COMMENT eshell
+(disabled for now cuz eshell is slower than vterm which sucks)
+
 a more integrated, emacsy shell
 #+begin_src emacs-lisp
 (after! eshell
@@ -1238,11 +1335,9 @@ a more integrated, emacsy shell
      corfu-quit-at-boundary t
      corfu-quit-no-match t
      corfu-auto-prefix 1
-     completion-at-point-functions (list (cape-capf-buster (cape-capf-super
-                                                            #'pcomplete-completions-at-point
-                                                            #'cape-dabbrev
-                                                            #'cape-file
-                                                            #'cape-history)) #'cape-file))
+     completion-at-point-functions
+     (list #'pcomplete-completions-at-point #'cape-file #'cape-history #'cape-dabbrev)
+     )
     (advice-add #'corfu-insert :after #'corfu:send-shell))
 
   (add-hook! eshell-mode #'eshell:setup-completion))
@@ -1390,16 +1485,6 @@ Strip music org file of song urls
        (urls
         (shell-command-to-string (format "%s %s" awk-script-loc music-file-loc))))
     (mapc #'vlc-add-uri (split-string urls))))
-#+end_src
-
-** Tree Sitter
-#+begin_src emacs-lisp
-(add-hook 'c-mode-common-hook #'tree-sitter-hl-mode)
-#+end_src
-
-Set maximation colors for tree sitter
-#+begin_src emacs-lisp
-
 #+end_src
 
 ** Blamer
@@ -1570,6 +1655,16 @@ Set proced to auto update and be like top
 (setq proced-auto-update-interval 2)
 #+end_src
 
+** Undo Tree
+Show timestamps
+#+begin_src emacs-lisp
+(after! undo-tree
+  (setq undo-tree-visualizer-timestamps t))
+#+end_src
+** Rainbow Delimiters Mode
+#+begin_src emacs-lisp
+(add-hook! prog-mode #'rainbow-delimiters-mode)
+#+end_src
 * Programming
 ** C Family
 Setup LSP-mode with clangd based on [[file:~/.emacs.d/modules/lang/cc/README.org::*Eglot with clangd][this]]
@@ -1730,6 +1825,9 @@ Set abbrev mode
 
 (add-hook! python-mode
   #'personal-turn-on-abbrev-mode)
+
+(add-hook! c++-ts-mode
+  #'personal-turn-on-abbrev-mode)
 #+end_src
 
 * Functions for me
@@ -1786,7 +1884,6 @@ Mode specific keybinds
 * Misc/Random
 ** Fun Stuff
  Fun Emacs things
-
 
  Zone mode screen saver after a good amount of idle time
  #+BEGIN_SRC emacs-lisp
